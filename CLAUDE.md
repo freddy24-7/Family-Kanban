@@ -21,6 +21,10 @@ see [backend/ml/CLAUDE.md](backend/ml/CLAUDE.md).
 - DB: `docker compose up -d` (Postgres 17 + pgvector on localhost:5433)
 - Backend: `cd backend && uv run uvicorn app.main:app --reload`
 - Backend tests / lint: `cd backend && uv run pytest` · `uv run ruff check . && uv run ruff format .`
+  (tests build a `famkanban_test` DB from the real migrations; the DB container must be running)
+- Migrations: `cd backend && uv run alembic revision --autogenerate -m "..."` → review → `uv run alembic upgrade head`; `uv run alembic check` must be clean
+- Make platform admin: `cd backend && uv run python -m app.cli make-admin <email>`
+- Deploy: see [docs/deploy.md](docs/deploy.md)
 - Frontend: `cd frontend && npm run dev` · `npm run build` · `npm run lint` · `npm run format`
 
 ## Language
@@ -31,9 +35,12 @@ Dutch). Code, identifiers, comments, docs, commits: **English**. Never Norwegian
 ## Invariants (load-bearing — don't break these)
 
 - **Tenancy**: every tenant-owned table has `household_id`; every query goes through
-  household-scoped repository functions. No unscoped queries on tenant data.
-- **Provenance**: every data row carries `source` (`real` | `simulated`); metrics are
-  always reported per source. Never mix them silently.
+  household-scoped functions in `app/repository.py`, and every household route depends on
+  `app/tenancy.py` (`household_access` / `planner_access`). Cross-household access returns 404.
+  Add new household-scoped endpoints to the parametrised list in `tests/test_tenancy.py`.
+- **Provenance**: every data row carries `source` (`real` | `simulated`), derived from the
+  household's `kind` (never chosen by the caller); metrics are always reported per source.
+  Never mix them silently.
 - **Predictions are append-only** and always carry `model_version_id`.
 - **Frozen holdouts** (`data/holdout/`) are never trained on, edited, or regenerated.
 - **Promotion gate**: a new model becomes active only if it beats the active one on the
@@ -42,9 +49,13 @@ Dutch). Code, identifiers, comments, docs, commits: **English**. Never Norwegian
 - **Clock**: domain time comes from the injectable clock, never `datetime.now()` directly
   (the simulator fast-forwards time).
 - **One module per external dependency**: Gemini only in `llm.py`, email only in
-  `email.py`, DB access only via the repository layer, artifacts only via `ml/registry.py`.
+  `app/mailer.py`, fastapi-users only in `app/auth.py`, DB queries only in
+  `app/repository.py`, artifacts only via `ml/registry.py`.
   External services are env-gated and fail soft; the database fails loud.
-- **Migrations** via Alembic; never drop tables holding real family data.
+- **Migrations** via Alembic; never drop tables holding real family data. Enum columns use
+  `str_enum()` in `models.py` (VARCHAR + CHECK constraint).
+- **Layering**: routers stay thin; logic lives in `app/services/` so the simulator can call
+  it directly with a `SimulatedClock`.
 
 ## Scope guard
 

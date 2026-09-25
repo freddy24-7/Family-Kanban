@@ -104,14 +104,15 @@ provenance (`source`: `real` | `simulated`).
 - **OAuthAccount**: user_id, provider (`google`), account_id, tokens (fastapi-users)
 - **AccessToken**: token, user_id, created_at (database token strategy, revocable)
 - **Invite**: id, household_id, email, token_hash, invited_by, expires_at, accepted_at
-- **Membership**: user_id, household_id, is_planner, is_reviewer
-- **SimulatedMember**: id, household_id, name, gender, age, traits (world-model params)
+- **Membership**: user_id, household_id, is_planner, is_reviewer, profile (simulator-only:
+  gender, age, world-model traits). Simulated family members are `User` rows with
+  `is_simulated = true` and login disabled, so assignment works identically for both.
 - **FamilyProfile**: household_id, composition, assets (for simulated households)
 - **Topic**: id, household_id, text, due_by, created_by, occurred_at, source,
   category_label, effort_label, label_source (`planner`|`review`|`generator`),
-  labeled_at, prediction_was_changed
-- **Prediction** (append-only): id, topic_id, model_version_id, task
-  (`category`|`effort`), predicted, confidence, probabilities, created_at
+  labeled_at, labeled_by, category_prediction_changed, effort_prediction_changed
+- **Prediction** (append-only): id, topic_id, household_id, model_version_id, task
+  (`category`|`effort`), predicted, confidence, probabilities, source, occurred_at, created_at
 - **Sprint**: id, household_id, start_date, end_date, status
 - **SprintItem**: id, sprint_id, topic_id, assignee_id, status, completed,
   effort_actual, review_note, reviewed_at
@@ -159,7 +160,7 @@ Every technology must earn its place here. Nothing is added for CV padding.
   (security fixes only) — acceptable here; the auth module is isolated so it
   can be swapped later.
 - **Email**: transactional email (verification, reset, invites) via Resend,
-  isolated in `email.py`, inert without its API key (links logged in dev).
+  isolated in `app/mailer.py`, inert without its API key (links logged in dev).
 - **ML**: scikit-learn, pandas, joblib; exploration in Jupyter notebooks.
   Embeddings via `fastembed` (ONNX, no PyTorch) with a multilingual model.
 - **LLM**: Gemini, isolated in one module, inert without `GEMINI_API_KEY`,

@@ -1,6 +1,6 @@
 # Build Plan — Family Kanban
 
-**Status**: Phase 0 complete (2026-09-25) · next: Phase 1
+**Status**: Phase 1 complete (2026-09-25) · next: Phase 2
 
 Sized for ~8–10 hours/week. Each phase ends with something demonstrable.
 Phases marked 🎓 include ML lessons: before building, the concept is explained;
@@ -41,7 +41,7 @@ Guiding priorities:
 - Auth with `fastapi-users`: register, login, verify email, forgot/reset password,
   Google OAuth (`httpx-oauth`), bearer + database token strategy. Google Cloud
   OAuth client set up (see `external-service-setup` for redirect-URI gotchas).
-- `email.py` (Resend) for verification/reset/invite mails; in dev, links are logged.
+- `app/mailer.py` (Resend) for verification/reset/invite mails; in dev, links are logged.
 - Dependency resolving current user → household memberships.
 - Tenancy: a `current_household` dependency; every query goes through
   household-scoped repository functions (one `db.py` / repository layer).
@@ -52,8 +52,15 @@ Guiding priorities:
   so the Prediction pipeline and version tagging exist before the model does.
 - Deploy skeleton to Railway (API + Postgres) — early deploy flushes out infra issues.
 
+- Sprint tables + APIs are deferred to the start of Phase 4 (first used there);
+  simulator tables (FamilyProfile, SimulationRun, HoldoutSet) arrive in Phase 2.
+
 **Done when**: a user can sign up, invite a member, create topics via the API, and
 each topic has a Prediction row tagged with model version `stub-0`.
+
+**Outcome**: 32 tests (incl. parametrised cross-household isolation, verified to fail when
+the access check is broken); Docker image verified locally in production mode. The actual
+Railway deploy is a manual step for the developer: [deploy.md](deploy.md).
 
 ---
 
@@ -118,6 +125,8 @@ metrics on holdout-sim-v1 are recorded, and you can explain the confusion matrix
 ## Phase 4 — PWA frontend v1 (~3 weeks)
 
 **Build**
+- Backend first: Sprint / SprintItem / SprintReview tables + APIs (planning, board moves,
+  per-item review feeding labels with `label_source=review`).
 - Vite + React + TS, `vite-plugin-pwa` (installable, offline shell), Dutch i18n file.
 - Auth screens (email/password + Google), household invites.
 - Intake (mobile-first), backlog with **explicit confirm/correct** of labels
