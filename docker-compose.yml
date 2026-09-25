@@ -1,0 +1,19 @@
+# Local development database. Host port 5433 avoids clashing with a local Postgres.
+services:
+  db:
+    image: pgvector/pgvector:pg17
+    environment:
+      POSTGRES_USER: famkanban
+      POSTGRES_PASSWORD: famkanban
+      POSTGRES_DB: famkanban
+    ports:
+      - "5433:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U famkanban"]
+      interval: 5s
+      retries: 10
+
+volumes:
+  pgdata:

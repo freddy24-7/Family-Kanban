@@ -1,0 +1,27 @@
+# Env
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+.ruff_cache/
+.ipynb_checkpoints/
+
+# Node
+node_modules/
+dist/
+
+# Data: model artifacts and generated datasets are not committed.
+# Frozen holdout manifests (data/holdout/) ARE committed.
+data/artifacts/*
+!data/artifacts/.gitkeep
+data/datasets/
+
+# OS / editors
+.DS_Store
+.vscode/
+.idea/
