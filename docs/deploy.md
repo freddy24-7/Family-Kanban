@@ -32,6 +32,30 @@ Migrations run automatically on every deploy before the API starts.
    service's `DATABASE_URL`):
    `cd backend && DATABASE_URL=<public url> uv run python -m app.cli make-admin you@example.com`
 
+## Frontend (PWA) on Railway
+
+A second service in the same project, built from `frontend/Dockerfile` (Node build →
+static files served by Caddy with an SPA fallback and cache headers).
+
+1. **+ Create → GitHub repo** (same repo) → Settings → Source → **Root Directory `/frontend`**
+   (optional Watch Paths: `/frontend/**`).
+2. **Variables** on the frontend service:
+
+   | Variable | Value |
+   |---|---|
+   | `VITE_API_URL` | `https://${{Family-Kanban.RAILWAY_PUBLIC_DOMAIN}}` (the API's public URL) |
+
+   ⚠️ `VITE_*` values are baked in at **build** time (the Dockerfile passes it as a build
+   arg and refuses to build without it). After changing it, redeploy; a restart is not enough.
+3. **Networking → Generate Domain** (port from the deploy log, 8080 by default).
+4. On the **API** service set `FRONTEND_URL` and `CORS_ORIGINS` to the frontend URL
+   (`https://<frontend domain>`, no trailing slash): CORS for the browser, and the links in
+   verification / reset / invite emails.
+
+Cache policy (Caddyfile): `/assets/*` (hashed) cached for a year; everything else, including
+`index.html` for every route and the service worker, `no-cache`, so phones pick up new
+deploys.
+
 ## Google login (when enabling it)
 
 - Google Cloud project → OAuth consent screen (External) → **Web application** client.

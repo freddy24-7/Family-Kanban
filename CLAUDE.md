@@ -31,6 +31,7 @@ see [backend/ml/CLAUDE.md](backend/ml/CLAUDE.md).
 - Holdouts: `uv run python -m ml.holdout suggest|freeze ...` · snapshots in `data/datasets/` (not committed)
 - Deploy: see [docs/deploy.md](docs/deploy.md)
 - Frontend: `cd frontend && npm run dev` · `npm run build` · `npm run lint` · `npm run format`
+  (API at `VITE_API_URL`, default http://localhost:8000; Dutch strings only in `src/i18n/nl.ts`)
 
 ## Language
 
