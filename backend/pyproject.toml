@@ -8,11 +8,17 @@ dependencies = [
     "fastapi>=0.141.1",
     "fastapi-users[oauth,sqlalchemy]>=15.0.5",
     "google-genai>=2.25.0",
+    "pandas>=3.0.6",
     "psycopg[binary]>=3.3.6",
+    "pyarrow>=25.0.1",
     "python-dotenv>=1.2.3",
+    "scikit-learn>=1.9.1",
     "sqlalchemy[asyncio]>=2.0.54",
     "uvicorn[standard]>=0.54.0",
 ]
+
+[tool.uv]
+default-groups = ["dev", "notebooks"]
 
 [dependency-groups]
 dev = [
@@ -20,6 +26,11 @@ dev = [
     "pytest>=9.1.1",
     "pytest-asyncio>=1.4.0",
     "ruff>=0.16.9",
+]
+notebooks = [
+    "jupyterlab>=4.6.4",
+    "matplotlib>=3.11.2",
+    "nbconvert>=7.17.1",
 ]
 
 [tool.ruff]

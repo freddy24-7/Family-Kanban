@@ -4,7 +4,7 @@ functions that read tenant data take a household_id and filter on it."""
 import uuid
 from collections.abc import Sequence
 
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.domain import ModelStatus, Source, Task
@@ -172,3 +172,24 @@ async def list_topic_texts(session: AsyncSession, household_id: uuid.UUID) -> Se
 
 async def get_generation_run(session: AsyncSession, run_id: uuid.UUID) -> GenerationRun | None:
     return await session.get(GenerationRun, run_id)
+
+
+async def find_demo_household(session: AsyncSession, preset_key: str) -> Household | None:
+    """Oldest training-eligible simulated household created from this preset."""
+    stmt = (
+        select(Household)
+        .join(FamilyProfile, FamilyProfile.household_id == Household.id)
+        .where(
+            FamilyProfile.preset_key == preset_key,
+            Household.kind == Source.SIMULATED,
+            Household.training_eligible.is_(True),
+        )
+        .order_by(Household.created_at)
+        .limit(1)
+    )
+    return await session.scalar(stmt)
+
+
+async def count_topics(session: AsyncSession, household_id: uuid.UUID) -> int:
+    stmt = select(func.count()).select_from(Topic).where(Topic.household_id == household_id)
+    return await session.scalar(stmt) or 0

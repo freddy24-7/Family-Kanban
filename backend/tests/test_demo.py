@@ -13,8 +13,9 @@ from app.domain import Category, LabelSource, Source
 from app.llm import LLMResult
 from app.models import Membership, Prediction, Topic, User
 from app.services import demo
+from ml.text import normalise_text
 from sim.family import PRESETS, build_world, category_weights
-from sim.generator import normalise_text, plan_batch
+from sim.generator import plan_batch
 from tests.helpers import PASSWORD, make_superuser, register_and_login
 
 REQUEST_LINE = re.compile(r"^(\d+)\. category=(\w+);", re.M)
@@ -237,6 +238,7 @@ async def test_network_error_cascades_to_next_model(monkeypatch):
 
     monkeypatch.setattr(config, "GEMINI_API_KEY", "fake-key")
     monkeypatch.setattr(config, "GEMINI_MODELS", ["model-a", "model-b"])
+    monkeypatch.setattr(llm, "RETRY_BASE_SECONDS", 0)
     tried = []
 
     class FakeModels:
@@ -260,7 +262,7 @@ async def test_network_error_cascades_to_next_model(monkeypatch):
 
     monkeypatch.setattr(llm, "_get_client", lambda: FakeClient)
     result = await llm.generate_json_list("sys", "prompt", {"type": "INTEGER"})
-    assert tried == ["model-a", "model-b"]
+    assert tried == ["model-a", "model-a", "model-a", "model-b"]  # 3 attempts, then cascade
     assert result.model == "model-b" and result.items == [1, 2]
     assert result.failed_models == ["model-a:RemoteProtocolError"]
 
@@ -278,3 +280,73 @@ async def test_unexpected_crash_marks_run_failed(monkeypatch):
         with pytest.raises(KeyError):
             await demo.continue_generation(session, household, run, SystemClock())
         assert run.status == "failed" and "KeyError" in run.error
+
+
+async def test_unsupported_thinking_level_falls_back_to_low(monkeypatch):
+    from google.genai import errors as genai_errors
+    from google.genai import types as genai_types
+
+    monkeypatch.setattr(config, "GEMINI_API_KEY", "fake-key")
+    monkeypatch.setattr(config, "GEMINI_MODELS", ["picky-model"])
+    monkeypatch.setattr(llm, "_thinking_level_for", {})
+    levels = []
+
+    class FakeModels:
+        async def generate_content(self, model, contents, config):
+            levels.append(str(config.thinking_config.thinking_level.value).lower())
+            if levels[-1] == "minimal":
+                raise genai_errors.ClientError(
+                    400,
+                    {
+                        "error": {
+                            "message": "Thinking level MINIMAL is not supported for this model."
+                        }
+                    },
+                )
+            return genai_types.GenerateContentResponse(
+                candidates=[
+                    genai_types.Candidate(
+                        content=genai_types.Content(parts=[genai_types.Part(text='{"items": []}')])
+                    )
+                ]
+            )
+
+    class FakeClient:
+        class aio:
+            models = FakeModels()
+
+    monkeypatch.setattr(llm, "_get_client", lambda: FakeClient)
+    await llm.generate_json_list("sys", "p", {"type": "INTEGER"})
+    await llm.generate_json_list("sys", "p", {"type": "INTEGER"})
+    assert levels == ["minimal", "low", "low"]  # remembered after the first rejection
+
+
+async def test_transient_503_is_retried_on_same_model(monkeypatch):
+    from google.genai import errors as genai_errors
+    from google.genai import types as genai_types
+
+    monkeypatch.setattr(config, "GEMINI_API_KEY", "fake-key")
+    monkeypatch.setattr(config, "GEMINI_MODELS", ["model-a", "model-b"])
+    monkeypatch.setattr(llm, "RETRY_BASE_SECONDS", 0)
+    tried = []
+
+    class FakeModels:
+        async def generate_content(self, model, contents, config):
+            tried.append(model)
+            if len(tried) == 1:
+                raise genai_errors.ServerError(503, {"error": {"message": "high demand"}})
+            return genai_types.GenerateContentResponse(
+                candidates=[
+                    genai_types.Candidate(
+                        content=genai_types.Content(parts=[genai_types.Part(text='{"items": []}')])
+                    )
+                ]
+            )
+
+    class FakeClient:
+        class aio:
+            models = FakeModels()
+
+    monkeypatch.setattr(llm, "_get_client", lambda: FakeClient)
+    result = await llm.generate_json_list("sys", "p", {"type": "INTEGER"})
+    assert tried == ["model-a", "model-a"] and result.model == "model-a"

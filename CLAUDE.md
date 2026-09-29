@@ -13,7 +13,7 @@ see [backend/ml/CLAUDE.md](backend/ml/CLAUDE.md).
 - `backend/` — FastAPI (`app/`), ML (`ml/`), simulator (`sim/`), `tests/`. Python 3.12, uv.
 - `frontend/` — Vite + React + TS PWA.
 - `notebooks/` — exploration and lessons; shipped code lives in `backend/ml/`.
-- `data/holdout/` — frozen holdout manifests (committed, never edited).
+- `backend/ml/holdouts/` — frozen holdout manifests (committed, never edited).
 - `data/artifacts/` — model artifacts (not committed).
 
 ## Commands
@@ -44,7 +44,7 @@ Dutch). Code, identifiers, comments, docs, commits: **English**. Never Norwegian
   household's `kind` (never chosen by the caller); metrics are always reported per source.
   Never mix them silently.
 - **Predictions are append-only** and always carry `model_version_id`.
-- **Frozen holdouts** (`data/holdout/`) are never trained on, edited, or regenerated.
+- **Frozen holdouts** (`backend/ml/holdouts/`) are never trained on, edited, or regenerated.
 - **Promotion gate**: a new model becomes active only if it beats the active one on the
   frozen holdouts without regressing on real data.
 - **Training eligibility**: only households with `training_eligible = true` feed training.

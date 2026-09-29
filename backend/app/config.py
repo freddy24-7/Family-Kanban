@@ -49,6 +49,9 @@ DATABASE_URL = _normalise_database_url(
     _env("DATABASE_URL", "postgresql+psycopg://famkanban:famkanban@localhost:5433/famkanban")
 )
 
+# Batch CLIs set DB_POOLED=false before importing app.db (see app/db.py).
+DB_POOLED = _env("DB_POOLED", "true").lower() != "false"
+
 AUTH_SECRET = _env("AUTH_SECRET")
 if len(AUTH_SECRET) < 32:
     if IS_PRODUCTION:

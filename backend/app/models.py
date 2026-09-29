@@ -3,7 +3,7 @@
 Tenancy: every tenant-owned table carries household_id.
 Provenance: topics and predictions carry `source` (real | simulated).
 Predictions are append-only. Sprint tables arrive in Phase 4, SimulationRun in
-Phase 5. Frozen holdouts are committed manifest files (data/holdout/), not tables.
+Phase 5. Frozen holdouts are committed manifest files (backend/ml/holdouts/), not tables.
 """
 
 import uuid

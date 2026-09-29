@@ -8,8 +8,6 @@ counted and dropped, never allowed to break the batch.
 """
 
 import random
-import re
-import unicodedata
 from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
@@ -18,6 +16,7 @@ from pydantic import BaseModel, Field, ValidationError
 
 from app import llm
 from app.domain import Category, Effort
+from ml.text import normalise_text
 from sim.family import FamilyWorld, Person, category_weights
 
 # Bump when the prompt changes meaningfully: it is stored on every GenerationRun,
@@ -78,15 +77,6 @@ class BatchResult:
     model: str = ""
     tokens_in: int = 0
     tokens_out: int = 0
-
-
-def normalise_text(text: str) -> str:
-    """Lowercase, strip accents/punctuation, collapse whitespace. Used for duplicate
-    detection here and for holdout exclusion later."""
-    text = unicodedata.normalize("NFKD", text.lower())
-    text = "".join(c for c in text if not unicodedata.combining(c))
-    text = re.sub(r"[^\w\s]", " ", text)
-    return re.sub(r"\s+", " ", text).strip()
 
 
 def plan_batch(

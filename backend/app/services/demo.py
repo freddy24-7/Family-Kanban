@@ -1,6 +1,7 @@
 """Demo families: create a simulated household from a FamilySpec, and fill it with
 Gemini-generated tickets that carry weak labels (label_source=generator)."""
 
+import asyncio
 import logging
 import random
 import secrets
@@ -14,8 +15,9 @@ from app.clock import Clock
 from app.domain import LabelSource, Source
 from app.models import FamilyProfile, GenerationRun, Household, Membership, Topic, User
 from app.services.classification import classify_topics
+from ml.text import normalise_text
 from sim.family import FamilySpec, build_world
-from sim.generator import BATCH_SIZE, PROMPT_VERSION, generate_batch, normalise_text, plan_batch
+from sim.generator import BATCH_SIZE, PROMPT_VERSION, generate_batch, plan_batch
 
 log = logging.getLogger(__name__)
 _password_helper = PasswordHelper()
@@ -181,6 +183,10 @@ async def continue_generation(
         log.warning("Generation run %s failed: %s", run.id, exc)
         await _mark_failed(session, run, str(exc), clock)
         return run
+    except asyncio.CancelledError:
+        # Process stopped/cancelled mid-run: record it, then let cancellation proceed.
+        await asyncio.shield(_mark_failed(session, run, "cancelled", clock))
+        raise
     except Exception as exc:
         # Unexpected: record it so the run never stays "running", then re-raise.
         log.exception("Generation run %s crashed", run.id)

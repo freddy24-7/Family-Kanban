@@ -11,7 +11,7 @@ Read `CLAUDE.md` and `backend/ml/CLAUDE.md` first; they define the invariants.
 
 Check, in order of severity:
 
-1. **Holdout contamination** — can any topic in a frozen holdout (`data/holdout/`) reach a
+1. **Holdout contamination** — can any topic in a frozen holdout (`backend/ml/holdouts/`) reach a
    training query? Trace the data selection code, not just names.
 2. **Leakage** — anything fitted (vectorizer, scaler, encoder, threshold) on data that
    includes evaluation rows; post-hoc fields used as features (`effort_actual`,

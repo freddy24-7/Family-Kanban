@@ -16,7 +16,7 @@ node_modules/
 dist/
 
 # Data: model artifacts and generated datasets are not committed.
-# Frozen holdout manifests (data/holdout/) ARE committed.
+# Frozen holdout manifests live in backend/ml/holdouts/ and ARE committed.
 data/artifacts/*
 !data/artifacts/.gitkeep
 data/datasets/

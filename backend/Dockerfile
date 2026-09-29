@@ -7,7 +7,7 @@ ENV UV_COMPILE_BYTECODE=1 UV_LINK_MODE=copy UV_PROJECT_ENVIRONMENT=/app/.venv \
 
 WORKDIR /app
 COPY pyproject.toml uv.lock ./
-RUN uv sync --frozen --no-dev --no-install-project
+RUN uv sync --frozen --no-dev --no-group notebooks --no-install-project
 COPY . .
 
 # Migrations run on every deploy (additive-only, see CLAUDE.md), then the API.
