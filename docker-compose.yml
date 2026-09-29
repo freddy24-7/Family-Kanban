@@ -1,7 +1,8 @@
-# Local development database. Host port 5433 avoids clashing with a local Postgres.
+# Local development database, same major version as production (Railway pgvector, PG 18).
+# Host port 5433 avoids clashing with a local Postgres.
 services:
   db:
-    image: pgvector/pgvector:pg17
+    image: pgvector/pgvector:pg18
     environment:
       POSTGRES_USER: famkanban
       POSTGRES_PASSWORD: famkanban
@@ -9,11 +10,12 @@ services:
     ports:
       - "5433:5432"
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      # PG 18 images keep data in a versioned subdirectory of /var/lib/postgresql.
+      - pgdata18:/var/lib/postgresql
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U famkanban"]
       interval: 5s
       retries: 10
 
 volumes:
-  pgdata:
+  pgdata18:

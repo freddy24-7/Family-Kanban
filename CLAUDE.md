@@ -18,7 +18,7 @@ see [backend/ml/CLAUDE.md](backend/ml/CLAUDE.md).
 
 ## Commands
 
-- DB: `docker compose up -d` (Postgres 17 + pgvector on localhost:5433)
+- DB: `docker compose up -d` (Postgres 18 + pgvector on localhost:5433)
 - Backend: `cd backend && uv run uvicorn app.main:app --reload`
 - Backend tests / lint: `cd backend && uv run pytest` · `uv run ruff check . && uv run ruff format .`
   (tests build a `famkanban_test` DB from the real migrations; the DB container must be running)
