@@ -1,0 +1,3646 @@
+{
+ "name": "holdout-sim-v1",
+ "frozen_at": "2026-09-29T10:55:06.789979+00:00",
+ "note": "Seed dataset v1 (prompt gen-v1). Two typical families + one variation, chosen with the developer on 2026-09-29, before any modelling.",
+ "split": "group (whole households)",
+ "dataset_hash_at_freeze": "b81598bfbd36f411bd15ca088bc64b8751dcc39c96d517915b075c2a8802b694",
+ "households": [
+  {
+   "household_id": "0f6e0d79-6d40-4690-bd12-6322433f0716",
+   "name": "Familie Bakker (demo)",
+   "preset_key": "typical-2"
+  },
+  {
+   "household_id": "3144a64c-f010-4e57-be62-6def35322724",
+   "name": "Familie Meijer (demo)",
+   "preset_key": "typical-5"
+  },
+  {
+   "household_id": "a41205ff-ccf4-4d41-a97b-9fe3ee74acf5",
+   "name": "Familie Smit (demo)",
+   "preset_key": "city-apartment"
+  }
+ ],
+ "counts": {
+  "topics": 600,
+  "by_source": {
+   "simulated": 600
+  },
+  "by_category": {
+   "chores": 140,
+   "kids": 127,
+   "groceries": 124,
+   "home_maintenance": 100,
+   "finance": 47,
+   "social": 46,
+   "other": 16
+  },
+  "by_effort": {
+   "S": 475,
+   "M": 115,
+   "L": 10
+  }
+ },
+ "topics": [
+  {
+   "topic_id": "00c0003d-3aab-4484-9c9d-55a5bda044a0",
+   "text_hash": "a6771d885340d21610d659db291c3604ee52fb52eee3ca6937ea91c7108b9e6b",
+   "category": "chores",
+   "effort": "S"
+  },
+  {
+   "topic_id": "010b8d73-96b7-4b92-b291-50e391f29d51",
+   "text_hash": "0827979b622205ce7d4728d1be8658b7b89af57d4f6f44c27dc9614120c00e0f",
+   "category": "chores",
+   "effort": "M"
+  },
+  {
+   "topic_id": "0191282a-e8d8-40a9-94ae-61a54175168a",
+   "text_hash": "166438fc0bc0489a739b60a0756d1b83fc90350f2747a04987d6148837160713",
+   "category": "kids",
+   "effort": "S"
+  },
+  {
+   "topic_id": "026c297e-2f94-42b8-bbf7-2a03f82ff115",
+   "text_hash": "d32df1e3bd4509c5b090f897caa11355adef83d5d248e27da61d8e5aebea9b1e",
+   "category": "other",
+   "effort": "S"
+  },
+  {
+   "topic_id": "03c9e577-4b4a-4ab8-8c7a-1152bafbb497",
+   "text_hash": "fd46e72e5d748bd930f001a0078268174048d38e136882b856243c3e44bb45d4",
+   "category": "groceries",
+   "effort": "S"
+  },
+  {
+   "topic_id": "041f8813-2e6b-4072-b14c-43e6c82611a7",
+   "text_hash": "30e4f158f68a4523268c708354198f4d116d9e5246ac9978b75d4251827f3832",
+   "category": "kids",
+   "effort": "S"
+  },
+  {
+   "topic_id": "04ab0a6f-da7d-4854-a878-8ae27be80a44",
+   "text_hash": "5321691fad16e3b0ba6c9ab6f0f2171a1d133141aedd4d446da2ab5f968dd0e3",
+   "category": "groceries",
+   "effort": "S"
+  },
+  {
+   "topic_id": "05442d82-deda-4ac3-814d-14ce2519dff3",
+   "text_hash": "5ceafc1399b3a20a26ab2cff8617802616ca90125b5e030ae6bc614e4d04ac51",
+   "category": "home_maintenance",
+   "effort": "M"
+  },
+  {
+   "topic_id": "056bb789-2a56-4afb-b599-5fd53b136459",
+   "text_hash": "eea4d523ea7ec6ccc281f62d814b492e3fec1cdfc997887ffa7597c689f23706",
+   "category": "chores",
+   "effort": "S"
+  },
+  {
+   "topic_id": "0646c1ba-eabb-4eb7-b5f4-e961fc5018c3",
+   "text_hash": "8dcde059bba3e969b252736cf3e0555a7e4e0a86a4760995dc6147c98727c049",
+   "category": "groceries",
+   "effort": "S"
+  },
+  {
+   "topic_id": "06b8a91d-d561-4f72-bd82-9e46d39f67c3",
+   "text_hash": "196341ccd9dcf20c63a4dd6b4381458c82b57f1a402610384ddeaaf0072ac777",
+   "category": "home_maintenance",
+   "effort": "S"
+  },
+  {
+   "topic_id": "06f23a15-8379-491e-8662-be59c69ab6ff",
+   "text_hash": "20bdc02d8ebc9af6806456f2a574a9d5ced71fc62b208add29686cdfcf882253",
+   "category": "chores",
+   "effort": "S"
+  },
+  {
+   "topic_id": "07002ce6-37b8-4583-9d71-a8901b7cdbe0",
+   "text_hash": "96fa6e09dc598b216238bf3d4c2896597549456b3a30eb2a5d6c8e130f6eef6f",
+   "category": "kids",
+   "effort": "S"
+  },
+  {
+   "topic_id": "074c35e0-382f-4c76-a787-b94a13e76f20",
+   "text_hash": "45445e8f081537fe1e60b665acb66db1d87e7f912c167f7cd0e7a1229166da3b",
+   "category": "home_maintenance",
+   "effort": "S"
+  },
+  {
+   "topic_id": "078bfc8b-5eb6-4cb1-9cee-171313b52477",
+   "text_hash": "f1cec5a080af7e40506843d2711f189fb8fc2830f7bff14d93b47531d1b27192",
+   "category": "finance",
+   "effort": "S"
+  },
+  {
+   "topic_id": "080e2fb5-26b3-444b-9a73-b24610832dc5",
+   "text_hash": "97ee8f80d06ed247bcbfcfbfa031ee503dd1797f28cb142e17066f536023d7f7",
+   "category": "home_maintenance",
+   "effort": "S"
+  },
+  {
+   "topic_id": "08a5e123-16ce-4519-9316-b68b248a8d15",
+   "text_hash": "542769fa0cee1a9c3a6b1bf4a5280ac9311393c284ea3136aa435bfab5ac41b4",
+   "category": "chores",
+   "effort": "M"
+  },
+  {
+   "topic_id": "09140aa1-0a14-4c2a-b006-cc6330d26567",
+   "text_hash": "6c94edc484ab5607b66aee1dc2a26aa2b7bfd499a04da2bd6f4ce82854a0ecaf",
+   "category": "kids",
+   "effort": "S"
+  },
+  {
+   "topic_id": "09aa2c48-32e4-48ef-b29e-9dc0e75dce17",
+   "text_hash": "a69da04aed038214e9d6818d462dd6ee33bab41769a6600ea4305c1f0a3a57e1",
+   "category": "chores",
+   "effort": "S"
+  },
+  {
+   "topic_id": "09b2b468-e92e-4fb9-b720-a9b1e9c3cafa",
+   "text_hash": "a44df2d5975fc1a0ef767035d50695f18bf6294f5d9b240fe3755466ebb259ba",
+   "category": "groceries",
+   "effort": "S"
+  },
+  {
+   "topic_id": "09d3ebc8-9b28-4244-8313-f97836054016",
+   "text_hash": "a5bb00a60d797464c69d803899e6aea104dab9ae87203000d16ac9d71dc09485",
+   "category": "kids",
+   "effort": "S"
+  },
+  {
+   "topic_id": "09ecae65-01b5-4927-b906-44501f63d9b0",
+   "text_hash": "8ae23981c64af1a17b2d9591aacb2db0c37de50bc002481e53225336da12b8e0",
+   "category": "finance",
+   "effort": "S"
+  },
+  {
+   "topic_id": "09f780a8-d008-41a7-bbfd-f505ed172fe6",
+   "text_hash": "40955db333ce667688fc3fcb359ccb18907dd68e66519eda47b81703612296bd",
+   "category": "groceries",
+   "effort": "S"
+  },
+  {
+   "topic_id": "0a3044e1-e1ec-41d4-8d8b-38687a345637",
+   "text_hash": "747ba00dd1a4d1d0e22f701401d1d239e64b170bd07c5c5be1dccc11774ee310",
+   "category": "groceries",
+   "effort": "S"
+  },
+  {
+   "topic_id": "0a32a191-6953-4e11-918f-b513d68c8e3b",
+   "text_hash": "f102b673782fbdb4e495e8d88d8125fa1f547982edc5d7ebceff5f8a5b1c709b",
+   "category": "chores",
+   "effort": "S"
+  },
+  {
+   "topic_id": "0a9d83f6-5a8f-4e7f-9894-ec36ccc604a7",
+   "text_hash": "685afbcd093ddc83266df8270169d3ed1d4d1a3ab04bbba1efef25f7a5c89d4a",
+   "category": "kids",
+   "effort": "M"
+  },
+  {
+   "topic_id": "0ab47f2a-61b9-4715-a502-a6fcf132ba78",
+   "text_hash": "93254584f5931517c660ac6f2a76a248e6e50a885d535bc8bb474045e05cbda7",
+   "category": "finance",
+   "effort": "S"
+  },
+  {
+   "topic_id": "0ad0c814-1869-43ac-8466-6750a8526c3f",
+   "text_hash": "66e01b19528aab2958e7a7435291dedf75251e84267c998633e0f5eaf85d748a",
+   "category": "kids",
+   "effort": "S"
+  },
+  {
+   "topic_id": "0b7262b3-90c8-4fdd-9072-1e388c85dd07",
+   "text_hash": "c40d770e8ae29599d0cf5535a2156af3efaf70f34bd5c2b74de19dfcf870a20d",
+   "category": "home_maintenance",
+   "effort": "S"
+  },
+  {
+   "topic_id": "0bbc2efb-1c76-4f17-9be2-604d3eccee10",
+   "text_hash": "2e93a10ad47e7afad3bd661376ce408172502f81f6eb770bb4fdc05601944d3d",
+   "category": "home_maintenance",
+   "effort": "S"
+  },
+  {
+   "topic_id": "0bc146f4-023b-46a8-9397-2f79309a2763",
+   "text_hash": "945f50b8e38bf4e9c5d841b1f1ea7445e57ebd5d94484b4461e991e375231660",
+   "category": "groceries",
+   "effort": "S"
+  },
+  {
+   "topic_id": "0c12078a-4b89-4835-b9ee-c7a1996172c9",
+   "text_hash": "85b03fb99b0df540e5011e930ffe8243f8c0661362d08e69ee930ffa26e009c7",
+   "category": "groceries",
+   "effort": "S"
+  },
+  {
+   "topic_id": "0d14c19a-506b-429b-bb61-ceaf9b4aad40",
+   "text_hash": "db1e90d4e916525a7d359821a3d3786a4fa0a8be134a576fc3a69bfcdcd61f5c",
+   "category": "finance",
+   "effort": "S"
+  },
+  {
+   "topic_id": "0d6d69b8-53bf-4218-9034-69c47bd8ec17",
+   "text_hash": "d53bc4bc4bb560ae56086a62d675ddaa2268f82f03e882c824eb4428b935661a",
+   "category": "home_maintenance",
+   "effort": "S"
+  },
+  {
+   "topic_id": "0de9341a-f721-44e7-86e6-7f4844b703b8",
+   "text_hash": "153fefab5b599739bff490baf63b4c70d1db6bbc02e09bea3290bd6520ae2f14",
+   "category": "chores",
+   "effort": "M"
+  },
+  {
+   "topic_id": "0e05bcaa-cbac-45eb-b2c3-3bf502fb4132",
+   "text_hash": "453f0fe62cecf6db0114d75f2aa11c277293b29f3520bbd7345954e4be8f5494",
+   "category": "kids",
+   "effort": "S"
+  },
+  {
+   "topic_id": "0e34a110-0cf0-4898-bcb6-314189e32f1d",
+   "text_hash": "0ca0a47c3674269cf10763ad0dc375ddd151f27fa08aea442a2c74c44b9b9471",
+   "category": "groceries",
+   "effort": "S"
+  },
+  {
+   "topic_id": "0e800d47-7bf6-45b8-9ab8-0f2cd917a74a",
+   "text_hash": "2c2c1baee85ab6c6e7af43df5c343c282b485715d3e0c85701a5cad7318b5cae",
+   "category": "chores",
+   "effort": "M"
+  },
+  {
+   "topic_id": "0e9d383c-fe89-42e7-9295-a7c7d0c333d7",
+   "text_hash": "715e930b705a8502e7cb251326f00d02c3d3d2f7ed587914de71b995f9b6b625",
+   "category": "home_maintenance",
+   "effort": "M"
+  },
+  {
+   "topic_id": "0ec3e74e-fdbd-4def-813f-d86e301eefff",
+   "text_hash": "82b57417d172f236f36a431528a070effaee80901efa0951bd0c7ee52481fdbb",
+   "category": "groceries",
+   "effort": "S"
+  },
+  {
+   "topic_id": "0f4daf92-d10e-4ce6-a770-a221c436413a",
+   "text_hash": "b8bb536c5d50153761dd1ccc78e526523d5af4f0f3b633f3bbef0f62955b8ce2",
+   "category": "chores",
+   "effort": "S"
+  },
+  {
+   "topic_id": "0fbf1fe8-195a-47db-befa-7a0ffde25a0e",
+   "text_hash": "5ebd68ee9767ef0b10a563e07e102407d174c077423cba12c10d6b29d0fcb313",
+   "category": "chores",
+   "effort": "S"
+  },
+  {
+   "topic_id": "10099af4-35c5-4e11-bfc1-62b5f9a49c6c",
+   "text_hash": "cb614dc6f6994da1c903a606fcd28fa38ee5b2113d9eab9d692ba1f7ea52a9f4",
+   "category": "home_maintenance",
+   "effort": "S"
+  },
+  {
+   "topic_id": "115e91cc-5791-4d23-94d3-0727588a4e8e",
+   "text_hash": "a876e0c7f0f6a3c55ba98905e4ce789145967024b52ed84c8d6879d2859accc1",
+   "category": "other",
+   "effort": "S"
+  },
+  {
+   "topic_id": "12227452-21f4-4a71-a1fc-da97d59453a7",
+   "text_hash": "52bcaef3c09f6ba49965b709acaa119870515433e42387548ec2b2448ef8ef2c",
+   "category": "groceries",
+   "effort": "S"
+  },
+  {
+   "topic_id": "12606a42-75d5-43ef-bc9b-6722389b86ce",
+   "text_hash": "60ee3aecfc5326cc098838db05ce87c9b235021e5f63b0cc2de8d91568bda01a",
+   "category": "groceries",
+   "effort": "S"
+  },
+  {
+   "topic_id": "1274863b-9e8a-44b8-bd94-9dfa9c947b0b",
+   "text_hash": "6f6014399ad4255298c42a31d6436497c859608d010b5ee308ae9e91bcdce82c",
+   "category": "home_maintenance",
+   "effort": "S"
+  },
+  {
+   "topic_id": "13f39da7-9032-4295-abae-8de6e9a6253c",
+   "text_hash": "5fa59122c4c84fb5d7e327fc38fdc5ebf5fb31ce77df1a1c338cf995fd5758b9",
+   "category": "kids",
+   "effort": "S"
+  },
+  {
+   "topic_id": "145d98d6-d673-4f84-8feb-22c814ef2bbd",
+   "text_hash": "fc70be07289a4183c7e1c6c71f4a6f78fa1b4661014bbbfbf0008d3fe242d550",
+   "category": "kids",
+   "effort": "S"
+  },
+  {
+   "topic_id": "14c5ddd6-da16-4726-936e-e00d869f32d4",
+   "text_hash": "807135dd2a7d85cdefe056f74836497a91d4e89618f94e68391e3aae55d12ced",
+   "category": "kids",
+   "effort": "M"
+  },
+  {
+   "topic_id": "1650ea5c-e7db-4b43-be85-ce477126380b",
+   "text_hash": "4f280ef46ed117c7981470c5dfbf2092d30def9f337ef5e50569c951bb898f47",
+   "category": "kids",
+   "effort": "M"
+  },
+  {
+   "topic_id": "16d04b33-2f6e-4872-92bf-af531fdc6b61",
+   "text_hash": "e7e600efa7f0d74f97f8741aa5630513eba8c85072854a848136ec26198b055b",
+   "category": "home_maintenance",
+   "effort": "M"
+  },
+  {
+   "topic_id": "170455a3-bd0c-413e-94b6-3c8fddfc5da7",
+   "text_hash": "9234b1b248bed105302618dd19a0b1dc1ea55fc4c352500df0efe48e8e61fd14",
+   "category": "social",
+   "effort": "S"
+  },
+  {
+   "topic_id": "173c1b78-9adf-4703-a10a-07766784e39a",
+   "text_hash": "083a0f2d2460f616ca60afa6f75011a8db47639e6daa10e46377e4f96fbfeddd",
+   "category": "home_maintenance",
+   "effort": "S"
+  },
+  {
+   "topic_id": "18dbb913-317a-4145-9073-288ca7d1b84d",
+   "text_hash": "67c093190158cee756d398cbec0cda6a3ecd60c228b8a2ff2614f8bc448fcea1",
+   "category": "home_maintenance",
+   "effort": "S"
+  },
+  {
+   "topic_id": "1961af7f-6836-4ecd-97b1-3a5cc2d8cf76",
+   "text_hash": "fed77f960f39c44bec02fc8e0ca7eef725f9c836b7d7fdd959d489dd2e05926d",
+   "category": "other",
+   "effort": "S"
+  },
+  {
+   "topic_id": "1962d82f-888a-4603-8276-34ccf8a6a726",
+   "text_hash": "906ec0f04009b7a4d4c5492ed1827c7e27601ae3caafc318668de1d999ef2c74",
+   "category": "groceries",
+   "effort": "S"
+  },
+  {
+   "topic_id": "199e28e6-2b37-4b8c-87b8-c94ffc921df4",
+   "text_hash": "92bb05e6c50d881125f718be73ed9613d1fd14c1ba1420886afc6bb44960539d",
+   "category": "other",
+   "effort": "S"
+  },
+  {
+   "topic_id": "1a66b36a-f872-481e-9ed8-82c622ea68fa",
+   "text_hash": "0e522b5dc2257c6cc7a80e3ae2f926959171c1ea2c235c8c91578bed8c78b1b8",
+   "category": "chores",
+   "effort": "M"
+  },
+  {
+   "topic_id": "1b0f6815-8b1c-48fe-8689-4cb4538c8b0e",
+   "text_hash": "a43513ab3500c381839a4b81bdf09304cfcd14237bfdcdd7817ef37f73cbb1d7",
+   "category": "chores",
+   "effort": "S"
+  },
+  {
+   "topic_id": "1b22ed61-6c57-452e-8dcd-e285f34cd20f",
+   "text_hash": "9a08bb7ccbe8741b783114c2301b7e8ee7f7360d13164e064473cf33e4e9376c",
+   "category": "home_maintenance",
+   "effort": "L"
+  },
+  {
+   "topic_id": "1b99800f-019d-4df9-974a-5767ba11e566",
+   "text_hash": "1a363b15cabb6316da0b65260b340776e8a4054805f0917f70e0eef98065a94a",
+   "category": "chores",
+   "effort": "S"
+  },
+  {
+   "topic_id": "1b9ce2d0-0411-4abd-8d8e-9ab7890e184b",
+   "text_hash": "5fa777664383172944b876aff90ac0345723c5bab798344d13bf139175b87dbd",
+   "category": "other",
+   "effort": "S"
+  },
+  {
+   "topic_id": "1c02d8f4-c443-4319-a5fd-350d1fe7e858",
+   "text_hash": "762243204530514f845ed735d0c63bd8d667ef6f80f3d0018418591435fe9146",
+   "category": "finance",
+   "effort": "M"
+  },
+  {
+   "topic_id": "1c32d53d-a4b0-4362-9a29-ab33231d9d49",
+   "text_hash": "01ea60c42abbd6c8b74b6a3c53aed373b43d363ec863932a44f9a84f14672008",
+   "category": "kids",
+   "effort": "S"
+  },
+  {
+   "topic_id": "1d525fe0-07fe-46ec-ac79-ff08d8eed33e",
+   "text_hash": "bb68fe8b166671dba05576eea203276102004ca9c67a73ce0a38690f62f58aa2",
+   "category": "groceries",
+   "effort": "S"
+  },
+  {
+   "topic_id": "1d5a4de9-f527-49c2-bf9d-024799fa1b65",
+   "text_hash": "004d91d31127a33d11354ae84fddb7087d37f55a7eaae0aeb2fcf30e24823468",
+   "category": "chores",
+   "effort": "S"
+  },
+  {
+   "topic_id": "1e8cd743-afb0-4e77-a10c-214c3f3ca7ad",
+   "text_hash": "667fc58e83261a2b47174f2bd0b229ce6d9c93348756aba194e1c6b8bfac1f72",
+   "category": "finance",
+   "effort": "L"
+  },
+  {
+   "topic_id": "1efe1dcf-253f-4d77-9d60-1f74eed7779c",
+   "text_hash": "d78c7f69f570fbeb7e82ca93855938db7a97eb37592af3f15d5eb5d1f270d426",
+   "category": "groceries",
+   "effort": "S"
+  },
+  {
+   "topic_id": "1f11b1a4-5d6a-481b-a8b7-11808d6f63e5",
+   "text_hash": "d338f12965e6b44fcb8fea1173ebc9e8fa29f631e734a3611c52c27e08ab7159",
+   "category": "home_maintenance",
+   "effort": "S"
+  },
+  {
+   "topic_id": "1f4e6ca4-6151-4973-98a1-7f44cf8561ea",
+   "text_hash": "2badbd1da6d831ec2ff9b16ba081efaa2427d139bd3c1041d2bdde7eb2de7eff",
+   "category": "home_maintenance",
+   "effort": "S"
+  },
+  {
+   "topic_id": "1faf431a-e4f9-4c6a-ae71-7cc708c5731a",
+   "text_hash": "762243204530514f845ed735d0c63bd8d667ef6f80f3d0018418591435fe9146",
+   "category": "finance",
+   "effort": "M"
+  },
+  {
+   "topic_id": "21034456-3dba-4005-9db3-67f0a9f37956",
+   "text_hash": "a1614dc6e96ac76f62412ded9836f307ad63a8a419b3c241a7b8cd46c37acae8",
+   "category": "kids",
+   "effort": "S"
+  },
+  {
+   "topic_id": "2133849a-fe25-4080-8684-0a752062ac27",
+   "text_hash": "d950541a635836975eec1563f5c9b2ec760178681f0e3544cde514c7c09859be",
+   "category": "chores",
+   "effort": "S"
+  },
+  {
+   "topic_id": "215279fb-68f8-48e8-bf91-d03f472b6b9c",
+   "text_hash": "c324084e3af1bcaf8acb9da6eb6415c9820514c679fd1b17045c078da1f7706e",
+   "category": "chores",
+   "effort": "S"
+  },
+  {
+   "topic_id": "2153e93e-f01a-4b4e-bc58-c3f2a2d0fa44",
+   "text_hash": "c010cd84e7c1a102aaaed8be3e4f037cddd6f0b9a38b4775a88699661417743b",
+   "category": "social",
+   "effort": "M"
+  },
+  {
+   "topic_id": "21713653-8cfa-4d7c-8bde-f7d4d433e6a7",
+   "text_hash": "ffe6b8a286aa93105b826803a36d34045d46ff99e2f898502456218d4c408c80",
+   "category": "social",
+   "effort": "S"
+  },
+  {
+   "topic_id": "2183303f-adeb-48a9-97a3-7f2fe1598291",
+   "text_hash": "0c4fe9a1c7a4f20bb216cc42024b7373c06923d44a4cb7b3d8ab1a675c3951e1",
+   "category": "groceries",
+   "effort": "S"
+  },
+  {
+   "topic_id": "21b72053-3a7c-42be-8395-625ce6db0051",
+   "text_hash": "ebb06b3559946eb67f5f07b1dc59401a8c0e6f37ec74e852f8325a504ef49a7f",
+   "category": "chores",
+   "effort": "S"
+  },
+  {
+   "topic_id": "21f3565d-4678-44c3-ad94-7138d39eaf09",
+   "text_hash": "748d30044ceb2fbb49b82d994fedd9557bf5312c1642a64033497f8cfca40cc5",
+   "category": "kids",
+   "effort": "S"
+  },
+  {
+   "topic_id": "2248cbf8-6738-4394-8109-d38807e770a3",
+   "text_hash": "36f4064905dc7a942d7777ec7fd46f3831e6b5733140f5ce276bc77ff7b5af91",
+   "category": "kids",
+   "effort": "M"
+  },
+  {
+   "topic_id": "228b7800-2baf-4760-87b9-9cfe2950b93e",
+   "text_hash": "9ad3e5a1d02af84525a4665f663640896910bbfa54713818dea286d39ff25740",
+   "category": "groceries",
+   "effort": "S"
+  },
+  {
+   "topic_id": "2295c8a0-9198-4d6f-8b29-df302f578edb",
+   "text_hash": "1db7d9c4e6167cf18b819e32d46b6ec5bea6158aee07d949059096c9af5f1315",
+   "category": "groceries",
+   "effort": "S"
+  },
+  {
+   "topic_id": "22db4ea8-3faa-4ebf-86c5-fc66eb1791b8",
+   "text_hash": "5b6402b03e45d19b2d3cf6135aa465a3ded05f0a3dccaec9dc24dc9adef0edaa",
+   "category": "home_maintenance",
+   "effort": "M"
+  },
+  {
+   "topic_id": "2359b786-5f60-4000-bf72-55a016736307",
+   "text_hash": "bc68c643af3d50b3ae63de5a3bb677d48cc0a8617f833e136a211dd025874cb3",
+   "category": "groceries",
+   "effort": "S"
+  },
+  {
+   "topic_id": "235b638f-98cd-4b75-85ca-252df4f33e18",
+   "text_hash": "3fee8c18b2f61b67cc61a7631b87b91d1f50741262a03ebc35e8e736f74f03b8",
+   "category": "kids",
+   "effort": "M"
+  },
+  {
+   "topic_id": "2455c2ba-ac40-45f6-9925-6c57ab3638fe",
+   "text_hash": "84a0006696783781911bad6cbbfe60e7a951837c4d7e1c78dad0c15706f83512",
+   "category": "kids",
+   "effort": "M"
+  },
+  {
+   "topic_id": "2485e8e2-16e1-4ab4-bd4e-a431398660a9",
+   "text_hash": "22e1ce3a6bdbb87b8d73d58fc85a0291831e8fabd45a93e040c366ec2cfb8b83",
+   "category": "kids",
+   "effort": "S"
+  },
+  {
+   "topic_id": "250a35be-0433-4933-b5b4-232ff83e6edc",
+   "text_hash": "1d8eb1c089f8e071793350c5a617d01ced755288ae9487ea34a4005376ed189d",
+   "category": "chores",
+   "effort": "S"
+  },
+  {
+   "topic_id": "2593d1be-1b46-4250-b02d-0cec525b5b30",
+   "text_hash": "90bc4af0463f163b80b947b1a7ec0bd89960b8e1ff10f6720da6fe74064a8319",
+   "category": "home_maintenance",
+   "effort": "S"
+  },
+  {
+   "topic_id": "266b2855-0773-4abc-a72c-976ac9803ca8",
+   "text_hash": "b7a24c0d22c8f727de34c2b9eedbcc28049d493748865b3c7bbf17db70fe411f",
+   "category": "home_maintenance",
+   "effort": "S"
+  },
+  {
+   "topic_id": "27ad5a9d-d6ac-41e6-bcfa-c5304f427013",
+   "text_hash": "f838116927946c1d96a0d688f999abc53533ebbd7bf3cb22ad92f46032d1fc75",
+   "category": "social",
+   "effort": "S"
+  },
+  {
+   "topic_id": "27e018d9-4204-4d29-9421-ade556290d4d",
+   "text_hash": "207558b7f340be741dfa4b2c599ae05bc33e7a202eddc92b9fd967d2a861e510",
+   "category": "home_maintenance",
+   "effort": "M"
+  },
+  {
+   "topic_id": "27eaa615-2b60-4542-b65d-f3af7355f485",
+   "text_hash": "fa8d35f510f843a87b9b49bf5d2fe4b9a51ab8b38399e207986affc746c378c3",
+   "category": "kids",
+   "effort": "S"
+  },
+  {
+   "topic_id": "297db670-620f-47af-9165-ef09e78a5dbe",
+   "text_hash": "614e2ab5c6d864e3c809516fd162d3c95d685c57fff1249fce2528848f148253",
+   "category": "home_maintenance",
+   "effort": "S"
+  },
+  {
+   "topic_id": "2989a670-3109-4f47-84ca-d541552da2c8",
+   "text_hash": "6102f43a70670fa11884baf9369ff12e4c6618522931dbde784ae52c7c2466af",
+   "category": "social",
+   "effort": "S"
+  },
+  {
+   "topic_id": "2a41e0cf-661f-4121-be8f-601313b96fd2",
+   "text_hash": "f05a30754586e436bf11986fc6245bf851336087da9911b7a8ca4a297d8a3ead",
+   "category": "chores",
+   "effort": "S"
+  },
+  {
+   "topic_id": "2a47dac5-3d0b-4790-b36f-b6dd36c0f19f",
+   "text_hash": "d2e6abb8f8b85d2a4e5563257f1e10c9e938189bc33d0c2146c97643d02d4fe7",
+   "category": "social",
+   "effort": "S"
+  },
+  {
+   "topic_id": "2a529bb1-6e92-4e75-bf02-413c24ae4819",
+   "text_hash": "6848de295d10105a8039f49a22a2f244ff4e6e27c2d217fb9ae38d9af303ce47",
+   "category": "home_maintenance",
+   "effort": "S"
+  },
+  {
+   "topic_id": "2aa28a71-0d22-4678-91f9-905c9405273b",
+   "text_hash": "a95410b8dc03bf696301255b61ed3b9c46f451909b3de2b8ad629a8654e8d0c3",
+   "category": "chores",
+   "effort": "M"
+  },
+  {
+   "topic_id": "2b31d58a-bb7e-4d9d-a65c-16f4b9b11e17",
+   "text_hash": "e698dcc77af95ce7d8aef2b8d753ba8a8068e5f430c2c9e987cba9c6d1c00f8f",
+   "category": "home_maintenance",
+   "effort": "S"
+  },
+  {
+   "topic_id": "2bc49a65-613b-46fa-b12d-0b91d8ab4470",
+   "text_hash": "18e4d2d8984adef05bf949a505ed3b2fc629680ec921f0d261d6d0319af13de8",
+   "category": "groceries",
+   "effort": "S"
+  },
+  {
+   "topic_id": "2be803e1-dfd9-4356-a3be-b0a51ad974aa",
+   "text_hash": "48f05b730802d877b00759c968d559e0056dbb4298e482c4c1651f6caff45438",
+   "category": "kids",
+   "effort": "S"
+  },
+  {
+   "topic_id": "2c1646b8-2b35-4a5a-b4c8-e064da760962",
+   "text_hash": "0ba24b6dfc08105cc98402318c5c3c6461fe8b53980ad25510d56307c818ff3d",
+   "category": "chores",
+   "effort": "S"
+  },
+  {
+   "topic_id": "2caed429-c050-4fd3-81e7-851da3854722",
+   "text_hash": "f483c95fecf375ce7e149d2f40dd0b68aa2ab1ae4a667bf9b95986ded38dc932",
+   "category": "kids",
+   "effort": "S"
+  },
+  {
+   "topic_id": "2cb7b4c7-6a97-41c3-8196-ed800d2a9bfb",
+   "text_hash": "d7e19c947b35c11544e4d7abb02a32b0131c9cfb4a9367a2f17cfb600fa80f33",
+   "category": "home_maintenance",
+   "effort": "S"
+  },
+  {
+   "topic_id": "2d1db3c2-7a59-49c5-9db3-d4ccb6dfb72b",
+   "text_hash": "06d79f1d7fe4eb7148dca9513082c1e64867d682020498bc0490b99a24603318",
+   "category": "kids",
+   "effort": "S"
+  },
+  {
+   "topic_id": "2e30b503-4d4b-4bb9-b6ec-e86b5c543cc8",
+   "text_hash": "2a98940b448698d0225836a1b4297b644db76db0290a57b9c9dc94dfb37db0fa",
+   "category": "groceries",
+   "effort": "S"
+  },
+  {
+   "topic_id": "2e8bdece-fca4-462d-b520-349c6ce959dc",
+   "text_hash": "9e68b6bd740025442cfa8646a06779718e26f7a79850574d8c609deebe6a7c3b",
+   "category": "social",
+   "effort": "S"
+  },
+  {
+   "topic_id": "2f0c8d9c-ece9-4c95-b41e-52c6608d1cff",
+   "text_hash": "e1ea1746fe8f3fd5959608b20b58804d4e1f20b0bef5270bf9f38167a514604c",
+   "category": "kids",
+   "effort": "S"
+  },
+  {
+   "topic_id": "30abe4fe-0323-4377-b49f-4e80d1b585cb",
+   "text_hash": "c93ca1d162e9409600300afe04782176233498d1758b0c6c7ba92ef155dc8bef",
+   "category": "kids",
+   "effort": "S"
+  },
+  {
+   "topic_id": "30ad4db6-7817-4f5d-9345-022b55bdd1a9",
+   "text_hash": "4b1af8c58833c8fa08dbea5edcfeecf689e2deadf859bef5e0a99252539aded6",
+   "category": "social",
+   "effort": "S"
+  },
+  {
+   "topic_id": "311b0d9a-20ce-4228-ae23-1b024b08dc30",
+   "text_hash": "e6765ae6b67cf9058c3beaa2a440bb5e1f992ff4417de249bb0bef96315afa12",
+   "category": "kids",
+   "effort": "S"
+  },
+  {
+   "topic_id": "314cc1f1-f853-407f-93a3-d91f419ab8d7",
+   "text_hash": "8f078b1a6114d972887d01058bf368ebf1a6e24144a121e4321005b5e6c7534a",
+   "category": "groceries",
+   "effort": "S"
+  },
+  {
+   "topic_id": "31c7fd1e-aa12-40c1-b669-faf7bb0e0562",
+   "text_hash": "063bad062c5f5083a083b14e9d17ed4115905454660b26f724a27abe8fcf8a93",
+   "category": "groceries",
+   "effort": "S"
+  },
+  {
+   "topic_id": "31da5ec3-1f1d-4e16-99e1-45218bebaa69",
+   "text_hash": "1240fa1babeb40130290601ca7b472b963afccc8d919a17ec745a53ea403086c",
+   "category": "kids",
+   "effort": "S"
+  },
+  {
+   "topic_id": "3281d039-8e67-43b2-bae9-5e78d9c9435d",
+   "text_hash": "c4773f6787d66d0345c29a0e03577d5c09b8e8c91f688286315408389d6bf8e6",
+   "category": "kids",
+   "effort": "M"
+  },
+  {
+   "topic_id": "32ca8c4f-3432-48c3-8e67-11e5d9b3109b",
+   "text_hash": "85c201006c622858fab9af6cd165d471d65ee70e444cbe0d1181f035a06f627a",
+   "category": "groceries",
+   "effort": "S"
+  },
+  {
+   "topic_id": "32e59757-3611-4bc5-868d-c475831d5a05",
+   "text_hash": "648f003cea2c0eaacf1dd86a08acea357387db0b40fecd63339a27e1bcea7f20",
+   "category": "chores",
+   "effort": "S"
+  },
+  {
+   "topic_id": "33a94b29-3716-425d-82c2-58a2ba7c888e",
+   "text_hash": "7c72c2bdac46114a5e838a03aafca6d21123089402a36c00dd3bb038cdc54a1d",
+   "category": "chores",
+   "effort": "S"
+  },
+  {
+   "topic_id": "34b90841-61f7-493f-a8e6-eb617e1c0462",
+   "text_hash": "5f9880ad452b54a62292c918135509b6b3914112a9d9f4e6734661ba40f7ed36",
+   "category": "groceries",
+   "effort": "S"
+  },
+  {
+   "topic_id": "34eb116f-8225-427c-8881-14de326819a5",
+   "text_hash": "c4692786acdaab05f01f981f35c1a67ba50f2a65cc78c67e6e25c2db5cd70ec5",
+   "category": "chores",
+   "effort": "M"
+  },
+  {
+   "topic_id": "353751ab-0961-4b8e-8813-678d6fa1122a",
+   "text_hash": "75f2ec742acbf6325c1c43f48f50da031252d2e2908f7a39d05c7515bb9725ee",
+   "category": "chores",
+   "effort": "M"
+  },
+  {
+   "topic_id": "3572d828-4be7-4715-b8a9-08828eb989e8",
+   "text_hash": "e10bbd134471f86eb92af76023a9a9cc2e93e69e847221a72eb1d0ee05f1e71c",
+   "category": "home_maintenance",
+   "effort": "S"
+  },
+  {
+   "topic_id": "359be60c-da45-42aa-b9f7-eed5bad97b00",
+   "text_hash": "b03d8fe64a725b24d01ce1b16ce8dd0eff4a2de9583ebd4f1993cc8277a197b5",
+   "category": "chores",
+   "effort": "M"
+  },
+  {
+   "topic_id": "36437043-cf09-4eb0-bc55-2474725122d7",
+   "text_hash": "e614a88beb48f7e1c8cf2249ce226a61c02b9334a43d71f6fa767027741f37c1",
+   "category": "chores",
+   "effort": "S"
+  },
+  {
+   "topic_id": "36887796-c1a6-4034-977a-5efd3b6a3dfb",
+   "text_hash": "248fa6addccc43d119cd69333cba67742a93d8b6c4cfe8dfc633db2f46c80342",
+   "category": "finance",
+   "effort": "M"
+  },
+  {
+   "topic_id": "36b3629c-6785-4c68-b4b1-9e2a88b4a1a0",
+   "text_hash": "acf69165c3c15dcbadaa3dd616b4832898ecacae130616380b6362cfc252b8ac",
+   "category": "groceries",
+   "effort": "S"
+  },
+  {
+   "topic_id": "36e21b5d-b3cf-4e5b-bf5e-6b99e8063748",
+   "text_hash": "5f2dafa49f7c03eade15d76ae82bf6bdf623fbbc023f5ef81079e45e7d0bd9c2",
+   "category": "chores",
+   "effort": "S"
+  },
+  {
+   "topic_id": "374304b5-d676-4589-b281-c1590f7b533d",
+   "text_hash": "2283d2cd2bb8bce763e06b5b56ab8c821a8bc6977f2f049fda811b9c1877e370",
+   "category": "groceries",
+   "effort": "S"
+  },
+  {
+   "topic_id": "38c40441-32ee-4874-809c-ef94f71f6f9e",
+   "text_hash": "2391e71cda9d5542b7ab21e9873c889a1c23fb6c3da32ee3bde0fffbad269d03",
+   "category": "kids",
+   "effort": "S"
+  },
+  {
+   "topic_id": "38d83358-5fdd-41d0-bc95-b3e59216968d",
+   "text_hash": "6726a819e81fe042562803ee712bee36337575d49f3a833e6ae8018c71eea9f0",
+   "category": "groceries",
+   "effort": "S"
+  },
+  {
+   "topic_id": "38d89610-ca44-4950-b1a9-479f54135551",
+   "text_hash": "d0e280d0e55357dd92465293529dcb4fe4e6986cd27d32f6c2f3ff8887478c3d",
+   "category": "finance",
+   "effort": "S"
+  },
+  {
+   "topic_id": "39298219-c13d-475f-8eec-138e9eee9b97",
+   "text_hash": "c82f067340e14d1157fcd3accbc769ca4d2b32395446716d31b949e21e76b5bf",
+   "category": "groceries",
+   "effort": "S"
+  },
+  {
+   "topic_id": "394e0778-6589-4c46-a195-52deb298d765",
+   "text_hash": "ffd838727ae30b4b48b93bb0f3cae82d4dbcc2a674201bc1914824b032346126",
+   "category": "kids",
+   "effort": "S"
+  },
+  {
+   "topic_id": "3a3c69fb-2ace-47e9-8703-8fefcbc2abd6",
+   "text_hash": "6ef2ca7c32092c05ccf18a09ce75d42d09a0f08696ab352bad7c94b17ab83710",
+   "category": "kids",
+   "effort": "S"
+  },
+  {
+   "topic_id": "3a8fdefc-56e2-4efd-891e-82805d469f6f",
+   "text_hash": "cb81ebfcb620a533f6d8cb1f8ac931ef72e271a87442b9d0b32978ebe7aa9f89",
+   "category": "kids",
+   "effort": "S"
+  },
+  {
+   "topic_id": "3b045e22-759b-4a1c-af90-3880693da08e",
+   "text_hash": "149ce3d8ed012ffceb8c37ad021df78a42155fef8275867b1bff0e86b3c298bf",
+   "category": "social",
+   "effort": "S"
+  },
+  {
+   "topic_id": "3b985730-fa9c-4ed6-b6a0-cb62217f7ec6",
+   "text_hash": "c787e3b76c3606c10ff479157b81fc945b7b39e109460776f1061562a80e6fab",
+   "category": "finance",
+   "effort": "M"
+  },
+  {
+   "topic_id": "3baae358-6bfe-4143-8d7c-2ae36a042470",
+   "text_hash": "80c609d8b0b8044c70847017ccaa03ada32b6e0d0b9e61899e6f056937653c65",
+   "category": "social",
+   "effort": "S"
+  },
+  {
+   "topic_id": "3c37d214-67f4-43dc-b746-cf20ad5294e9",
+   "text_hash": "f65a3dc1adb1f2ec0c8683dedba35fecded4ce2c57753c429a2391aa380aaa59",
+   "category": "chores",
+   "effort": "M"
+  },
+  {
+   "topic_id": "3c78878d-780b-457a-879b-f29418d2d18e",
+   "text_hash": "baf7a06bd6c5e5c42124d997f97a82cd60b94be37e6e74ef2169879e9a0a8637",
+   "category": "home_maintenance",
+   "effort": "S"
+  },
+  {
+   "topic_id": "3cfba4e8-71dc-4152-a8a5-db9e398b33d3",
+   "text_hash": "686dfad58960b40a39af2b53e82d93884219b084ca653e55a22ffee70be8c924",
+   "category": "social",
+   "effort": "S"
+  },
+  {
+   "topic_id": "3d3ee9b3-eb91-4305-92bc-e4762c080707",
+   "text_hash": "365510492ac619fff9811f64a99de7c780a27f566fd648de201fc0cf290c3320",
+   "category": "home_maintenance",
+   "effort": "S"
+  },
+  {
+   "topic_id": "3ea56b6c-73b4-47d8-b7ce-a62f43e9101a",
+   "text_hash": "1dfe79bf6da72bf7b03601d49e46a31d45a5149224e40bfab4b49efb349cb786",
+   "category": "kids",
+   "effort": "S"
+  },
+  {
+   "topic_id": "3eb62364-dbf4-4346-accd-4847f51bd4a6",
+   "text_hash": "a28228b76b5700731ae3acd94640e5f5df7d83454c46883ace8e343d25f8084f",
+   "category": "groceries",
+   "effort": "S"
+  },
+  {
+   "topic_id": "3ef226ce-e4dd-485a-8984-adbf345e9d3c",
+   "text_hash": "c3cc1d97cc7cfa866a4a9f7ec2d196a1a8daa28322675eff849ca4a5a5a88a0e",
+   "category": "chores",
+   "effort": "S"
+  },
+  {
+   "topic_id": "3f35927a-19a6-41b3-b6ff-66589e49d12c",
+   "text_hash": "552bff82f4041c06699223766d9c3296426abd68c92b8427111a17f6b6d9aba0",
+   "category": "groceries",
+   "effort": "S"
+  },
+  {
+   "topic_id": "3f8e2bef-4e12-44aa-9dfa-a47bc449755d",
+   "text_hash": "6db6f4a3c9b00ea3d050ea861bfcf09ea7691125564a69177f19bfab0ea5700a",
+   "category": "chores",
+   "effort": "S"
+  },
+  {
+   "topic_id": "3fe05d53-f8f5-4a8e-96de-77c88a2491ec",
+   "text_hash": "4b0fa2e7cc5c7fe615a18687af70bf810da953d96a6cba9663dec4766b49d780",
+   "category": "groceries",
+   "effort": "S"
+  },
+  {
+   "topic_id": "4042490e-e548-4490-aa74-4d66ecb6553b",
+   "text_hash": "cc837a11a14e02c3a0fe272a0fea09f409d807d620630950dcc6a8f32e5ddbf1",
+   "category": "home_maintenance",
+   "effort": "M"
+  },
+  {
+   "topic_id": "4048c88c-c351-45f4-8c87-3f5f37b63dc3",
+   "text_hash": "dfca8b436e92408e002663ed2bb958d5224cd9718696a5ec68e3ee1fba64187f",
+   "category": "social",
+   "effort": "L"
+  },
+  {
+   "topic_id": "4082037a-bcdd-4200-9eb0-a5962c4c76e3",
+   "text_hash": "69b89000afbf99e360999e14b423915dc2aa39dcb9aa3e99647f7528643dbd25",
+   "category": "home_maintenance",
+   "effort": "M"
+  },
+  {
+   "topic_id": "40cff2e8-1093-4050-baeb-557f801c5c52",
+   "text_hash": "a95db517c336f6de7908b65bc9216af7f8f1918dbe454cc220c799c542ec2e11",
+   "category": "groceries",
+   "effort": "S"
+  },
+  {
+   "topic_id": "40d9cee3-665d-4afa-a5f5-6bc9e97b7ef6",
+   "text_hash": "ba4da0a50828791f825977889e6845274162bd6e9eb83fd899f64492445b3c00",
+   "category": "groceries",
+   "effort": "S"
+  },
+  {
+   "topic_id": "40f16edc-73fe-4a19-bf6d-516a2218f62a",
+   "text_hash": "d6c1dbd0248526ec02021f6cc3af460c07ec9bc43b9e18ec0a8bd3af3da02007",
+   "category": "home_maintenance",
+   "effort": "M"
+  },
+  {
+   "topic_id": "4163a41d-04e4-48e0-b6c3-8e28d279311d",
+   "text_hash": "97639153830e80739f1e7969739c005b91734f595c5fd53d72a0591064e377ff",
+   "category": "home_maintenance",
+   "effort": "M"
+  },
+  {
+   "topic_id": "420761c1-3c86-42bd-b6f1-59a40439ccd5",
+   "text_hash": "695d3c2eb3d8e0dcdfc58619621cc669c1c4a2e5bb845ca16fccbad9efd2c69d",
+   "category": "groceries",
+   "effort": "S"
+  },
+  {
+   "topic_id": "4268fc41-3629-4941-b444-1df912bede43",
+   "text_hash": "9a85b258140c54814fcb788bb3dab767818ef1af73b8ab8b99b07933b926f20d",
+   "category": "kids",
+   "effort": "S"
+  },
+  {
+   "topic_id": "42c20501-55ff-488f-b2c7-21d83103ab4d",
+   "text_hash": "68264e8463b3606d9e0dfe2fbe7cb5980112397b2e7de2b63a691ab3cc689ffb",
+   "category": "kids",
+   "effort": "M"
+  },
+  {
+   "topic_id": "443751a5-c250-4b46-ae11-6f07fdc2b572",
+   "text_hash": "47c4873091aa83181d8c38f2614fa73b1d2c7a3a3542399f8b568fa08af5af31",
+   "category": "home_maintenance",
+   "effort": "L"
+  },
+  {
+   "topic_id": "4478e908-6c85-41b5-82f4-61833aa49353",
+   "text_hash": "be695ab6470208a62490200556c3e4e958eda4ac9ecbcbeec3d699c0b283b3c3",
+   "category": "groceries",
+   "effort": "S"
+  },
+  {
+   "topic_id": "44e931eb-83c9-4033-b4c4-3299b3df44bc",
+   "text_hash": "24ac8b6f7f98da8eb419f3ec2e42fb092c46ff98dc8ae1ca5bb342a02bb198fb",
+   "category": "finance",
+   "effort": "S"
+  },
+  {
+   "topic_id": "450afeb2-7280-4e4e-a2b5-3285165145df",
+   "text_hash": "cd093a9549ba032c8a085d95387e5cd2eb04b01033d76eb1736bdb5ede7910e7",
+   "category": "chores",
+   "effort": "S"
+  },
+  {
+   "topic_id": "455c0718-053f-4261-a9c9-cbaba5eb7c60",
+   "text_hash": "5d2530b06393f10dd27df8d6ed8bdfed8ef8a57e0e695c940721c5d4f66d3692",
+   "category": "social",
+   "effort": "L"
+  },
+  {
+   "topic_id": "459171fc-c100-480c-a8bb-b2211c4e99d1",
+   "text_hash": "19d51784c589cfc43df89060e7c81ed94fe15a14eadb8fc48b7a1d4b349d33ed",
+   "category": "finance",
+   "effort": "S"
+  },
+  {
+   "topic_id": "45c0f10b-d489-49bd-9a9f-967796cf5c9d",
+   "text_hash": "298fc1bbdb75725735ac6914a9ec99e743dc49eb44a1f2fd10221a2221062a5e",
+   "category": "other",
+   "effort": "M"
+  },
+  {
+   "topic_id": "460389f5-e474-4c98-a6d0-4077491bf675",
+   "text_hash": "d0349eaacc9b83b3fa866868cb7d573b26823f73d01d33e5530856783741eea5",
+   "category": "finance",
+   "effort": "S"
+  },
+  {
+   "topic_id": "460bf560-70ff-4307-84e5-454383ad87fc",
+   "text_hash": "8da5aa4c8efe105df48178fbdcfca2045a676a8671f9e95992f00ce4949f1ec5",
+   "category": "chores",
+   "effort": "S"
+  },
+  {
+   "topic_id": "4644dda5-c0f9-4376-ac60-09c035a82411",
+   "text_hash": "454ce27a1e4f226c5093ae646bbbccc43e51e72b3426735377e9d61febf50abc",
+   "category": "kids",
+   "effort": "S"
+  },
+  {
+   "topic_id": "4648d02c-4c9b-4098-b3ac-361826e4ae8e",
+   "text_hash": "d0192330ce26c7c0e831d04bc8c4a724cc1623405e4ed8c3be297902cf31b8de",
+   "category": "kids",
+   "effort": "S"
+  },
+  {
+   "topic_id": "466e5a8a-5a4f-4b62-b0db-6204b77e0d5a",
+   "text_hash": "4c9a3ca16df297d4cc976c2ed780e1a306a537a3ba236ed5868583acda53ec4a",
+   "category": "groceries",
+   "effort": "S"
+  },
+  {
+   "topic_id": "46c44bf6-e52f-4f8e-89c2-7c9f4986181d",
+   "text_hash": "5313c374a6b2bc35487d93f4420b5f183d17eefae91d302481dc3ca46e682f36",
+   "category": "home_maintenance",
+   "effort": "S"
+  },
+  {
+   "topic_id": "475c882a-a1f3-4604-bde3-e64c0ea1257f",
+   "text_hash": "1f8d8217a24bbdd93226e3b09f0f7260ea41596e1f528ae0f2338b209774c993",
+   "category": "home_maintenance",
+   "effort": "M"
+  },
+  {
+   "topic_id": "47f9fff2-c64c-427b-814f-52681ac17e53",
+   "text_hash": "77dddaa96e6576f4621de51640a2660015e566da94d6676111bbc4ddc1e39639",
+   "category": "chores",
+   "effort": "S"
+  },
+  {
+   "topic_id": "4801e80b-466e-4ebb-9e7f-9e9aea096b39",
+   "text_hash": "4094370eea77d6834165bc4bc2a81961939e6a3a57f1b608d11d0883c21f8659",
+   "category": "groceries",
+   "effort": "S"
+  },
+  {
+   "topic_id": "4813cad1-f3a8-43fd-a5e5-e90f8a1f855c",
+   "text_hash": "bea27c4cb0a7cb82684be2e009b4b33e834100b3cce763fd53ba66baa0c94266",
+   "category": "chores",
+   "effort": "S"
+  },
+  {
+   "topic_id": "4826ac51-31ba-4bde-b350-f4c20469235f",
+   "text_hash": "d394a5c207bdd776a6ddb12771b3239a9425e59aaa53df7ea942ec4f4142f1bb",
+   "category": "kids",
+   "effort": "S"
+  },
+  {
+   "topic_id": "4897c16e-c5a5-4d01-b33b-bd62a85bc7dd",
+   "text_hash": "eae244bb2fe7841b00a38bf5c5779f8f5a3c9e9c08976d9b8b9002b6e9a44261",
+   "category": "home_maintenance",
+   "effort": "M"
+  },
+  {
+   "topic_id": "489cb07b-2574-4cb5-bfaf-d771781a29b6",
+   "text_hash": "18f7c59d631fb88c598414fbdf50667b5f4717aa6d39132c57dfc59735837ee5",
+   "category": "groceries",
+   "effort": "S"
+  },
+  {
+   "topic_id": "4916d451-b3d2-4283-beb7-f894acf11558",
+   "text_hash": "cd6ead7fbdb725235521e32454cf4a0797bc8046a3bc1640e22231343155d98c",
+   "category": "finance",
+   "effort": "S"
+  },
+  {
+   "topic_id": "492957d1-8d59-4748-a042-2dbcdb07a65a",
+   "text_hash": "246cf5f5037ca53eec5f0fc1a736cf3dc80888e1fbcad820b24aaa94e6f68c66",
+   "category": "home_maintenance",
+   "effort": "M"
+  },
+  {
+   "topic_id": "49478ead-a11a-4420-8753-4539784d0c12",
+   "text_hash": "2bc4326336950c83a45e84de9a3d0c6d28317b29c30ae227e0f96132ba143cf2",
+   "category": "groceries",
+   "effort": "S"
+  },
+  {
+   "topic_id": "4a8f2fc1-546b-4613-916f-ba321dd7b83a",
+   "text_hash": "a8d38542e22350489ca48d7e423dca7eca26b230c21dae7e6187ac71bf09f762",
+   "category": "home_maintenance",
+   "effort": "S"
+  },
+  {
+   "topic_id": "4ae0ca11-7060-4a54-80a7-7a501d5466fc",
+   "text_hash": "f10ac530256241183063e71c8cb5c6e1bc144f587fde03b157a9d367c7019b17",
+   "category": "finance",
+   "effort": "S"
+  },
+  {
+   "topic_id": "4b452ca1-89e8-4270-aa65-606b1599437e",
+   "text_hash": "000955438dbe48f1eeb682113bc745a0a714d93bf0a2b81f0a2c530e5105b4b3",
+   "category": "groceries",
+   "effort": "S"
+  },
+  {
+   "topic_id": "4b989922-fc5e-4f72-b200-95667c206df1",
+   "text_hash": "f2a49feff3193393171b5941b40f518b24ca89140e6932aa58c85bd506d6ce9a",
+   "category": "chores",
+   "effort": "S"
+  },
+  {
+   "topic_id": "4c1fc5b3-0a24-425f-bdef-30c0eed81dff",
+   "text_hash": "97dc08f916fb49ec979d3ddca3aa0a257b67d95a45d0525c344254720d95047c",
+   "category": "other",
+   "effort": "M"
+  },
+  {
+   "topic_id": "4c5e47c4-57b7-45e5-ae25-c2222ac7a6ff",
+   "text_hash": "a24414d4098cfc2297def56c2663481c4c8386e770d91be161788dd6ee9d21ac",
+   "category": "kids",
+   "effort": "S"
+  },
+  {
+   "topic_id": "4cec6ecd-b0df-44c4-8f88-a7b0255736eb",
+   "text_hash": "f60562410e01ce333a919f73f21e87f1b898897bb3575469f77f76dd0c1f4af2",
+   "category": "kids",
+   "effort": "S"
+  },
+  {
+   "topic_id": "4d511dce-3666-4e3c-a4f9-3c8a319bf2ca",
+   "text_hash": "f51b085a7c376530eefff30a2355a958df2096bf633a0b22cc5d0cccf449adc8",
+   "category": "home_maintenance",
+   "effort": "S"
+  },
+  {
+   "topic_id": "4d699c81-4782-4f69-85a1-cc6aab5aa5c7",
+   "text_hash": "4702a5208329b70264ee77b96d376864cecf53a4c552a17b5fd2e61cec75ee69",
+   "category": "other",
+   "effort": "S"
+  },
+  {
+   "topic_id": "4df3de40-9b0d-4fb1-aca9-d352eab6483c",
+   "text_hash": "8b8af0527e921e5fae907537727a38ce611a81eff1955d493ac0406b060c83a9",
+   "category": "chores",
+   "effort": "S"
+  },
+  {
+   "topic_id": "4df75798-315f-4241-8f87-74a8caacd1f4",
+   "text_hash": "3866f2e45493f1e4f9b66dedebb53027709b357c3d49d9f35aa94fece6283147",
+   "category": "groceries",
+   "effort": "S"
+  },
+  {
+   "topic_id": "4fdc5f20-5acb-4f7e-96e0-4244170b6b39",
+   "text_hash": "78039076fa74e0d9cb5240207bf17890183e4035f7c98a9be7425f7bd80ec664",
+   "category": "chores",
+   "effort": "S"
+  },
+  {
+   "topic_id": "50069200-7814-4867-bc13-1859f21b095c",
+   "text_hash": "5f2dafa49f7c03eade15d76ae82bf6bdf623fbbc023f5ef81079e45e7d0bd9c2",
+   "category": "chores",
+   "effort": "M"
+  },
+  {
+   "topic_id": "501363a7-1ed0-42e7-ad30-4b0bfc8e67fa",
+   "text_hash": "297c43a220c1acace992914ba6ea6a07b7f92399a74dee887954084da784a15e",
+   "category": "chores",
+   "effort": "S"
+  },
+  {
+   "topic_id": "5025da58-4032-4e38-a615-81ee9c5d1c16",
+   "text_hash": "09f7c21832c2268fc6751f1bb36df162b05a909b729443389ae22e493d69743c",
+   "category": "social",
+   "effort": "S"
+  },
+  {
+   "topic_id": "502954a2-5047-4020-9b07-8b76e543b86b",
+   "text_hash": "ef09d5d6f748a1f21ced7d70398433b3b73777e526b345942f79b1edcac619d1",
+   "category": "chores",
+   "effort": "S"
+  },
+  {
+   "topic_id": "50e641ba-7238-41bf-8fb2-87320e10cd3c",
+   "text_hash": "283f3cccc3d9da90794a80da71464211820d74b37d5d6dd50175dd7fb2d4ad65",
+   "category": "groceries",
+   "effort": "S"
+  },
+  {
+   "topic_id": "5144f849-ba14-464d-9dc7-f10323e0191b",
+   "text_hash": "b90e64cab5533a335135540ea93d6b7cb3c0628773522d12fe247aa92437a0dc",
+   "category": "home_maintenance",
+   "effort": "M"
+  },
+  {
+   "topic_id": "51fb0719-c631-4228-a42f-dd5f37fea880",
+   "text_hash": "966c305e3318a73d8a5da792dc88e2d2eaae6d6412786e10d60e3cc0a99cf45f",
+   "category": "social",
+   "effort": "S"
+  },
+  {
+   "topic_id": "52698f99-3704-4c4e-9da6-2c82478e4cc1",
+   "text_hash": "356649557916c1e99b847f0312187ec4e6c186222a1294d53932472ea6ae7946",
+   "category": "kids",
+   "effort": "M"
+  },
+  {
+   "topic_id": "526dac2d-c6fb-4a26-aa50-dd51dfd45212",
+   "text_hash": "317c698b8d4d51e6d5233f4a1604c852b6ed83fde1c542323b56bba28a13d260",
+   "category": "kids",
+   "effort": "M"
+  },
+  {
+   "topic_id": "52a12d70-6a13-4d65-8f89-efe6b19cce37",
+   "text_hash": "c8b78355b053f2760eda3b43842d52b92d9b530b4ac0d70cf25c43de6d7700dc",
+   "category": "kids",
+   "effort": "M"
+  },
+  {
+   "topic_id": "548952fc-8b35-4deb-8a2f-cb9452176925",
+   "text_hash": "008f1dfc6a37e3deecf1ab39412dc3fdfd06704a81551429654c98aa1c45d1e6",
+   "category": "groceries",
+   "effort": "S"
+  },
+  {
+   "topic_id": "559a0a6a-2f05-48a5-a858-1b32791f9ce3",
+   "text_hash": "04a4dbcdce5051f93537d71abfbe9e0d9a68b21ce1ee62201ef27b31ca6b3ffb",
+   "category": "kids",
+   "effort": "S"
+  },
+  {
+   "topic_id": "55c81c55-8dad-4a29-96a7-6ca922468891",
+   "text_hash": "321190af9f3b013eae1ed8171773a91884bc17c846ebce10a7b2e1c93c1020a0",
+   "category": "kids",
+   "effort": "S"
+  },
+  {
+   "topic_id": "560df08e-19b3-46df-a1f1-7b97c845d256",
+   "text_hash": "e6cc0b5baaab0b1b15f2078dfc9d652c9a7c44a21ba9a29982c171be3fbbebac",
+   "category": "social",
+   "effort": "S"
+  },
+  {
+   "topic_id": "561bafb4-1c67-411f-89f0-7ad01e0a9202",
+   "text_hash": "18fcfe42af745675573262adfd011149b8d8f52fe5c77bda83af93fcdc1e42e1",
+   "category": "kids",
+   "effort": "S"
+  },
+  {
+   "topic_id": "566736c7-89fd-46c8-b63b-3cdaebfb3c12",
+   "text_hash": "ac8b4790d577921ee3ab895476f75e7b20d0afde20e9eef49a6d663a52134eab",
+   "category": "kids",
+   "effort": "S"
+  },
+  {
+   "topic_id": "57219f5f-b511-478a-9376-fde1de6c9606",
+   "text_hash": "89f649fa5a03afa4d07a7fe526f79cc4b9a4fca451eb91477c67535ee82df1b0",
+   "category": "finance",
+   "effort": "S"
+  },
+  {
+   "topic_id": "572be50c-756d-43c0-af7a-81b435a17e5b",
+   "text_hash": "65dace03acebe941cbf0e7427a05d99638ef3ef0d75da06a4e9c28be012f5d4d",
+   "category": "chores",
+   "effort": "M"
+  },
+  {
+   "topic_id": "57a2f89d-aaef-4198-beca-1317d8c351b0",
+   "text_hash": "d0ebda6bb294badf98b54d7f6604936266ecd5f10c7480d5603fd1c146d56cfc",
+   "category": "groceries",
+   "effort": "S"
+  },
+  {
+   "topic_id": "57ccdda0-5af1-42af-b156-004506d90e17",
+   "text_hash": "91cb2d26fcc12e09ee918cafa0447fbd94324da0f59f7ac4d252bff0b6ce9363",
+   "category": "kids",
+   "effort": "M"
+  },
+  {
+   "topic_id": "5872f3a7-919b-43d1-bf59-ae87ca2bccd1",
+   "text_hash": "e40c42053cace63663bb8f286fb87dfccd2f65014d2791ca2d445b941c3d3b55",
+   "category": "chores",
+   "effort": "S"
+  },
+  {
+   "topic_id": "58bd89c8-d64c-4f4b-91ce-a79542c4b0ef",
+   "text_hash": "861511f8c57f22e2950e28f86291341c813f12aff0fe890e62d31bc0c598cf8b",
+   "category": "other",
+   "effort": "S"
+  },
+  {
+   "topic_id": "5930546c-f725-4517-8426-e7f6e6d0392e",
+   "text_hash": "9cefdcf81faa121af37a02bcf704d2e07645f643d4f898511a87c7aefdb8de67",
+   "category": "chores",
+   "effort": "S"
+  },
+  {
+   "topic_id": "5a42e72c-1396-4d59-9e5f-2cdae9b32ee2",
+   "text_hash": "d669bee52760e0286b8bcd512116fdc823d4bd959428b167999105e7abe464c0",
+   "category": "other",
+   "effort": "S"
+  },
+  {
+   "topic_id": "5a7010dc-4e44-463a-bdc3-94e01d414357",
+   "text_hash": "53a5c0ebcc9ed246bb5d390bc0e19c5576939db3e2eca1b6dc2b1b5d3da544e3",
+   "category": "finance",
+   "effort": "S"
+  },
+  {
+   "topic_id": "5b0de157-39c0-4375-b90a-41b48b8e753d",
+   "text_hash": "4846d158894fd6e98308e80e9c228f1c216954a2cafc8b282c355ea5d9395970",
+   "category": "kids",
+   "effort": "M"
+  },
+  {
+   "topic_id": "5bdb8828-ec89-4bec-9a92-b6c6b5f73cb8",
+   "text_hash": "fc16f4093d407959a3053466370c29e7f8e4895545d3864b188df42be0449e27",
+   "category": "other",
+   "effort": "S"
+  },
+  {
+   "topic_id": "5bfb2ca2-fea0-42dd-8280-9a5dc4bb176b",
+   "text_hash": "a0de0a77cb0bc916bfa5aa8e549d51996d4a62058649e47f460306d877fe2e84",
+   "category": "home_maintenance",
+   "effort": "M"
+  },
+  {
+   "topic_id": "5bfbea52-50f5-422d-82da-904e8aa6aa21",
+   "text_hash": "a9ea35856ed9fd894c97b65d5103c7a9f6086da9248a52be43d9e38874542a31",
+   "category": "kids",
+   "effort": "M"
+  },
+  {
+   "topic_id": "5bfe672d-6117-4992-a5e9-67b029dbb199",
+   "text_hash": "877902d6ee622f522f4e3c6b3fbe6a48f8606f288e21ff1eb107504f6f3a7802",
+   "category": "chores",
+   "effort": "S"
+  },
+  {
+   "topic_id": "5c14b70a-6c74-4d31-83c2-d5aaedc28a83",
+   "text_hash": "17dcf161a2f1b4166fbba8674ebf01be691c4dc8fb247e3b26b8374a6e415fa3",
+   "category": "groceries",
+   "effort": "S"
+  },
+  {
+   "topic_id": "5c988555-be2e-4548-b6ef-0d0830e348a7",
+   "text_hash": "abf8726ec17fa365907af365bc7d7c8337d12e14c32ab702e320f24b4701adcb",
+   "category": "chores",
+   "effort": "M"
+  },
+  {
+   "topic_id": "5c9cdaf5-9c6a-4a30-9501-aa47fd688414",
+   "text_hash": "e7fae786632241ef9a4c9cffa8d7b1e824f11eb3f7c34ea80e829e4f64be3c4a",
+   "category": "kids",
+   "effort": "S"
+  },
+  {
+   "topic_id": "5cbaf367-df93-4949-9807-b50836cff972",
+   "text_hash": "6594b0ac338ee55c31dd22f087b96aca703ab4d4a58e8a038aec1ca62c34d9fe",
+   "category": "kids",
+   "effort": "S"
+  },
+  {
+   "topic_id": "5cc616e4-d0b8-4ec5-ad42-8fab04b7a890",
+   "text_hash": "b0f5e108892239b931afe4aedf0f2129f38ccf3904cab7dce1ebea8e1e21738d",
+   "category": "kids",
+   "effort": "S"
+  },
+  {
+   "topic_id": "5d26d4e4-0c3e-4943-8953-400d16401657",
+   "text_hash": "921aa794792662c36e5d225d3ce36f9c247c3ee15e61b9dc7fc8b14a7421c810",
+   "category": "home_maintenance",
+   "effort": "S"
+  },
+  {
+   "topic_id": "5d685b34-88cc-4da1-8cdc-e201b6bfc6d1",
+   "text_hash": "599fe00f8311942041dca61ad6876acee62cea888d2bc06d910587001291a788",
+   "category": "kids",
+   "effort": "S"
+  },
+  {
+   "topic_id": "5da9ecd1-2ce8-4f41-863f-88e364c39b50",
+   "text_hash": "b943ce27e6a61c78f8b7b82c9cea86dbda843a0df6ce51efd0f468779fd09e1d",
+   "category": "chores",
+   "effort": "S"
+  },
+  {
+   "topic_id": "5ed7500d-a9fd-46a8-9db8-b734669b5a10",
+   "text_hash": "247e448f85b31f77f85291130e5f9e0983fba8446763f6eaaa0379bd62931a39",
+   "category": "kids",
+   "effort": "S"
+  },
+  {
+   "topic_id": "5f12ddea-88d0-4e9a-bb56-dacc0e3a6252",
+   "text_hash": "f102b673782fbdb4e495e8d88d8125fa1f547982edc5d7ebceff5f8a5b1c709b",
+   "category": "home_maintenance",
+   "effort": "S"
+  },
+  {
+   "topic_id": "5fa743ca-7b43-4dee-a0fc-16e257b02664",
+   "text_hash": "60d25550c0b031b8a0d9d7d0ce4809d2a7208c149c8922adc5c679f8d3c85603",
+   "category": "kids",
+   "effort": "S"
+  },
+  {
+   "topic_id": "601244fd-b367-43a1-95cd-eaf02905bf52",
+   "text_hash": "3f574965f325e16edc3f5f0db99343303efb7470937814366ac1b5fdf2a63bdf",
+   "category": "home_maintenance",
+   "effort": "M"
+  },
+  {
+   "topic_id": "60354a18-e202-424f-80c4-a537f4422ee2",
+   "text_hash": "0d724330d0f1a5aefa48c8905a84c69436f4ca0241077312cebd4d537afd8138",
+   "category": "chores",
+   "effort": "M"
+  },
+  {
+   "topic_id": "60ad20a9-7ba4-4297-a43f-df1f96da54b7",
+   "text_hash": "79080d916ce326c5adf83e86419f404c2828b0092f63630eee91fb097489643a",
+   "category": "groceries",
+   "effort": "S"
+  },
+  {
+   "topic_id": "6142a7a6-0b77-49e5-afd2-cab84e7bcaad",
+   "text_hash": "02c0adc358925945b4fad8fe558ac110e3601c3816f7f196d4e7dd69236bb5d7",
+   "category": "kids",
+   "effort": "S"
+  },
+  {
+   "topic_id": "616234a5-1e55-44ba-a392-92a77149bbd4",
+   "text_hash": "fa559668beedda050b57cd9e8d56f652fa04ec762430871441ebeb79d7263d63",
+   "category": "groceries",
+   "effort": "S"
+  },
+  {
+   "topic_id": "624d175f-db17-44fd-8ed7-6d3ddf841afb",
+   "text_hash": "c1be70c277e1eb631bba4ee9287a66ea64c70f95394902f73388208eb5b8e103",
+   "category": "home_maintenance",
+   "effort": "S"
+  },
+  {
+   "topic_id": "62534fa7-f33a-497c-82d3-95d18648f187",
+   "text_hash": "b05725231d5b0b21b514d59f8c06825b0b608915ba9ceaa2633d055f2457161e",
+   "category": "home_maintenance",
+   "effort": "S"
+  },
+  {
+   "topic_id": "62d36722-1e3b-496e-8cb5-aff4ade0d1dc",
+   "text_hash": "91adc6a4c156c3ea9b0e19d47611e15d1ea800f7bb151a7e509fc81f65c84e2e",
+   "category": "home_maintenance",
+   "effort": "S"
+  },
+  {
+   "topic_id": "642e3958-5e11-4170-90e7-e3bd36628ea5",
+   "text_hash": "1f9213c4602fc65fce2a95ea41b44a145469dd8e94f4fb7b83ed995a67b15fcf",
+   "category": "home_maintenance",
+   "effort": "S"
+  },
+  {
+   "topic_id": "6455e1fb-67ec-4cd6-a3a0-cf49e036f5cf",
+   "text_hash": "2ce8ba0d05aa3fe4dfcc44647cb8f9b43d8d95d8987ca174ccd68b2670c5d7e0",
+   "category": "chores",
+   "effort": "M"
+  },
+  {
+   "topic_id": "676682ce-e4bf-45c9-aceb-00ad2948bd96",
+   "text_hash": "827c8866721f98f751efcc7f8b7c7eb5ac80b06243e1bec0b75ea4095cc56e3d",
+   "category": "home_maintenance",
+   "effort": "S"
+  },
+  {
+   "topic_id": "684a1a5f-d51c-4862-b17f-7936e82d7f47",
+   "text_hash": "b48e54cc11fed1c464941a6bdaddd4fab9d21dbc02c129f68a1f1bb49525e3c8",
+   "category": "social",
+   "effort": "S"
+  },
+  {
+   "topic_id": "6897e38f-83f0-4498-8cef-8ee8c4562688",
+   "text_hash": "2c2272f978f1c0658c82a80ff40be7c7a17dd412cea797faf349814753cc741e",
+   "category": "social",
+   "effort": "S"
+  },
+  {
+   "topic_id": "6913f6fa-6ca8-489f-9d83-ae89398d408d",
+   "text_hash": "7ae20c19765d586829c47c6a145c198325f98087b13a555ac3b18d5d80c7662b",
+   "category": "chores",
+   "effort": "S"
+  },
+  {
+   "topic_id": "69f92e1e-daf9-4137-9583-1a0e8eaa4d36",
+   "text_hash": "bd214239f87788125c6759b604b40e8e78578c952e7080fae30c9295046b680e",
+   "category": "home_maintenance",
+   "effort": "S"
+  },
+  {
+   "topic_id": "6a4d6921-34ae-4a77-aa84-6b2389686163",
+   "text_hash": "a50d3b12c87b49d218d393c42e1929e6227f905d22cc398d3857c0486ccab585",
+   "category": "kids",
+   "effort": "M"
+  },
+  {
+   "topic_id": "6ae3b702-dee0-4b7b-9ec9-22509f2208d4",
+   "text_hash": "4206e3c31ea855b04738fb1b89493980560687a8c131ae51826a6314e91ede11",
+   "category": "chores",
+   "effort": "S"
+  },
+  {
+   "topic_id": "6b3f4f78-6dfa-4145-9f5a-1ae2111474ab",
+   "text_hash": "0ac32bfe02496bbb8125110c01e7b562bd56d1b11050229e7e09aa850df433a9",
+   "category": "groceries",
+   "effort": "S"
+  },
+  {
+   "topic_id": "6b57f52e-ece7-4d41-bb5d-24a689c5ff09",
+   "text_hash": "684ffc4190fc578c30e296b3e829d7fd2e7eacfe8dc5b143d13aef26a4610c8f",
+   "category": "finance",
+   "effort": "S"
+  },
+  {
+   "topic_id": "6c03490a-e1b8-4129-9376-aa45794b4d31",
+   "text_hash": "ab396a8716e241bb1f7406410908254d2fc7f5f200f2c8bae6bfe461213106a9",
+   "category": "chores",
+   "effort": "S"
+  },
+  {
+   "topic_id": "6c2db713-f9a7-44c7-a11d-fd1231a8cd44",
+   "text_hash": "02bbfbe98d3d5ee873a2a678479bf4aca3e0fc7a37c970730408a5bc074baf9b",
+   "category": "groceries",
+   "effort": "S"
+  },
+  {
+   "topic_id": "6c5f93ae-4265-4361-8c72-825e704d26e8",
+   "text_hash": "0a42b81f45b65b9b149d3bfb833c02d82fedd992e523c7519c5709773d5236eb",
+   "category": "chores",
+   "effort": "S"
+  },
+  {
+   "topic_id": "6c72bbdc-b45d-48c3-b2b3-8552472f1868",
+   "text_hash": "9b3247a32eab05c58cc797677daeb5e67b8a219c36b8a34aedd95a529ea94633",
+   "category": "chores",
+   "effort": "S"
+  },
+  {
+   "topic_id": "6d8115b7-a1e4-40bf-81e7-d2ed193bf8f2",
+   "text_hash": "063c37eecc42b23168d617cfd48c3d447521b8f5c29a622a8310d3fa2833e643",
+   "category": "chores",
+   "effort": "M"
+  },
+  {
+   "topic_id": "6d83c5c6-0b69-42dd-8171-9ff93751853f",
+   "text_hash": "8e161f1379833b625bbb5725527513235cdf3879a664660fc07f9a06dac3a6d4",
+   "category": "kids",
+   "effort": "S"
+  },
+  {
+   "topic_id": "6e56c0aa-85f2-41ab-be36-a7e1fb585765",
+   "text_hash": "3469bab74c0ccf95424f2e864c6d93fa7cc74079e73bda3bc993cad55ddd0a51",
+   "category": "kids",
+   "effort": "M"
+  },
+  {
+   "topic_id": "6e982976-b4df-422a-b0d6-b8859acbb754",
+   "text_hash": "dba1db5768de780947581acd7e543ce8b91e8ca0aa8b7b4b7a684606617a8182",
+   "category": "groceries",
+   "effort": "S"
+  },
+  {
+   "topic_id": "6f3bddf9-1a89-45da-b0c8-0057969b79bc",
+   "text_hash": "ede87580b847cc403218c7a2bdcf5202085dcf0ab9ea1dbbef03907c33fc5c5e",
+   "category": "kids",
+   "effort": "S"
+  },
+  {
+   "topic_id": "6f571cf5-303a-4c34-a860-359c68e63e12",
+   "text_hash": "e4febf4e026346b5d5a01f757389d11972cc1fc2dceac7790e436ad0ebc50ad5",
+   "category": "groceries",
+   "effort": "S"
+  },
+  {
+   "topic_id": "6f6f6286-5c6e-46f5-b192-54855e0bd646",
+   "text_hash": "a536fbaf4c77a768437fefe93f8caee52b09547565724dd613c3c679d775514e",
+   "category": "finance",
+   "effort": "S"
+  },
+  {
+   "topic_id": "6ff3421c-050c-4d6f-8112-9be31876475f",
+   "text_hash": "87b05f40075addbbaefa1822c871c6981a219ad88620f21444354be64fa69645",
+   "category": "chores",
+   "effort": "M"
+  },
+  {
+   "topic_id": "706299b4-70d8-4ded-88d0-47ef75d086fc",
+   "text_hash": "515bf3a427ec4994736d7f92b8e5e6a1cc3ed7eececa0ca9575728c495a8104b",
+   "category": "groceries",
+   "effort": "S"
+  },
+  {
+   "topic_id": "7138db09-d730-480d-9567-1b86864d7d7f",
+   "text_hash": "103ec3b7adc0a83852903bf0577b1bc9afafae251aa1b7caf28d866d36af36bd",
+   "category": "home_maintenance",
+   "effort": "S"
+  },
+  {
+   "topic_id": "71c03c79-9fb0-46e4-b3ce-8020cb0e70b6",
+   "text_hash": "810ed976cef32e3043e346614b8a13ded2ee2a035930c5fc4f9758dc890a6604",
+   "category": "groceries",
+   "effort": "S"
+  },
+  {
+   "topic_id": "7236c434-f3f8-4c4c-898b-801430bea672",
+   "text_hash": "2c0babaf3918293d70816d480f293e077df51385078734c9dea3890da164af51",
+   "category": "home_maintenance",
+   "effort": "L"
+  },
+  {
+   "topic_id": "72ba407b-f0ad-4d0a-9625-8b4f8d8c321d",
+   "text_hash": "c7c9ad043ccc682a39a274e7cf810e0e34ad26468c1bc3fcc2daf93323638554",
+   "category": "finance",
+   "effort": "M"
+  },
+  {
+   "topic_id": "72d7f7eb-b0e3-4a1e-9f38-874a3fbc57db",
+   "text_hash": "741571e83eeea3cd480e10476cd7f1431ff8dbb9e81a06c6da5cb56dac72820c",
+   "category": "home_maintenance",
+   "effort": "S"
+  },
+  {
+   "topic_id": "72ec48b6-f8cf-4697-8a64-6595a2884d0a",
+   "text_hash": "2fc8e07eef6156a8637eb074f546573f5f8af019ec18fd4a4da4e74c256437fc",
+   "category": "groceries",
+   "effort": "S"
+  },
+  {
+   "topic_id": "732a4776-0877-4ace-97c2-d20603fb212f",
+   "text_hash": "ab08f27ca4255add7af9f2e67f9c3b727f5b253af71acddbb681fe273d5aa301",
+   "category": "home_maintenance",
+   "effort": "S"
+  },
+  {
+   "topic_id": "73bd22e6-ffca-4be0-a76c-9d3a71a0aaf9",
+   "text_hash": "41839fbb0d318330228f2dfc3d7b1d6869592aa2b232d331e657f05cb157007a",
+   "category": "home_maintenance",
+   "effort": "M"
+  },
+  {
+   "topic_id": "741fde07-09bd-4baf-b8e7-6f2445d83b77",
+   "text_hash": "34fda78370f78d034902914d76e4d687e2a34ca1baa1cfb38b0ca9a6b3d781c1",
+   "category": "groceries",
+   "effort": "S"
+  },
+  {
+   "topic_id": "74436c3b-6b37-42be-bad4-df5401a8877b",
+   "text_hash": "cfb168637a1a94edc108add2f853764839ca31efc3118dc709709a65118381da",
+   "category": "groceries",
+   "effort": "S"
+  },
+  {
+   "topic_id": "74490458-c9b7-4f38-b8be-b459014efef1",
+   "text_hash": "0cb1151dadb708983c5521b6901a0526bc468251e45b3807b9dd12ebc8728075",
+   "category": "chores",
+   "effort": "S"
+  },
+  {
+   "topic_id": "745099e3-d295-4e81-b8ed-eef9b09d5261",
+   "text_hash": "51d1d8efbc66bb2b0a7db3e4c174f760241b2ae8d01efa153afec5f6f1a5bba7",
+   "category": "chores",
+   "effort": "S"
+  },
+  {
+   "topic_id": "74a76e2e-a4b8-49b8-b278-529a69de5838",
+   "text_hash": "e53d8badf96ff4a1654be230b07e191c610db3877d9c4ff72092e5272467544e",
+   "category": "groceries",
+   "effort": "S"
+  },
+  {
+   "topic_id": "74ded8de-59b5-4813-8c42-f8e3d78b2bfa",
+   "text_hash": "3c24c7dedb2ec863d3bddba5ab95fb1c3e6500755018956a8c3d06c4c647c8d7",
+   "category": "home_maintenance",
+   "effort": "S"
+  },
+  {
+   "topic_id": "74f63820-0a9c-4d4b-8220-c7cad6035d87",
+   "text_hash": "4c5abd2b8a7a1041ac6f0f0d781041f135ad8e5d92b5c80f37eeb4662aa26893",
+   "category": "chores",
+   "effort": "S"
+  },
+  {
+   "topic_id": "752ea763-7e51-4152-8cf3-15aa90537634",
+   "text_hash": "6037c7c13478c15d29c863caf86d77f9c7db5aa8580a4026bba36e8d32e69851",
+   "category": "kids",
+   "effort": "S"
+  },
+  {
+   "topic_id": "75dc7889-2129-41f5-8eb6-704efa551021",
+   "text_hash": "db0746221de4a568a7c1eb8f8d837c895636268db30305bf6ce2a8c7f9581139",
+   "category": "home_maintenance",
+   "effort": "S"
+  },
+  {
+   "topic_id": "75e5ae1e-d0d5-4de1-a38f-9b4721e29e6a",
+   "text_hash": "cea7b8a42a52569ea582681d495cfdd7e89951b17d24423b48387c9390502aa2",
+   "category": "chores",
+   "effort": "S"
+  },
+  {
+   "topic_id": "77d4812b-0a0e-4776-a3ed-2881cb1df2ae",
+   "text_hash": "075057af48d37b514df5420b27ca9c27eec22670e9f1c245e550b5aac5eec7b7",
+   "category": "chores",
+   "effort": "S"
+  },
+  {
+   "topic_id": "77d7ba64-e373-4af1-8f9a-eba693ae4e8e",
+   "text_hash": "042175fb772d530a6a3cb769ff49bdccae974e0539111dd4f7e7fef2fbdab08d",
+   "category": "chores",
+   "effort": "M"
+  },
+  {
+   "topic_id": "781d7595-b8a6-4324-bea6-96e0425e93bd",
+   "text_hash": "09d3e068599647564bd9bfbde9a623c5440c20f87e74005b0c674af908f223fe",
+   "category": "finance",
+   "effort": "S"
+  },
+  {
+   "topic_id": "78a12e7d-b8ea-4760-bbd9-efa9bf497295",
+   "text_hash": "99f80a2ab7a85f91f3c7523b291a0eb22b41fe1685d3e0ea86b0a7836a235c7b",
+   "category": "social",
+   "effort": "S"
+  },
+  {
+   "topic_id": "79d07b09-0d07-439e-929d-b910e359e74e",
+   "text_hash": "9ba3d50fc8f6134c2b1df70f2d3f955837269e5da348e5774514bf761af0a776",
+   "category": "groceries",
+   "effort": "S"
+  },
+  {
+   "topic_id": "7a04ade9-bed4-49c0-b847-2aa30e42ef9c",
+   "text_hash": "e59992b4771eb07f10f913aa2080bd756d0d556409eafae866d7ad0bbd8f7404",
+   "category": "chores",
+   "effort": "S"
+  },
+  {
+   "topic_id": "7a9d9236-6ff6-4cab-bd0c-bc93a7254e46",
+   "text_hash": "b6fb3526a8afa27dbdbe660185cad6ef27fa07f2a594126245fae3f3fd4be6e5",
+   "category": "finance",
+   "effort": "S"
+  },
+  {
+   "topic_id": "7b20bc87-7187-4ea7-a4f1-780cdd229ebc",
+   "text_hash": "82a4334815ce7cbd6125e569b6c050c2ec68ac32752031b9f1e217f62bb7ce12",
+   "category": "groceries",
+   "effort": "S"
+  },
+  {
+   "topic_id": "7b44bd3f-de6d-4b0a-ac80-12b0207b5910",
+   "text_hash": "286bbb4b2123782ddf0ef2f385d83a8dac5348ed330f2e154754e5eb6eb50a5c",
+   "category": "groceries",
+   "effort": "S"
+  },
+  {
+   "topic_id": "7c0067fe-2dd1-4c7c-a662-520cf739a1f9",
+   "text_hash": "1eb0341734d16183cbd54308f04c7469d2d7474c03b66de0a7074d62f3acf388",
+   "category": "finance",
+   "effort": "S"
+  },
+  {
+   "topic_id": "7d5eaed5-7501-49b6-8d16-e96934a0ed24",
+   "text_hash": "91b5a5165519b5cc2e26f65188411a1989cbc21e9e86093b083532037d0765a5",
+   "category": "groceries",
+   "effort": "S"
+  },
+  {
+   "topic_id": "7d854e52-713e-4a92-b1bf-926892917c77",
+   "text_hash": "ac8c021b67132ece5e175a4e152693a968bdfc9458de97b8baf9a230f4000cb0",
+   "category": "groceries",
+   "effort": "S"
+  },
+  {
+   "topic_id": "7d9799ae-d46a-40aa-9ddf-8918fb7b0e88",
+   "text_hash": "7652ee00652fa267c1bae1b2c8b331eebdfdaaac4966210b35b1a3e7277898fb",
+   "category": "groceries",
+   "effort": "S"
+  },
+  {
+   "topic_id": "7da06d0d-b124-42f9-b387-343f678093e1",
+   "text_hash": "9a41fa07a33ae33325ceb80e3f4a53e868412d2854a6e22af19d4143100cd763",
+   "category": "kids",
+   "effort": "S"
+  },
+  {
+   "topic_id": "7ddbb35a-2b9c-4f41-bfc5-58bdb1797dc4",
+   "text_hash": "bc7004a459f40e74e2a1e04df52a4c7445176462613819028d2fdb1caeb6b419",
+   "category": "kids",
+   "effort": "S"
+  },
+  {
+   "topic_id": "7de13831-27d7-4c9b-a0e4-ab82128374c4",
+   "text_hash": "743c78a74356322b07c69a370dbfb3c0170b117330cc877b464a87920d67c768",
+   "category": "groceries",
+   "effort": "S"
+  },
+  {
+   "topic_id": "7df7315e-8971-48d7-9415-90b3d8813bef",
+   "text_hash": "86add868f9d12d608d23829dbb97a9edd53a93f31b12dd3ee0d4bd3ff6c89cbe",
+   "category": "social",
+   "effort": "S"
+  },
+  {
+   "topic_id": "7e572367-ea3e-4eed-80ad-615068c91327",
+   "text_hash": "14a3d7c86ddd0bc526bce8aa4f8f6ceb1dc65b8f06650d39b4d2de15ca172965",
+   "category": "finance",
+   "effort": "S"
+  },
+  {
+   "topic_id": "7ee430b8-4c5d-4222-bdc1-4c3cd80d144b",
+   "text_hash": "d2945d79aac91586715f8c7f171ee903e38c0b52b361f982a74b56d8788f8bda",
+   "category": "home_maintenance",
+   "effort": "S"
+  },
+  {
+   "topic_id": "7f6ea3fa-c475-4c46-94f8-5df93fa484fd",
+   "text_hash": "3dcbe34a927261509ec1245c85a8aba2ad5cb127dd7fdd7f043d6fb214cb8b32",
+   "category": "kids",
+   "effort": "S"
+  },
+  {
+   "topic_id": "7fa2f4e0-f16f-4690-81cf-dd5bea5447b5",
+   "text_hash": "5b7f0301fbfc5f05b8ef1009d562864ab9f564f83c5d7ac68865f4dce2b32f5a",
+   "category": "chores",
+   "effort": "S"
+  },
+  {
+   "topic_id": "80e4d1de-6600-4161-aea2-8c639d8a93fa",
+   "text_hash": "289c665daa44eadaec0ec7861405c6aa06e2c427c6205cba426f3d3eb19415c8",
+   "category": "groceries",
+   "effort": "S"
+  },
+  {
+   "topic_id": "81555d07-b615-45bb-bfbb-419e850a1f67",
+   "text_hash": "86add868f9d12d608d23829dbb97a9edd53a93f31b12dd3ee0d4bd3ff6c89cbe",
+   "category": "social",
+   "effort": "S"
+  },
+  {
+   "topic_id": "827f5145-6500-42ab-8c61-2ff9b0f43427",
+   "text_hash": "a34f680437565d9468f06290c1b233e0ba3126aceef9c59634cde3e90256c707",
+   "category": "social",
+   "effort": "S"
+  },
+  {
+   "topic_id": "82ba57e9-c007-42b3-ab5a-dd7038222d79",
+   "text_hash": "b1d9d293ca7457daa61af99755d5f1b087455e1336f50d6957a993d72f8ee172",
+   "category": "chores",
+   "effort": "M"
+  },
+  {
+   "topic_id": "82dc93b0-a0ae-40bd-a9d9-b909e596757b",
+   "text_hash": "f407a28466a08c926156ebb005f70b728f2f74e8f503d08a58f4df1c7b41471a",
+   "category": "groceries",
+   "effort": "S"
+  },
+  {
+   "topic_id": "8362cb70-f5fe-4690-9a49-57965f023881",
+   "text_hash": "efd8b655e746e58c967ee5eee2f256f04de8f089257e8745b41581418ea8e76e",
+   "category": "home_maintenance",
+   "effort": "M"
+  },
+  {
+   "topic_id": "84007b72-3e59-4715-a72e-8a76e1fe655b",
+   "text_hash": "c08f2c8f39b5c0183bfdf10a37230fa04b35f0c59865c05a1c2a57173ac4c77d",
+   "category": "kids",
+   "effort": "S"
+  },
+  {
+   "topic_id": "847a252d-737c-4d1c-85b7-25c7941e395f",
+   "text_hash": "51a0274d95e14f2b9eb1f2c8b2a784153fea0b6bf4b41f66265e84d4169257a7",
+   "category": "chores",
+   "effort": "M"
+  },
+  {
+   "topic_id": "85dbe2c9-e5bb-4fc4-9911-c6c5926b0d9c",
+   "text_hash": "dd47a70b9c785e22295d96e9f0bd554c06c243a0899c879a326e1ac673693837",
+   "category": "chores",
+   "effort": "S"
+  },
+  {
+   "topic_id": "86f7f73a-0538-423b-a18c-adc1a3a9a2a2",
+   "text_hash": "e044bc53e9bd6049f2fa4cf6001c3446025df636896f67ff5d9cf0de9bbceee5",
+   "category": "kids",
+   "effort": "S"
+  },
+  {
+   "topic_id": "87007f57-bcbb-48bc-9526-b83f3c6568fe",
+   "text_hash": "e6ec24487ba6b88b8d7c89e4fd3894ed9a72c0f0bb99c8899778c95154d02330",
+   "category": "chores",
+   "effort": "S"
+  },
+  {
+   "topic_id": "87603cf6-52ea-4273-98f5-cd43d9bcf22a",
+   "text_hash": "bb62a8d42e8083bac858246c90487f3e87574758cb0a0ec66d1a6a885574425f",
+   "category": "chores",
+   "effort": "S"
+  },
+  {
+   "topic_id": "87af8ef6-4118-49cc-98a6-bb62dd9afd9d",
+   "text_hash": "7732582d001331b8cdb5e5a146a6c370d1a829955224c91dc27314cede19220c",
+   "category": "social",
+   "effort": "S"
+  },
+  {
+   "topic_id": "87f04d3f-e1d8-4cba-8ad0-9de29424e66e",
+   "text_hash": "c54edde50384e781581e8f2035f23935de49d398063f3396707982455b79d869",
+   "category": "finance",
+   "effort": "S"
+  },
+  {
+   "topic_id": "88cf7d5f-3686-48e0-ac56-0428ea68980f",
+   "text_hash": "2ee08bf59d2d40c1c05150ab03e289ba93695e9c497384cc92d19ce458a658ca",
+   "category": "kids",
+   "effort": "M"
+  },
+  {
+   "topic_id": "89ddb777-7111-4929-bed4-e835b6daa17a",
+   "text_hash": "7fcac00a445aa8b9b64fcc6aa3fbbb28da6826d44b0c3f0f754c3f622128d3bf",
+   "category": "groceries",
+   "effort": "S"
+  },
+  {
+   "topic_id": "8a66cecb-f71c-4b31-bc59-cd9405d82b14",
+   "text_hash": "e5e5ca28d165b12a0100368483b7575dc2d3cba1516d6a9288d6cdb76defbd4d",
+   "category": "home_maintenance",
+   "effort": "S"
+  },
+  {
+   "topic_id": "8ade6165-6753-453b-8b15-8314ad957248",
+   "text_hash": "ffcd759c2ba08be5f2113c1101eb46aa6d6bcf62e2cbde7f8223c54156a326e3",
+   "category": "kids",
+   "effort": "M"
+  },
+  {
+   "topic_id": "8b9092dc-1971-4131-bcfb-aabecf601d31",
+   "text_hash": "b0b6ff7063ca8c4819635a1a9885c0db2301102d74b975caef74ebb92fc3d054",
+   "category": "home_maintenance",
+   "effort": "S"
+  },
+  {
+   "topic_id": "8ba5a3a9-4575-437f-b703-12dcff37622a",
+   "text_hash": "6244c54c9af211abfba2fc9995bc3759598370475b258f05defd3bfc18b001c9",
+   "category": "kids",
+   "effort": "S"
+  },
+  {
+   "topic_id": "8d0fc6d1-10b2-4a9b-ba8d-98a7733852d1",
+   "text_hash": "788698b03868e2a23038d64a820b40cc2672b86a699b6393aca13a713d5a2774",
+   "category": "kids",
+   "effort": "S"
+  },
+  {
+   "topic_id": "8d197ded-0f41-4c1c-bf90-89a6af7f96c6",
+   "text_hash": "7b219abb2afeb81b8148611b741041bdda69408194446f5b96c5678c19f53ef6",
+   "category": "groceries",
+   "effort": "S"
+  },
+  {
+   "topic_id": "8d9b7ea7-c25d-4351-b251-f8eeba7a81ec",
+   "text_hash": "70ab5967b308e595ecffc81adb3f49cc8e86e369756cc7fbddc97e3c20a2d0f8",
+   "category": "kids",
+   "effort": "M"
+  },
+  {
+   "topic_id": "8da3359c-0b78-47fd-aed7-0a7ef84bed34",
+   "text_hash": "f2dd04baf73c7cb1029b43cd6f4e9f8755e3c5e2298a5fa8b6ad72b6157574d7",
+   "category": "chores",
+   "effort": "M"
+  },
+  {
+   "topic_id": "8dcd27c4-3d00-48f5-b2f1-288eb8daf7b3",
+   "text_hash": "4a3f48e7aa0af6702438a371bc4816b336ff80e56a51247539aeeb166d787979",
+   "category": "chores",
+   "effort": "M"
+  },
+  {
+   "topic_id": "8f42e603-1c85-4971-9aad-30d3a2660774",
+   "text_hash": "8adbe1e98834f379a7da96744bb48a70d08bc9bfffc2f539f85e43399b384f02",
+   "category": "kids",
+   "effort": "S"
+  },
+  {
+   "topic_id": "8f9f2149-2406-44c8-a40f-600f76eaf2f0",
+   "text_hash": "3054e982c41eb76420d7736a75e5cb7ccd6a4059cd7a7869a0fbd591170c53bb",
+   "category": "kids",
+   "effort": "S"
+  },
+  {
+   "topic_id": "8fd20edf-30e1-491e-ad88-08123c510e82",
+   "text_hash": "f63be891c8c47304cdcab098f8fd06e1d15d395ec726a223cf78c1240b54f9a7",
+   "category": "kids",
+   "effort": "S"
+  },
+  {
+   "topic_id": "8ff1742c-9931-4e4b-8541-6bf44c8a339b",
+   "text_hash": "42797daaebe9809493f4b55027961ae83a7a14daf70516f3c8dbfdbfbf5159df",
+   "category": "social",
+   "effort": "M"
+  },
+  {
+   "topic_id": "9036b28d-d7b3-41fe-bf60-ab5d928b119a",
+   "text_hash": "827449b30c5830aa376ab34dbad86baa26961fc41bc25963a4164e141c3982ba",
+   "category": "groceries",
+   "effort": "S"
+  },
+  {
+   "topic_id": "91f1bba5-e758-44ad-a697-381a18e01773",
+   "text_hash": "6ddefc536f9208290d2dc5b21eae8fc193f78c6f18699e17b189086019d40a5b",
+   "category": "groceries",
+   "effort": "S"
+  },
+  {
+   "topic_id": "921982ac-c488-4c27-810a-3ca1a6545ce0",
+   "text_hash": "8e84baa58598da61e2a78f8559c3675850c2cf44099c25ae9b3ebed37ee3ffec",
+   "category": "chores",
+   "effort": "S"
+  },
+  {
+   "topic_id": "92518894-db64-4977-91fa-b76863b08021",
+   "text_hash": "5788a4f95302c64ecedc5f7eef5cb18db7705be6603938fdabc0e1a680cd9f72",
+   "category": "chores",
+   "effort": "S"
+  },
+  {
+   "topic_id": "92526bb0-6f3f-4e59-bb9c-46c21574b6d2",
+   "text_hash": "8f014f3fa5657e006a97c64a94c7d33b7323ef2da65cf2e97bf2e6ffda936fef",
+   "category": "home_maintenance",
+   "effort": "S"
+  },
+  {
+   "topic_id": "92a4c80d-4d82-4e19-996e-db11cb1a01c3",
+   "text_hash": "2ececccf5305e6aab171c2a361c8b1f8f6549b3ba9e7a03dbdd375118842a62e",
+   "category": "finance",
+   "effort": "S"
+  },
+  {
+   "topic_id": "92e97a53-4c63-484a-8dc9-d9e97cdfea31",
+   "text_hash": "486f6238882b0bf9f589e19ad8b6520238b20161f88742ef58bf6bb2d899fd17",
+   "category": "chores",
+   "effort": "S"
+  },
+  {
+   "topic_id": "9320644f-9acd-4025-af67-e3d05a2ee9ab",
+   "text_hash": "1c11750585b2e1413ed02e48e5232c3b8471544a16e3c7c96001ee71c10c6fd5",
+   "category": "chores",
+   "effort": "S"
+  },
+  {
+   "topic_id": "940416e0-0157-4712-a8d8-df92f8c7ea28",
+   "text_hash": "d08073c1c6b56b4d8a48f548d4416cae01a1481c7a403e51da256930f632bbef",
+   "category": "home_maintenance",
+   "effort": "L"
+  },
+  {
+   "topic_id": "949ddd4d-f231-415a-9bde-d9ebf5e68239",
+   "text_hash": "82b49a65a103a20b8663815cefa000f02423ca025391056eacb733150221cab1",
+   "category": "chores",
+   "effort": "S"
+  },
+  {
+   "topic_id": "94d3d93c-2740-4452-94d4-3dca468f9f41",
+   "text_hash": "58971fff6b9d775bcccc91741efa383c0fde8d44a99b0d2b24ecbac0a4ba0d82",
+   "category": "kids",
+   "effort": "L"
+  },
+  {
+   "topic_id": "95528606-d5a8-4d27-a08b-045c2f3f8dee",
+   "text_hash": "e71dadbdec0fb28b9e7188ddd35bdcd738af208a0bf06120bb89f36e1667927e",
+   "category": "finance",
+   "effort": "S"
+  },
+  {
+   "topic_id": "95c95209-50b6-4f24-95aa-70c8b7239af3",
+   "text_hash": "d201f97a3cd2dcdae4e27ad4c6667ed5709524aadceccb3ab251f31948a18f52",
+   "category": "groceries",
+   "effort": "S"
+  },
+  {
+   "topic_id": "95e743f3-4b95-4011-b9c9-a80cb9390064",
+   "text_hash": "1bf5f9a63a8a8143a3fdfbaa8b7f0e4414b578d22a21237ab6d47ac1dc8fb473",
+   "category": "social",
+   "effort": "S"
+  },
+  {
+   "topic_id": "971f8a51-2510-4cd3-b73c-fb709558f87c",
+   "text_hash": "101f7f5c9f3996e685d83b3096eca891fea47226a2918a0c6936b1361670d5b5",
+   "category": "finance",
+   "effort": "S"
+  },
+  {
+   "topic_id": "97311d51-e6cf-437e-beea-be9df9fff981",
+   "text_hash": "22e2c66a3dac9f8a0057aebff10de60bc59680254e40ba4f1e28e203f4b97f4f",
+   "category": "groceries",
+   "effort": "S"
+  },
+  {
+   "topic_id": "97515040-6faa-4147-aabe-25ceecd798ac",
+   "text_hash": "e9a4db8e4c6737329d05c48e82d1a24fcc4887eaefa1b54a3a26467a8116afc5",
+   "category": "chores",
+   "effort": "M"
+  },
+  {
+   "topic_id": "975c8369-de95-4fbc-90bc-c85a2c32eed4",
+   "text_hash": "6306a23099589a4099b26ce896cfb5a7efd3d04fcd6b5b53e206d11973636b08",
+   "category": "finance",
+   "effort": "S"
+  },
+  {
+   "topic_id": "976445b9-d5b9-4ed3-a806-afbbde0878a3",
+   "text_hash": "b0785a2ead4d7f45c95213e9a36be6aaad1d700ab95f13d487a08153166fc932",
+   "category": "chores",
+   "effort": "S"
+  },
+  {
+   "topic_id": "976bff49-35fe-4fe3-acd8-28b265d62c44",
+   "text_hash": "565b8c9b774402896f8fffa3723ed6b7e0f41abfbf3125387cd173498baea369",
+   "category": "groceries",
+   "effort": "S"
+  },
+  {
+   "topic_id": "97dd90c1-e94d-4b07-9529-6edcc32cb53e",
+   "text_hash": "8e9a2fb2c5fa094b246ec66343b81e85d342143adf53ea0b63577a11b73cf044",
+   "category": "other",
+   "effort": "S"
+  },
+  {
+   "topic_id": "97e5166c-7e42-4bcc-9a84-a39cf0735ff0",
+   "text_hash": "1d9674d21ad237b9edb70854fc8ba3f35aee2e9979a48c2b348c5180954d2f77",
+   "category": "groceries",
+   "effort": "S"
+  },
+  {
+   "topic_id": "998e3038-d24e-4e38-997b-cfbab2c33f41",
+   "text_hash": "82e45fa4ded21d4538157ed540e0e0bd4ee3412088fb849dc28126bbf52056ab",
+   "category": "chores",
+   "effort": "S"
+  },
+  {
+   "topic_id": "99bbfa51-c650-4c2c-94f8-242e0b6a4a63",
+   "text_hash": "24027b3b23b848f6bc9de8455591b26e220c810e8435790da6ea1eaa1451ba89",
+   "category": "chores",
+   "effort": "S"
+  },
+  {
+   "topic_id": "9a55afb8-9044-42eb-81ad-452f3a876ed5",
+   "text_hash": "dac5ebaf1c2a42489d1c37c658163c96d0646b2bd29b600b7b0f266b1676232b",
+   "category": "finance",
+   "effort": "S"
+  },
+  {
+   "topic_id": "9ab5fa59-632f-4d4e-b1d6-d45997d1d770",
+   "text_hash": "cfb168637a1a94edc108add2f853764839ca31efc3118dc709709a65118381da",
+   "category": "groceries",
+   "effort": "S"
+  },
+  {
+   "topic_id": "9b06b5b0-283e-454d-b846-2af2ec74495f",
+   "text_hash": "6aab175d24d6923093c58ce1e20051ed80e02437dae1b384b2cef469e3ccebe6",
+   "category": "groceries",
+   "effort": "S"
+  },
+  {
+   "topic_id": "9b262f71-d1a4-4b0e-88fb-24bdc4d9edc2",
+   "text_hash": "2c69ada17b1461953df0997a53e674e00dd2ab3b5b0a881aef2444317781479d",
+   "category": "groceries",
+   "effort": "S"
+  },
+  {
+   "topic_id": "9b5a5c50-dac0-4484-ac18-6100cad7b97b",
+   "text_hash": "4206e3c31ea855b04738fb1b89493980560687a8c131ae51826a6314e91ede11",
+   "category": "chores",
+   "effort": "S"
+  },
+  {
+   "topic_id": "9bdd28da-05e6-4897-ac38-41b6ab1a2920",
+   "text_hash": "8333bb273eeaa15abca7cffecd072143a9af675d5e6369bc943dbb219adcd8ce",
+   "category": "home_maintenance",
+   "effort": "M"
+  },
+  {
+   "topic_id": "9bed9d8b-d922-4552-95da-a95b57b04eed",
+   "text_hash": "3cad9751452c5b62b2b43107d70b8a6aec258eb0d01233ad36ece1be8df39ac7",
+   "category": "chores",
+   "effort": "M"
+  },
+  {
+   "topic_id": "9bf6ff99-434a-41a8-b06c-2060cc4ed464",
+   "text_hash": "5f539bd30afce83f912dba39639b83094fad79513cb2e80df00caca5c178b55c",
+   "category": "home_maintenance",
+   "effort": "M"
+  },
+  {
+   "topic_id": "9c119503-8a1f-4e2c-8857-c93d2be7b914",
+   "text_hash": "10f6d18f53c62fc9118ecfe34093a3e7b1fb65d85e55251ad597241b8593e7b7",
+   "category": "groceries",
+   "effort": "S"
+  },
+  {
+   "topic_id": "9c64c880-241f-448f-98a8-1b7d48f1ca4f",
+   "text_hash": "0cc4b89675396290917cec89c79603409b2745cf0b76344465e57936016a40ac",
+   "category": "kids",
+   "effort": "S"
+  },
+  {
+   "topic_id": "9c84210f-6ce0-4c80-81b6-ddca857acf93",
+   "text_hash": "cb7e6a7c45a0c7768cdd330aa7d3a6e83ccaef51410f88831528154e8b5a47f8",
+   "category": "chores",
+   "effort": "S"
+  },
+  {
+   "topic_id": "9cbed9e1-0aaa-4219-8aa7-0d523af69a94",
+   "text_hash": "d055307689bf201c4da59d3fcea1335d2d11ff239f231fcad37dfe0beadf5e7d",
+   "category": "kids",
+   "effort": "S"
+  },
+  {
+   "topic_id": "9ce4709a-8565-401e-8a5e-25da4fa3c127",
+   "text_hash": "9fc879d6a415b252ba7958e1b06d1d6ea2f89921e928018e0d2e0583892f19ef",
+   "category": "groceries",
+   "effort": "S"
+  },
+  {
+   "topic_id": "9dac9af6-208e-4211-946d-7d5b008b6aa5",
+   "text_hash": "18565c7874b4ae0fa5388eff36fa4234555a7df8caf8a635fe8a3b218245c9df",
+   "category": "chores",
+   "effort": "S"
+  },
+  {
+   "topic_id": "9e012167-5b0a-4abf-8129-c04c42922bb6",
+   "text_hash": "59b9cc692e9bcd9af4a0a38b8539c2cfce05eb35783bde140d71dcb73250fd17",
+   "category": "home_maintenance",
+   "effort": "S"
+  },
+  {
+   "topic_id": "9e0fa6a2-1cf2-4b75-ba13-735e4489684e",
+   "text_hash": "47b75015c4c3dfd2c8c38c9b64ea97f6385449cc906a2382e05062f8d792a5c8",
+   "category": "chores",
+   "effort": "S"
+  },
+  {
+   "topic_id": "9e393f6e-b370-4f61-9444-0cbdfcde38b0",
+   "text_hash": "0e7840bc76707384c4945dd47efe3b979943854547497febf42730c09273a175",
+   "category": "social",
+   "effort": "M"
+  },
+  {
+   "topic_id": "9e99ed93-eea0-4407-8603-568bf83add00",
+   "text_hash": "f5290344575000eb1852cb7dd3f91302ec5277e83f9c2248acda420c1d688e6a",
+   "category": "home_maintenance",
+   "effort": "M"
+  },
+  {
+   "topic_id": "9edec791-9e4b-4843-bde2-a87aa379edcf",
+   "text_hash": "5f7f2960d4cfac2530212f531c460a082ba1b8b85fe78e4e7ade4c18093646d3",
+   "category": "chores",
+   "effort": "S"
+  },
+  {
+   "topic_id": "9f17461f-0f80-4574-b749-0d56760d015a",
+   "text_hash": "93aa05a45f4c2904bb21486b931659b5fd72564435eac4f13dfd845b8b4cb861",
+   "category": "kids",
+   "effort": "S"
+  },
+  {
+   "topic_id": "a00aa040-20a8-43ae-8eab-accdcf788855",
+   "text_hash": "620ec8195746f4bb3d2d7cb04b186e258aec220a7d7f54e99e269b2fcf75014e",
+   "category": "kids",
+   "effort": "S"
+  },
+  {
+   "topic_id": "a04f2bad-02a5-4cb0-963e-98d1f50ffe6d",
+   "text_hash": "0695a0f40e12a5cf311716849d525592e60fc012a39e16da4a50fdc9f6970d7a",
+   "category": "chores",
+   "effort": "S"
+  },
+  {
+   "topic_id": "a0837877-9d3a-4c1a-a22c-ac021528f7f7",
+   "text_hash": "37f9f5ae023356f397dfe4c8c7f4a7b57bbeb08615b20a847cff6cae19ca487c",
+   "category": "kids",
+   "effort": "M"
+  },
+  {
+   "topic_id": "a11aba1d-c8de-4b3d-b769-4c595d5ac929",
+   "text_hash": "5b94c49c46680b82e59ed499c4e0220396d539dc0f5d40f50b718e00efa3c4bc",
+   "category": "finance",
+   "effort": "S"
+  },
+  {
+   "topic_id": "a15b19a7-1956-4eda-85a2-27b7245ac8b0",
+   "text_hash": "70d2bde5801ce8a857511fcdd1265122ccb22b4cc15dc08a0d5a71ecc2a9b977",
+   "category": "finance",
+   "effort": "S"
+  },
+  {
+   "topic_id": "a1b6e0cc-8dc1-4948-8cc7-3ca535287214",
+   "text_hash": "09aa9a47eee445a1897eb8faf138b656bb14c777ec00edee584359226f058708",
+   "category": "chores",
+   "effort": "S"
+  },
+  {
+   "topic_id": "a2344403-343d-4b55-8b2f-74a10401d29d",
+   "text_hash": "66c715b5b513cdf981dad542d67ac74f697a4cbf1211a036bc23dd9340574c1f",
+   "category": "chores",
+   "effort": "S"
+  },
+  {
+   "topic_id": "a2604914-4aad-4292-a482-cfa1193339ae",
+   "text_hash": "e42baebe63a0d88e490a3fda5d7b04274f185cc7ead4f174a2c6ba86c707158a",
+   "category": "groceries",
+   "effort": "S"
+  },
+  {
+   "topic_id": "a2c06c49-b8eb-409f-85c2-b00310e46010",
+   "text_hash": "93a0b230c4ad4a9c0d4cb38f0bb3688d42abe673d2e78160a5ad9fcd22e8a82e",
+   "category": "groceries",
+   "effort": "S"
+  },
+  {
+   "topic_id": "a2d37158-d405-46a1-b8db-7dcbae0c8b99",
+   "text_hash": "dcdc9471a370c926e0105867bef811ec2bb5507189b8b64eddb50c4338ec19ca",
+   "category": "groceries",
+   "effort": "S"
+  },
+  {
+   "topic_id": "a38fc4f0-4355-4df3-bc13-0bcf0879f7a5",
+   "text_hash": "a76906aa75df216feb093aa5a08301bc468c10084b7f528a4d77c95e50842753",
+   "category": "chores",
+   "effort": "S"
+  },
+  {
+   "topic_id": "a3eb4fcb-9396-41bc-9949-de3b689cace8",
+   "text_hash": "02e379f8e23daeb6ad84d0be347a9078bb480e1a4cf1b9dd0fa51db83eea9c80",
+   "category": "kids",
+   "effort": "S"
+  },
+  {
+   "topic_id": "a40c4f79-0eb1-4486-bc3f-e6dc40073fab",
+   "text_hash": "dbe088e653cf5328254579c95eacb98fd61fed0796c64cae9b23706a25f1bee7",
+   "category": "social",
+   "effort": "M"
+  },
+  {
+   "topic_id": "a449d4f8-416d-4c6c-9977-6b632dc244db",
+   "text_hash": "b9b3b8a5eab5e369b08b3cb0c1cbb72fd4bd3b9c45ba0ef13a7ba864dacf0852",
+   "category": "kids",
+   "effort": "S"
+  },
+  {
+   "topic_id": "a53221be-f826-4e44-a742-a12d1538a9ed",
+   "text_hash": "99400b7368e504e013cb07777ed7990f2eb772a97583c3418c6dc9511489350f",
+   "category": "groceries",
+   "effort": "S"
+  },
+  {
+   "topic_id": "a5409a2a-d842-4700-8662-c0ac3163495b",
+   "text_hash": "8a13388700368468e673e1a2a152bdf1a8408362a67d9cb741845553a2299620",
+   "category": "kids",
+   "effort": "S"
+  },
+  {
+   "topic_id": "a57f269d-533b-4e81-a0ae-edd9a72a8f06",
+   "text_hash": "bda40a6f09dad23028d80b734a8569168d6a0ea00e18a47bed58bfdee67110df",
+   "category": "home_maintenance",
+   "effort": "S"
+  },
+  {
+   "topic_id": "a5f39d71-d197-4425-b024-05d0d333487c",
+   "text_hash": "064cd6180dab5058dcf211c4bc38ebab6f2ca7c23d95d839d722a2c1fe54fbbb",
+   "category": "groceries",
+   "effort": "S"
+  },
+  {
+   "topic_id": "a5f9ae04-ba79-4105-a9aa-7d07f3ab1127",
+   "text_hash": "fb9feb39d94a369b308b9ad238c5797c68b84c99883bf2c7e276aa600702aa63",
+   "category": "home_maintenance",
+   "effort": "S"
+  },
+  {
+   "topic_id": "a738e5b1-d775-4e7b-aa40-afdec9d625a5",
+   "text_hash": "c3157316cdff0a2fbf63a0d0b58a59e3eadec6bb23a2f873c156cdbe96199ddf",
+   "category": "groceries",
+   "effort": "S"
+  },
+  {
+   "topic_id": "a8794ec5-99cb-48cb-997f-27474d832f99",
+   "text_hash": "9042a1af46e8136209fed93b7613343fe66ad11a07f9604a36cbfb9d336574d0",
+   "category": "social",
+   "effort": "S"
+  },
+  {
+   "topic_id": "a8dd2e1f-00e8-4ddf-a5d5-0b4a81f45b89",
+   "text_hash": "0dae6b17d65991cd7025f66414e5a449b3eaa368a731fd6a925e411019d0ca0a",
+   "category": "kids",
+   "effort": "S"
+  },
+  {
+   "topic_id": "a94cbebd-03cb-4fac-83cb-3903016cb913",
+   "text_hash": "c97bdd43522c4b7a63d22aa23225949d3869ef02e10be771caae6bc5636d1794",
+   "category": "chores",
+   "effort": "S"
+  },
+  {
+   "topic_id": "a972b2ec-a865-4452-821f-bb51c241b07c",
+   "text_hash": "8df8e1959370052be07a1102bdfbb5127980613458538e2b013de6d6d93cd4fd",
+   "category": "home_maintenance",
+   "effort": "S"
+  },
+  {
+   "topic_id": "a9a327cf-1b30-4701-9b29-609ea3d182af",
+   "text_hash": "e40c42053cace63663bb8f286fb87dfccd2f65014d2791ca2d445b941c3d3b55",
+   "category": "chores",
+   "effort": "S"
+  },
+  {
+   "topic_id": "aa1dc318-4ec3-459d-a088-1c49507bcf8d",
+   "text_hash": "5487e87cf9a3160ab04946e43b52ddaff6048a94cae29a9512b44200640c168f",
+   "category": "chores",
+   "effort": "S"
+  },
+  {
+   "topic_id": "aa223920-c242-44d9-8d05-d67ace12b82a",
+   "text_hash": "ca5a8619a15ffc05dafcf58668c64ad65f4d7c8f54c8efb42a1c36aaacd4b73b",
+   "category": "finance",
+   "effort": "S"
+  },
+  {
+   "topic_id": "abd2be3f-f65c-4d8b-8ddb-461786e9bf1b",
+   "text_hash": "c64c5a5a7cd29d00a388e1b2213dc8f6b5531ccfe0bee7778bd13f0d3aa47c9f",
+   "category": "home_maintenance",
+   "effort": "S"
+  },
+  {
+   "topic_id": "ad3f559c-87c1-4d6d-9589-145ab75e9617",
+   "text_hash": "a1984fa3bcc4682bf387384fc8c546132c512b9a71d8601d2fa006562f764861",
+   "category": "groceries",
+   "effort": "S"
+  },
+  {
+   "topic_id": "ad737b88-be4a-4991-9e94-a77f10dc31a4",
+   "text_hash": "e8a9c0949d8d8a221669bcfcd78abbd2e331fe83db83992c57755f90cc35e4b8",
+   "category": "finance",
+   "effort": "S"
+  },
+  {
+   "topic_id": "adae9141-cbe8-423f-9289-77e3a671b18b",
+   "text_hash": "f9ec5f9b585cd1d0500632d17b653ab8ecf8339f97d7fcd144232448f69e3d8b",
+   "category": "kids",
+   "effort": "M"
+  },
+  {
+   "topic_id": "adafc7ee-901f-43dc-b9e0-b4f48777e603",
+   "text_hash": "86add868f9d12d608d23829dbb97a9edd53a93f31b12dd3ee0d4bd3ff6c89cbe",
+   "category": "social",
+   "effort": "S"
+  },
+  {
+   "topic_id": "ae43e69f-1a2f-402b-8c99-7d8665440a3f",
+   "text_hash": "9f88dae14021b7402809afd6d9a488b9f65389ec98e40924c735cbb032df6f29",
+   "category": "kids",
+   "effort": "S"
+  },
+  {
+   "topic_id": "b10d4c49-b67d-4eb8-95a9-2c3fad9ed6b8",
+   "text_hash": "be9abebf88e6c9efed005d03a7e3b8dd4ad7b01fad51e38ffb7a1dab8c66b940",
+   "category": "kids",
+   "effort": "S"
+  },
+  {
+   "topic_id": "b11a2074-3cff-4954-98e9-d41cc7dae9f8",
+   "text_hash": "b32e4309804069d4cb1f4ac8207d0cd00e17658f4e25d5024958a8e4b99e2f86",
+   "category": "chores",
+   "effort": "S"
+  },
+  {
+   "topic_id": "b19ddf59-1aed-468d-b71b-a111bba621fa",
+   "text_hash": "063c37eecc42b23168d617cfd48c3d447521b8f5c29a622a8310d3fa2833e643",
+   "category": "chores",
+   "effort": "M"
+  },
+  {
+   "topic_id": "b1ba7720-7ebd-469e-972d-7d70bcf000a7",
+   "text_hash": "0d0d4d6c33087923568c4c23f7540088a682cce0a3dada6029dea9b3b8ff19fb",
+   "category": "kids",
+   "effort": "S"
+  },
+  {
+   "topic_id": "b1ef6093-59d3-49f6-b542-2bd29edd234f",
+   "text_hash": "148c80b1d054e2049a78dd438a3460c48836c9fbefeaf328b51bcbe2a283daf9",
+   "category": "social",
+   "effort": "S"
+  },
+  {
+   "topic_id": "b26452b1-3627-4bcb-b43a-40fcc78d8c24",
+   "text_hash": "11f6dbb904fdf72b83db0670be90d799c4a15a7ad4f90db583cfa4fb009cdbc8",
+   "category": "kids",
+   "effort": "S"
+  },
+  {
+   "topic_id": "b31431a5-ddb4-4b18-8f10-58aa0e0efc3c",
+   "text_hash": "ee89427a703657cf0928c1785cae4192ff4c482b27d2be150c6b3805f7ec92bf",
+   "category": "home_maintenance",
+   "effort": "S"
+  },
+  {
+   "topic_id": "b4052223-c3b8-4673-a2b2-7068f37ded56",
+   "text_hash": "ecc10aa735234246dd2fdd6682ff30b2c108d94a547b1e0d6de26f68e6d61dbc",
+   "category": "chores",
+   "effort": "S"
+  },
+  {
+   "topic_id": "b43e6964-1004-42c7-8ba6-62256039f7b8",
+   "text_hash": "4ef80a154c8f19f8840a48024bc3d0dc403b657b220a6f2fb2cd2efe453f1ca8",
+   "category": "chores",
+   "effort": "M"
+  },
+  {
+   "topic_id": "b4af8a21-ce78-4830-9394-23450e5a949b",
+   "text_hash": "53e376d0c2eb088ec1d858bd450a3d7b21a794d5ccc50088b64e4773563cb65b",
+   "category": "social",
+   "effort": "M"
+  },
+  {
+   "topic_id": "b599cb1b-544b-448b-95e3-14ead3ab6356",
+   "text_hash": "2d563cbc1c5bd29ad29380b7f13c319d7920215460cc4ad6708a2a2b3dfee7e6",
+   "category": "groceries",
+   "effort": "S"
+  },
+  {
+   "topic_id": "b5c84097-1608-4c25-9cce-708e08d6fc15",
+   "text_hash": "74cd4575ef1334749e1b3e9108a07b51e1a5a60232d3f22d05c839f5594e7d36",
+   "category": "groceries",
+   "effort": "S"
+  },
+  {
+   "topic_id": "b62061c5-9085-4700-9086-d0c863fea962",
+   "text_hash": "e9392165fa860ca299d3988ee670971df8525afd497e0a7ee0369b4582e6340f",
+   "category": "kids",
+   "effort": "S"
+  },
+  {
+   "topic_id": "b62df658-e1d5-4d5a-bd0b-a74eed7c7c6a",
+   "text_hash": "f859b5eb6b16bc27b8865327302d7bb6996674b8b791fd6c3888ecf15074d727",
+   "category": "chores",
+   "effort": "S"
+  },
+  {
+   "topic_id": "b661323d-aa61-4415-be48-58e530b81285",
+   "text_hash": "121204ee7732f4e43569480d45d0298861b2a6b4527dfd06541f05cb5da3db8f",
+   "category": "home_maintenance",
+   "effort": "M"
+  },
+  {
+   "topic_id": "b6d345be-2cdb-402f-8475-213c692f923c",
+   "text_hash": "da1306679a9c0675229809228061cfc8fa51b85057ad739257381f39e11bcc17",
+   "category": "chores",
+   "effort": "S"
+  },
+  {
+   "topic_id": "b700e951-d8d2-487f-b244-df3e6cd7ccf6",
+   "text_hash": "bb760b40dfa087cf5c47c4bb402ad1d6dace93a0b633eda26d701634eaaf528b",
+   "category": "other",
+   "effort": "S"
+  },
+  {
+   "topic_id": "b73e909b-3e2d-49ac-aff1-9deb8958dbe7",
+   "text_hash": "d870a89edc1c3f245ca1b6453ff168d21eff181381095d5fecf9d677dce6f7c2",
+   "category": "kids",
+   "effort": "M"
+  },
+  {
+   "topic_id": "b76ac0a5-147c-42bc-805b-def21f3fbf31",
+   "text_hash": "314f5640bf82ac57f4759b0e8553305a06b116456349e816ddb10fcc88b1eb06",
+   "category": "social",
+   "effort": "S"
+  },
+  {
+   "topic_id": "b7c2a3bc-d0a2-4181-9ea8-85ec1497da5a",
+   "text_hash": "aadead5be2c752a50a56b00244a3b666a129e45eb3b8f6f87805fe5e853a90e3",
+   "category": "kids",
+   "effort": "S"
+  },
+  {
+   "topic_id": "b8182770-72ee-469f-b053-ca870a0e4cee",
+   "text_hash": "b9edea7bdee70266f0ca1409de53d1416764e3986ff858b7249d99b7d667e46b",
+   "category": "home_maintenance",
+   "effort": "S"
+  },
+  {
+   "topic_id": "b894d394-b3b7-4a37-a124-0b9f388c21bd",
+   "text_hash": "bf2f3214afb199077196131830407ab28876bd0157ac9ffdf6ae1a4cfb592b76",
+   "category": "social",
+   "effort": "S"
+  },
+  {
+   "topic_id": "b8bd00f6-0dcc-4812-ac9d-11f4d2c0eff1",
+   "text_hash": "1ffd31be1c661699001eba0721e73fdf9a52eff17c659e3189295072e1665b46",
+   "category": "kids",
+   "effort": "S"
+  },
+  {
+   "topic_id": "b942b4fe-3096-44ad-a7db-9222c63c8b0b",
+   "text_hash": "e74d91cd249e0a1c8de8e22b1b93b2f66d7c80ff8b399b413f2d7daad9f8a631",
+   "category": "kids",
+   "effort": "S"
+  },
+  {
+   "topic_id": "ba11376a-e0a9-4a42-8eee-bf836d3b5e2e",
+   "text_hash": "87defd11968c1f9dfd0bcd869e515677155c5ece3bf79b065b28d536f633c6c9",
+   "category": "chores",
+   "effort": "S"
+  },
+  {
+   "topic_id": "bb402c97-aaf8-40fd-942f-bf23c29b3b1a",
+   "text_hash": "63e3f8de4573a41ab38e05a67ac3e2b0ba321dcfed1afb903c3b5d9b12fb675e",
+   "category": "groceries",
+   "effort": "S"
+  },
+  {
+   "topic_id": "bb83fcdc-86b3-4db9-b53b-8124fcfe9b96",
+   "text_hash": "a5d3c7a18212af8f304af833868d0912e3eeb0d8e5ce856c3ec8c72de895620d",
+   "category": "home_maintenance",
+   "effort": "S"
+  },
+  {
+   "topic_id": "bbb44eb3-02e6-444e-998b-cbb76752846d",
+   "text_hash": "cd8eb9cd857f8fb90a6364cc7e04dfc7aa4ad39669c2c51a7196e04c18579b94",
+   "category": "chores",
+   "effort": "S"
+  },
+  {
+   "topic_id": "bc0d8710-3f59-4446-afdd-9a9b21039df6",
+   "text_hash": "ba53fac6df758c536b04c83f3e25d7413c56ef9ffd879447e21a0d39681803ec",
+   "category": "groceries",
+   "effort": "S"
+  },
+  {
+   "topic_id": "bcb2e70c-a672-4cbe-8940-d2430ceecd35",
+   "text_hash": "14bb5b2c24957333d055d9f628a27f1329de8423ba6689ac4922c974d678ab29",
+   "category": "kids",
+   "effort": "S"
+  },
+  {
+   "topic_id": "bdcbe6a5-353a-41ad-993b-4e1da88435f1",
+   "text_hash": "d85d139342591c5b1763790d95abea5811127eea6b67cdcecca7d30eb90ef03a",
+   "category": "social",
+   "effort": "S"
+  },
+  {
+   "topic_id": "bf2467ba-9672-4791-a6df-f280e9c4af2c",
+   "text_hash": "ec0302fc47fedbd54bbba1c7574450653f446e5e460f00f16068e5d96e48c8b4",
+   "category": "home_maintenance",
+   "effort": "M"
+  },
+  {
+   "topic_id": "bfd201e9-0772-4ce9-877f-3d3a5d9ecde2",
+   "text_hash": "83f5d209ebee09bda59ab8d0a22904a9e74a29fc0aa1a9094e24cad10425ae05",
+   "category": "kids",
+   "effort": "M"
+  },
+  {
+   "topic_id": "c013eb49-71f9-4508-a219-7950b2e059c4",
+   "text_hash": "f21cee784a1c3169ea38e0f7e0b856b46d7417d147e76d8735a7285d356e4f24",
+   "category": "kids",
+   "effort": "S"
+  },
+  {
+   "topic_id": "c09a7690-5877-4092-b009-8def379a5f9d",
+   "text_hash": "c7fe312cce124b2425d63e8e15b35d5018faeb2ab719e99873b74ad4c0be47fc",
+   "category": "kids",
+   "effort": "S"
+  },
+  {
+   "topic_id": "c09c5f08-2419-475e-8760-f842465dff48",
+   "text_hash": "eed19b14d95e567159474710e0e46a10a6af2c3e4954414f958f822f440af417",
+   "category": "home_maintenance",
+   "effort": "M"
+  },
+  {
+   "topic_id": "c0c4bfe9-f164-47ed-a4a5-21edfd77609d",
+   "text_hash": "7d4a0a1ad53c6afbed609703c9a7b64a985dbf08ca3dbaefa6b90e7346538665",
+   "category": "home_maintenance",
+   "effort": "S"
+  },
+  {
+   "topic_id": "c25921ed-b742-4934-88de-f7221c964c0c",
+   "text_hash": "dfae567ffb10b83b88f031adfcf2eed4eed08a0e299a277390da36617ec89cb9",
+   "category": "finance",
+   "effort": "M"
+  },
+  {
+   "topic_id": "c2cf15c0-b708-4feb-8bce-c02f3973968e",
+   "text_hash": "cc7e215b29a4266f4e7d6925d518f2ec3841ec30e943bc9c4ad67f23900d3429",
+   "category": "chores",
+   "effort": "S"
+  },
+  {
+   "topic_id": "c351fbf2-d78d-4aa8-a4d0-ba2d6f0a7009",
+   "text_hash": "132adf2dc69ae782406f9c4cc770bb19ab49925cf005199920a4d65c820ce29a",
+   "category": "kids",
+   "effort": "S"
+  },
+  {
+   "topic_id": "c3ea902b-2bd7-4d19-b467-9234cd0faf88",
+   "text_hash": "b078a31ceb5ca64fe92e6a41391eb84dd8b85be3623387e0164d7c9e775f29b9",
+   "category": "finance",
+   "effort": "S"
+  },
+  {
+   "topic_id": "c4398cb4-10d5-4f33-9589-9fe6f9f6288d",
+   "text_hash": "356027d8f5077d7facf5ae0d583a7141246e04d2dc32326977668fb9df219eb2",
+   "category": "kids",
+   "effort": "M"
+  },
+  {
+   "topic_id": "c48c69bc-83c4-407f-86a8-3fc37bf85f32",
+   "text_hash": "23838722ae94bd776b50dd07e4c7e8c301fc87472a4b634f040bb7980a48979a",
+   "category": "chores",
+   "effort": "M"
+  },
+  {
+   "topic_id": "c51865b2-1cd6-4a64-8f4a-3eb83bde8251",
+   "text_hash": "b03635beb8a349e2ce9aee3c197575c4577ddba38d0465e3f9578e71e44ef7bc",
+   "category": "groceries",
+   "effort": "S"
+  },
+  {
+   "topic_id": "c56bf890-f7f8-4440-8fb5-b966ed917735",
+   "text_hash": "60c9b09dc4f9ed1d521cb237b312831a10c7c18eb9784fa221c537ac49979d27",
+   "category": "home_maintenance",
+   "effort": "S"
+  },
+  {
+   "topic_id": "c6058116-d119-4bc4-937c-25c9d17e81fe",
+   "text_hash": "e1e4dd2579fdfc296f35965306b79f77d6b8868926d981b9142fe4fb581bee4c",
+   "category": "groceries",
+   "effort": "S"
+  },
+  {
+   "topic_id": "c6203c74-8b60-4be5-bf51-3f1c102b038f",
+   "text_hash": "5d6923dcc1badaba6884840a7275d86a0505eb18de743e5fb9afb55f5f980458",
+   "category": "kids",
+   "effort": "S"
+  },
+  {
+   "topic_id": "c7a6f179-f69b-4dfb-b758-2974839e4c8d",
+   "text_hash": "ef76d00b57d555d844755c386cc8fd520dcf70eea3c7a9c1dbb75c07bf2a1e6d",
+   "category": "finance",
+   "effort": "S"
+  },
+  {
+   "topic_id": "c7c378f6-d22a-4cd1-9c18-e7ee9eae186c",
+   "text_hash": "f627ef5707fd399f08fde65509a102ba78732c8c006a1dc907e19fc41f332d7e",
+   "category": "chores",
+   "effort": "S"
+  },
+  {
+   "topic_id": "c8019e2a-4f7b-4d9b-a51f-de0d3921c8c5",
+   "text_hash": "30ee949d4d1cb25b29e14f6f13032f6c948616702d3dc7e4c06a9ad947010cb5",
+   "category": "kids",
+   "effort": "S"
+  },
+  {
+   "topic_id": "c83e1143-941b-4d56-a9ae-40acd641a4b6",
+   "text_hash": "e1871410f4736b9a05d42057e9a5d3971e5b3afd4cae1090470a867054a0b086",
+   "category": "social",
+   "effort": "S"
+  },
+  {
+   "topic_id": "c874b562-5989-4d8c-93e7-47fefb0cb8c5",
+   "text_hash": "3565b7615f9fd0a2150d2361f66fcc8ff09e8fb24fd27dbfae388d7c3db83e8d",
+   "category": "groceries",
+   "effort": "S"
+  },
+  {
+   "topic_id": "c9704fc8-ed15-4ef5-bd7d-d53ff8cca192",
+   "text_hash": "6025a9acbd10d4a427635d2f2668459dde24bffd093f91160a7dce1a875c5f82",
+   "category": "chores",
+   "effort": "S"
+  },
+  {
+   "topic_id": "c9a9bdf8-cd9a-4bf2-9185-8f798573d7de",
+   "text_hash": "2057dd02fc5a74e41f92015ee41a22260869d4582650bb2bb3773ec4c7592429",
+   "category": "chores",
+   "effort": "S"
+  },
+  {
+   "topic_id": "ca77650e-1653-4b7b-80ce-f7eca84d98db",
+   "text_hash": "fb7246f588e92fe7ee4f7ee1b168786f72cd22dddac92e6f6a7345991e3dfffd",
+   "category": "kids",
+   "effort": "M"
+  },
+  {
+   "topic_id": "caa29d30-8d47-4071-ab2f-6f1ea1203436",
+   "text_hash": "0f0603d9c1eb1b6498f5bfb159fdc893e041ccaa228f08eed92b95c4a58b47fd",
+   "category": "kids",
+   "effort": "M"
+  },
+  {
+   "topic_id": "cae70017-a955-47dc-9878-6058fb1cfef9",
+   "text_hash": "e58eec2de6b154f1f4a023058e3e1ddb0740e1f24cf54f87a6d33232db6e79df",
+   "category": "groceries",
+   "effort": "S"
+  },
+  {
+   "topic_id": "cb388d98-72f4-4d2f-a65e-dd4a040a7211",
+   "text_hash": "cb5d07a01457b3aa83fd5ef2f735f6024b3e958e5d18f523e3c21973f40edef8",
+   "category": "groceries",
+   "effort": "S"
+  },
+  {
+   "topic_id": "cca9662b-edca-4421-8893-3a1f4c6e30a4",
+   "text_hash": "ceb245c90998d75e1a7f165c7f56cee4b0a4e5d9eaa686ff1a8484b52aed7cbf",
+   "category": "groceries",
+   "effort": "S"
+  },
+  {
+   "topic_id": "cda2ccd1-ad07-4d57-b7a8-b03604d04696",
+   "text_hash": "48fbe9a2144dcf683de6dd845cb461b8846825449838a254065d3b5d4dfdb1d3",
+   "category": "finance",
+   "effort": "S"
+  },
+  {
+   "topic_id": "ce788991-e752-4828-b87f-257e281a9ab5",
+   "text_hash": "7d641ab6a83bef63e41747cc4204d6e35e6bdbb209103ac7168c107541e89631",
+   "category": "home_maintenance",
+   "effort": "S"
+  },
+  {
+   "topic_id": "cf2b56af-cab8-4989-8738-2d961c240c63",
+   "text_hash": "5aa812381ebc6f07c452c78289af5ce8c082ec39c0f4c73ab05dace92d44bc75",
+   "category": "finance",
+   "effort": "S"
+  },
+  {
+   "topic_id": "cf4939a0-0378-4473-a216-6f474337e6e9",
+   "text_hash": "d32177d914074638ba9a8305699daf1032c3592fa75065e3f55f11ce50ef5e7a",
+   "category": "kids",
+   "effort": "S"
+  },
+  {
+   "topic_id": "cf9d17af-63ed-4d7b-b3fd-bd89bd82a038",
+   "text_hash": "45a54da9de90b00f7576de84ad97b0326e69b0d8b013bfcaed3bdcf44763991d",
+   "category": "groceries",
+   "effort": "S"
+  },
+  {
+   "topic_id": "cfed4e99-863c-4f93-9781-8d25cab40734",
+   "text_hash": "f03831b40dba38a8e608e4b186be8f583efa537776f76876ab74b3ac76c0734a",
+   "category": "social",
+   "effort": "S"
+  },
+  {
+   "topic_id": "d083b366-11e3-44ab-a51c-f7b7e2e2b55d",
+   "text_hash": "804833f0005da458945fb812f7d9f8275d2d26bc74f1c2b9dfab386dcb93a1cb",
+   "category": "chores",
+   "effort": "S"
+  },
+  {
+   "topic_id": "d094f642-8b95-45a5-b8ad-c3b5c37ddb1a",
+   "text_hash": "04d088a0f67c227a730dc6bbf9f84a9c07df97cd5d1fb01f873008fb2a790cba",
+   "category": "home_maintenance",
+   "effort": "M"
+  },
+  {
+   "topic_id": "d0a8f5c5-fa16-48a5-90fe-8e0523b50926",
+   "text_hash": "26f57a583b5f82825a54643e077d227e2c796f9b01e4e55ff69125fe955c5997",
+   "category": "finance",
+   "effort": "S"
+  },
+  {
+   "topic_id": "d0b46ff1-28cc-41f6-a9c3-c4613e2313b4",
+   "text_hash": "8d87e8280f0221c063ff6d7652de81594e69daba5c15e0ea043d966122246aac",
+   "category": "social",
+   "effort": "L"
+  },
+  {
+   "topic_id": "d0d7d8ab-ebba-4e55-b8aa-63c935efb4f0",
+   "text_hash": "a5182060307a77263a2ffc719a65f272677a565b8413f5f5a9dd477e428ad698",
+   "category": "home_maintenance",
+   "effort": "S"
+  },
+  {
+   "topic_id": "d1a9cd60-62e3-46e9-9aed-535bf810ce2d",
+   "text_hash": "7f2f09fb664c81f84fb484886f7210cd1ee4114bae23b6e711bc30e7d9a603f7",
+   "category": "chores",
+   "effort": "M"
+  },
+  {
+   "topic_id": "d25a3100-034d-47ab-be11-11614eb4d3f7",
+   "text_hash": "a72fc5ba5252337c45830b2ae445b7b8505a2adb038ede967be41689e4b97cfe",
+   "category": "home_maintenance",
+   "effort": "S"
+  },
+  {
+   "topic_id": "d2a459ff-5038-4792-95a3-5f48a38bee67",
+   "text_hash": "60952b172e67fb7dfaff5a025132d698b106ea7ed327624cb5acb625a17df7a3",
+   "category": "groceries",
+   "effort": "S"
+  },
+  {
+   "topic_id": "d2fd4af6-2ba5-4c11-acc8-b385399005e9",
+   "text_hash": "048c76fe48720d32860b7ec20d25e7d8f88af0bc2d03e7083c97efc965650771",
+   "category": "chores",
+   "effort": "S"
+  },
+  {
+   "topic_id": "d2fe807f-483d-4c63-8e23-3aa6e934902a",
+   "text_hash": "6e29b5c5b8f8395ea9921c49e32754069b57113fdbb1f4825f68e40f3a3f5b77",
+   "category": "groceries",
+   "effort": "S"
+  },
+  {
+   "topic_id": "d37db97c-954b-42ff-a7a8-894869205afa",
+   "text_hash": "db0d48887008770989243992c70b9517c9ac2d3451ddbb1578ea804b482b68f4",
+   "category": "chores",
+   "effort": "M"
+  },
+  {
+   "topic_id": "d3f74fff-65d6-4ea1-a4b5-ebc1c543c233",
+   "text_hash": "fa317c9b6162552c8e2fecc4485d1d9ba1a779cd425f52df635db083bfad3492",
+   "category": "kids",
+   "effort": "M"
+  },
+  {
+   "topic_id": "d40b3a79-5d51-45dd-b9cb-187bfdbb5403",
+   "text_hash": "ce18848178a5547eacd2d072f558742a8b704f87e6f7c0091223452a0cebc258",
+   "category": "groceries",
+   "effort": "S"
+  },
+  {
+   "topic_id": "d4c002a6-ad24-4bbb-acb1-608b82230047",
+   "text_hash": "afc7e04f7196179873fe7329ed716e329f37a57bb8d23fab170116c248c73f5e",
+   "category": "chores",
+   "effort": "S"
+  },
+  {
+   "topic_id": "d5576625-c325-4f1e-9357-92d5d0968a80",
+   "text_hash": "d74fd6d5fc2e6140ff6aef540194135e5108c43cab348f4d29c5aa3c22546a0b",
+   "category": "other",
+   "effort": "S"
+  },
+  {
+   "topic_id": "d5d7c1df-039e-4e1b-a5fe-fb1391bef88a",
+   "text_hash": "a907444134a0c19cfac63b62ff4283d6ba0c3a487deb3941093a447c1c2178d6",
+   "category": "groceries",
+   "effort": "S"
+  },
+  {
+   "topic_id": "d5f1d7cf-bcd1-47f6-8831-6b5db222ae9a",
+   "text_hash": "dca877f63cd8158b6f96225fecef278de8c150a766b95af4b8d9bf76498eb712",
+   "category": "home_maintenance",
+   "effort": "M"
+  },
+  {
+   "topic_id": "d7b0dd7c-a2d2-4f35-a6f1-171898cc4928",
+   "text_hash": "0c0fb223c53afd6f847bb4354f288934d73360fb69dad320a9818a5c864c93bc",
+   "category": "home_maintenance",
+   "effort": "M"
+  },
+  {
+   "topic_id": "d91bbb26-f50b-4947-b64a-050dfd0d5891",
+   "text_hash": "1a363b15cabb6316da0b65260b340776e8a4054805f0917f70e0eef98065a94a",
+   "category": "chores",
+   "effort": "S"
+  },
+  {
+   "topic_id": "d92d71b3-a25a-4860-a29d-40c1bd349df4",
+   "text_hash": "bf6f6cef1991cc3fbef10f068d62a0f734d8402c44ba3a6e350a86a125067188",
+   "category": "finance",
+   "effort": "S"
+  },
+  {
+   "topic_id": "d97ce34f-8a42-4823-a1f0-c010fed5c7a7",
+   "text_hash": "dafc9d4ba03811bf5470ca4d9c385582222224e0243c0062566295521db0ab60",
+   "category": "finance",
+   "effort": "S"
+  },
+  {
+   "topic_id": "d9b2efb3-d252-4531-be57-2ed6c7b6b4bd",
+   "text_hash": "d0b612b27333a15b635e5535899acedb443bb573c5cf0105483db61c9b5e0ccb",
+   "category": "home_maintenance",
+   "effort": "S"
+  },
+  {
+   "topic_id": "da9a90a1-25ca-4201-b854-5864ff613ebf",
+   "text_hash": "e168a2da65236c831cd03c9fc7e189c49367be7b487f24a20f13e7f29a102ecc",
+   "category": "groceries",
+   "effort": "S"
+  },
+  {
+   "topic_id": "db77a97a-2ccc-47a0-875b-fbdf809df99a",
+   "text_hash": "c22bee53a57fe849de88d98c1155215403d71dbd359eb2c35196dac0d2d33482",
+   "category": "chores",
+   "effort": "M"
+  },
+  {
+   "topic_id": "db913390-72ce-4b82-b687-fcb8b7f50915",
+   "text_hash": "ac51ced543d83fab90071b1707ca923e9d0883810249b9da9c00db4e40698337",
+   "category": "social",
+   "effort": "M"
+  },
+  {
+   "topic_id": "db942239-dc38-4057-82bc-43857ef15de0",
+   "text_hash": "ef039144507d7d843892441d15099743dbc23f5ad4a03c7a88c43b7fc111ab66",
+   "category": "kids",
+   "effort": "S"
+  },
+  {
+   "topic_id": "dbbade7b-6191-441d-a687-8758599223ed",
+   "text_hash": "91879faa0860089786890e2e6636948cfc497a6f5b7c4b01ef24c07051b1d85a",
+   "category": "kids",
+   "effort": "M"
+  },
+  {
+   "topic_id": "dbe0efe5-4878-4379-ba64-75877b7e5633",
+   "text_hash": "1bc3bf8048ac5ebd65ea11d6f70920556fa8dde4bed9b89164b84513fe84a75f",
+   "category": "home_maintenance",
+   "effort": "M"
+  },
+  {
+   "topic_id": "dbed3a7d-f68f-40ad-a6c5-db522adf2486",
+   "text_hash": "6dc96b0c903994dc405a80e2c2fad77d81951f4c4289072a9721fa65ff4c10c1",
+   "category": "groceries",
+   "effort": "S"
+  },
+  {
+   "topic_id": "dc27a1ef-775e-4cb4-8110-f500a3e4bd63",
+   "text_hash": "ba5e333a47aa43bee96137143609ac40c2092a86df1bcf03b8a8120b9cbc20a2",
+   "category": "kids",
+   "effort": "S"
+  },
+  {
+   "topic_id": "dc973dd5-2df1-4c90-86f0-fa7996ffdfd5",
+   "text_hash": "0a49fd2b2c7a6293bbc686ae09675edc874364ec61396743466314414245c5d5",
+   "category": "chores",
+   "effort": "M"
+  },
+  {
+   "topic_id": "dcf9ab24-e9fc-4492-885d-3ddbe2ef62ea",
+   "text_hash": "4d50e2e22c467c734de097ec619b88c539efa6b4aa048faf6e065c2da0c52249",
+   "category": "chores",
+   "effort": "M"
+  },
+  {
+   "topic_id": "dd49e479-172c-49bd-b9ce-86badd4c986a",
+   "text_hash": "6ee146caf770a3f1044a27f609f69b6b557f7efa21c6293e4809d0dbe700219a",
+   "category": "chores",
+   "effort": "S"
+  },
+  {
+   "topic_id": "dd986656-2b76-461f-9cb2-43e7a5ef40e5",
+   "text_hash": "847467ef208a688365bd7d55dffd4fd45d144b664c63e508677e2200d116a8a4",
+   "category": "home_maintenance",
+   "effort": "S"
+  },
+  {
+   "topic_id": "dddee855-70ba-4b29-84ea-4ee8978a81a8",
+   "text_hash": "e7bbc3e3f3688ee16282b3e4131c96d34e5d06b66c5012196275cea9922d84f2",
+   "category": "chores",
+   "effort": "S"
+  },
+  {
+   "topic_id": "de1090e6-6e4b-4a2f-831c-e792408a1deb",
+   "text_hash": "4213f444a72f637ea21cb29ae71cd7ca17c0c5a84172afd25cbd9f28a73d3141",
+   "category": "chores",
+   "effort": "M"
+  },
+  {
+   "topic_id": "de14b9f0-1569-4b62-8f6b-7340d6679864",
+   "text_hash": "38b37e72c404c75622d1e8ff3ada8e2ac080ec1c724ecfecf7ba33f62c5fb591",
+   "category": "kids",
+   "effort": "S"
+  },
+  {
+   "topic_id": "de192fb6-4afc-4ce7-8d7a-60abc643c582",
+   "text_hash": "a62deab5959f3d5620494ebbb398ec79672a6dd9645aa8c2e2d275a65c0efb5a",
+   "category": "chores",
+   "effort": "M"
+  },
+  {
+   "topic_id": "de788aad-cd15-4fe9-ac4d-c6fa920a81ff",
+   "text_hash": "5445d3fdb1ec20e2653a7805a1971851cf27eb65714cdf173aa692c0e559fdf6",
+   "category": "groceries",
+   "effort": "S"
+  },
+  {
+   "topic_id": "dead4da3-52c9-4172-ae1f-fa0e8d52146f",
+   "text_hash": "63c8e45f3f5e78c0009a7bf7e7b9b0d8d1a9e255f9390fd3635a8d2427718b36",
+   "category": "social",
+   "effort": "S"
+  },
+  {
+   "topic_id": "ded112e3-5f68-43cd-957a-17bf741eec6a",
+   "text_hash": "43510e6952b8bcecfd081993836a15a9f306e28fc4e7e99de67535bd52e4eb4a",
+   "category": "chores",
+   "effort": "S"
+  },
+  {
+   "topic_id": "df2548ce-cd8c-434c-a693-5d7bc27ada41",
+   "text_hash": "791a45222271b7fb4c319dd3c055857f1abc1048cdb63aa1d8e9293c18b978b9",
+   "category": "kids",
+   "effort": "S"
+  },
+  {
+   "topic_id": "df716b00-cd8c-4d98-8b06-17726a100820",
+   "text_hash": "11a0640f163f81617ae2adc0b797f68f829e1802f0416172279ff271bdce2a9c",
+   "category": "home_maintenance",
+   "effort": "S"
+  },
+  {
+   "topic_id": "dffcb8c0-da07-4221-91ff-f472ecce8d11",
+   "text_hash": "68c5826e2b4b0d7d264d392843a1d8f69486be2eb2b6d5d599605084bbb09763",
+   "category": "groceries",
+   "effort": "S"
+  },
+  {
+   "topic_id": "e012e5d2-0c73-4bd6-b7fe-ca860e446f26",
+   "text_hash": "fc783056a2d188e069a4d6423b43dc9e8059225c36892de73d56bef65832ac1e",
+   "category": "groceries",
+   "effort": "S"
+  },
+  {
+   "topic_id": "e040328b-84fb-4556-aad4-492786fc5684",
+   "text_hash": "2c2cfb29a0727e42083892c2533cca7aa78b009c7f5f0193e87b09dc8f93f279",
+   "category": "groceries",
+   "effort": "S"
+  },
+  {
+   "topic_id": "e0d66c35-7a23-4c93-a92f-5e5453182c00",
+   "text_hash": "6d3b4cdd4f938450829540df442774f11de6ba422ee7656804ed9d0351101ce5",
+   "category": "kids",
+   "effort": "S"
+  },
+  {
+   "topic_id": "e1755d15-994c-45e0-a0bd-794e5081361e",
+   "text_hash": "bd07a184222d02d8a9b28ab6b8d28aa8f09d48e39f932b142431a55e5324ea4b",
+   "category": "other",
+   "effort": "S"
+  },
+  {
+   "topic_id": "e1b4df51-1144-40e3-ab46-1e90626c71d5",
+   "text_hash": "9dc8277d903dbd023145d0008f60bb79330390499b82d9bc2f2feb9fc9d27a56",
+   "category": "finance",
+   "effort": "M"
+  },
+  {
+   "topic_id": "e20a676f-0f98-4fb7-94fa-5104ed85533d",
+   "text_hash": "37326952577fe513d2574ae304d2eb6f0b77a7747f88995637c6b89d05f05838",
+   "category": "home_maintenance",
+   "effort": "S"
+  },
+  {
+   "topic_id": "e22da2e6-f775-45d7-8aac-67ec2942da89",
+   "text_hash": "ec083f29157e42a4ab6b22793fdf8897db4df82087be1973347b3aab026a3a7a",
+   "category": "home_maintenance",
+   "effort": "M"
+  },
+  {
+   "topic_id": "e2374145-1ca2-4aa6-9aa1-b90a056e4c23",
+   "text_hash": "e6592121c5a7ec815dd120adde390799278e21d34203326ff4a574ce10da0e1b",
+   "category": "social",
+   "effort": "M"
+  },
+  {
+   "topic_id": "e252ef61-ef0b-4003-8716-34b8e21bbe26",
+   "text_hash": "4443d3d51cf5b1d448cd79b22f5aa38d6b79534531a510965b0f306cd99df9d6",
+   "category": "groceries",
+   "effort": "S"
+  },
+  {
+   "topic_id": "e306cdb1-2a96-4af4-8eff-30e09dff5f0a",
+   "text_hash": "d5b0f05a434c2968e1c55afe84ef827c0731a4b5e731aaefb8bbfea4e8aa4cb0",
+   "category": "chores",
+   "effort": "M"
+  },
+  {
+   "topic_id": "e3aa7649-4282-48d9-9ad7-07209b008c7b",
+   "text_hash": "e7544b4608e72acb77ac1df15d776b0f68144c82b377c667df63a676d35ab77b",
+   "category": "home_maintenance",
+   "effort": "M"
+  },
+  {
+   "topic_id": "e3d78b2e-7470-4360-887d-f640b89ae762",
+   "text_hash": "a53f26071edac8e889e3ab57c8ab96b98577b42bbc7d38f129ca73790a4c3c8a",
+   "category": "kids",
+   "effort": "S"
+  },
+  {
+   "topic_id": "e4641076-cb8b-4295-bd90-9ea57bcdf963",
+   "text_hash": "7727cad11f5f37589a9022c46ae4b1c241a5bfd5a7034bb086499bbdb1d675cf",
+   "category": "home_maintenance",
+   "effort": "S"
+  },
+  {
+   "topic_id": "e4ee2df4-c4fb-4979-b788-5f864a310962",
+   "text_hash": "ce37515ca9834a9806659b29ee3dc860a7f7db94d63b0477406a0dd08f79aac9",
+   "category": "groceries",
+   "effort": "S"
+  },
+  {
+   "topic_id": "e510b7a6-a2e0-4d88-8da5-772033a560ef",
+   "text_hash": "9190f5a6ad031863707816a0e2d393108f08b7a108f8de2625d4749e821f0fc0",
+   "category": "groceries",
+   "effort": "S"
+  },
+  {
+   "topic_id": "e55ac56e-eaf7-48c9-9a1b-c9b269f02e5a",
+   "text_hash": "78039076fa74e0d9cb5240207bf17890183e4035f7c98a9be7425f7bd80ec664",
+   "category": "chores",
+   "effort": "S"
+  },
+  {
+   "topic_id": "e6317322-b04b-432d-a38c-4e7a257cbaba",
+   "text_hash": "ad02080bcac0166111bb25cec9358e058fddbca471505bcc5a42cfa238403151",
+   "category": "kids",
+   "effort": "S"
+  },
+  {
+   "topic_id": "e69a09f7-a295-4432-921a-4a8853ea8894",
+   "text_hash": "e34fccc144d110d6372488410c2e644eba4c4bf546e21e07b479d100ab9c3e88",
+   "category": "social",
+   "effort": "S"
+  },
+  {
+   "topic_id": "e6cf3e9c-c224-4ec3-9c39-216db4deffa5",
+   "text_hash": "0b464bcb0863fee881f7c14f83ec91c4d00e92be557c2698b43d4bf55fbe64b4",
+   "category": "kids",
+   "effort": "S"
+  },
+  {
+   "topic_id": "e6edb18b-c6f1-41c2-bc82-b83db348582c",
+   "text_hash": "6d4d805b267b2e499808d26b3580edfaafc8be77b03642b84936d6d0bb5b7443",
+   "category": "kids",
+   "effort": "S"
+  },
+  {
+   "topic_id": "e7040a94-0fb3-4268-ad1c-6f4633c049eb",
+   "text_hash": "a236908b3e2566a9a08ffcec45652ecd00c4c18f9e8e734f55ab5e60b29ec85e",
+   "category": "finance",
+   "effort": "S"
+  },
+  {
+   "topic_id": "e7663a3e-3eef-42fa-b523-d4ff50bac8fc",
+   "text_hash": "7cb270122b018d55d4b389ce2f9ae6306c531485c76a0ab41717347ac95efdba",
+   "category": "groceries",
+   "effort": "S"
+  },
+  {
+   "topic_id": "e7718778-60df-4d25-95d1-c7f0c27036dc",
+   "text_hash": "91d0209d9148f5803230d45561e06f8ea200deeeba1a5e0c088f4ccdea8579ae",
+   "category": "chores",
+   "effort": "S"
+  },
+  {
+   "topic_id": "e7952517-09e1-49ba-876e-d68638d6f0f7",
+   "text_hash": "34945bb686563490e541dfcda0bc76a04ccb380a359a67f2167fecb5c3fb9169",
+   "category": "chores",
+   "effort": "S"
+  },
+  {
+   "topic_id": "e7c72757-4ad7-4053-a217-50855372b155",
+   "text_hash": "a96f832cd0387ba2582c928c4a6cd9fd118f2762ff9968dbae2a29f917d15b6a",
+   "category": "kids",
+   "effort": "S"
+  },
+  {
+   "topic_id": "e7f8f358-b386-4394-b4d1-2fd638a37200",
+   "text_hash": "5671348029a469f47c256e63f0b6ce7871d36bb80b82beff0c9417d3b23452a3",
+   "category": "groceries",
+   "effort": "S"
+  },
+  {
+   "topic_id": "e83d3cad-4b2d-4411-b3cc-3eb861593dcf",
+   "text_hash": "ce367cbd92e317e5fc3182911f6304a273536c4c9bc4b857aacc08def609bb24",
+   "category": "finance",
+   "effort": "S"
+  },
+  {
+   "topic_id": "e853d751-12cf-4b7a-b038-190d9f215b94",
+   "text_hash": "d6478f3d248d20bd74f7198a46182a34c0d370320952e1a8c32ee4f7ed497ac7",
+   "category": "chores",
+   "effort": "S"
+  },
+  {
+   "topic_id": "e85d0711-78d6-47c5-9342-b38de16d23fb",
+   "text_hash": "80eadd3b0c075ac55b4d9bb5da335f7c5b3116cd110b2eaa55a7a9768b1b6e47",
+   "category": "chores",
+   "effort": "S"
+  },
+  {
+   "topic_id": "e8ed9b38-230b-47ec-a67c-d387a5f15474",
+   "text_hash": "78e3f28042209ea98a83fbbf99df5b9fa7a50950d37bea8aa3faf4e8296b3aac",
+   "category": "kids",
+   "effort": "S"
+  },
+  {
+   "topic_id": "e9971033-b12d-498e-a40f-49b262b9546d",
+   "text_hash": "b174ff528485de33dd3a32254119f5c7db06345b3f992f3752e58f70170cb753",
+   "category": "groceries",
+   "effort": "S"
+  },
+  {
+   "topic_id": "e9af3242-f951-4767-87af-b7794b4b2f4c",
+   "text_hash": "922360ff778df0b3572e094468633fd2547128145358a96a2c3d845aee7f556e",
+   "category": "groceries",
+   "effort": "S"
+  },
+  {
+   "topic_id": "ecc2d76c-1810-404a-a86f-94e7a1a51e9d",
+   "text_hash": "dff360abb07e667489166ae63cbf215fc71b1b1c5528aa399854932b71a8cda0",
+   "category": "groceries",
+   "effort": "S"
+  },
+  {
+   "topic_id": "ecd687ce-4869-477c-bd94-c70cb016107c",
+   "text_hash": "22e4b4bbb5a4aaac8164e27567d409c97932a6a1c03ae05d51aeec25afa1fb75",
+   "category": "home_maintenance",
+   "effort": "M"
+  },
+  {
+   "topic_id": "ed5eb818-4113-4922-9e6c-92f2252a9f13",
+   "text_hash": "f2317406dba280d65ee1810cda61e9d884845d7eb12dc20efc3eff2042fa8ff7",
+   "category": "home_maintenance",
+   "effort": "M"
+  },
+  {
+   "topic_id": "ee5a6f0a-46e4-49ed-8dd0-e2577c971f78",
+   "text_hash": "2dcd97a67488e8dfb7d3e3ef43bd36afac47cac3388f44d5986aea7384ec3682",
+   "category": "groceries",
+   "effort": "S"
+  },
+  {
+   "topic_id": "ee768164-7f20-4c7f-9847-e902ea110135",
+   "text_hash": "c3cc1d97cc7cfa866a4a9f7ec2d196a1a8daa28322675eff849ca4a5a5a88a0e",
+   "category": "chores",
+   "effort": "S"
+  },
+  {
+   "topic_id": "ef12cb2b-b0e8-404a-a6ee-2aa331f82ac7",
+   "text_hash": "ea339e6e8c7ecbc3ddae80a4d257a6fddfa60cf5858a7d72714a3df57cff169d",
+   "category": "chores",
+   "effort": "S"
+  },
+  {
+   "topic_id": "ef155825-4185-46da-838e-b9faf32a5146",
+   "text_hash": "6893eea4a05b8631406747ea3e82928db77744b92483c9a29fdf3b036cfde172",
+   "category": "home_maintenance",
+   "effort": "M"
+  },
+  {
+   "topic_id": "ef5be828-7467-441b-aac8-032864b0745b",
+   "text_hash": "e8976a5b3f5bcb4716a727943bbbc0a386a14a92b6986d3d722dc380a69dce20",
+   "category": "home_maintenance",
+   "effort": "S"
+  },
+  {
+   "topic_id": "f0c15e9a-6ee4-4993-88a2-a596dbd498af",
+   "text_hash": "ae2b610ed2522f9d1a0a7e38f074865cfbd7e4b03b6f917e91d5c50a5af0484d",
+   "category": "chores",
+   "effort": "S"
+  },
+  {
+   "topic_id": "f1000ffe-bd81-4d31-a4cf-688a532153b3",
+   "text_hash": "a832b1d582775bcc2fd9cbfea8aef613e1ae295468e6e80b71ebd02e258b9350",
+   "category": "chores",
+   "effort": "S"
+  },
+  {
+   "topic_id": "f2050b1d-3e67-4e17-a453-55507e7f4f33",
+   "text_hash": "2fc94fb4d2906321b30ebe77a348ce1e3ae082f5f1f766c59ae5342b1decb545",
+   "category": "groceries",
+   "effort": "S"
+  },
+  {
+   "topic_id": "f2c9a1bb-9072-4afd-b4d0-d3513525011e",
+   "text_hash": "6ffed6e8e58da636c42a4463066346b01785c52f4fb16c6be5fec60bd7883de7",
+   "category": "finance",
+   "effort": "S"
+  },
+  {
+   "topic_id": "f2e4ad82-855d-4ea6-995f-5b1f024a01d2",
+   "text_hash": "93455d7266adb7d3229dbd1bfce5dc7a140bf1dc379ca9f894b181e797647a26",
+   "category": "social",
+   "effort": "S"
+  },
+  {
+   "topic_id": "f30ef003-7d59-4c72-9cad-634cb55e9a9e",
+   "text_hash": "e002e4701d774947a82a7202381cecbcffbe8ce96b7eb1e2064a27986fe605ec",
+   "category": "chores",
+   "effort": "S"
+  },
+  {
+   "topic_id": "f3704b6f-8302-4e17-85a4-946cfaa8885e",
+   "text_hash": "81fb519e0c965a7d18ee738a5380ea8da46153a3a5b5d941142a55e6cd81aa0e",
+   "category": "kids",
+   "effort": "S"
+  },
+  {
+   "topic_id": "f37f0ebf-aa60-4a7d-99a7-958b8e346669",
+   "text_hash": "c8879af1be7d43bd8806cb09cb31cfe8d9123206c243c91f11a21ea016592a65",
+   "category": "kids",
+   "effort": "S"
+  },
+  {
+   "topic_id": "f4d42c71-5237-4828-9d9f-d677a458fdfe",
+   "text_hash": "0a666f612b3a9b88d7a60d6ef355f7761569c2878ad89ca301aa6b9bb8993c63",
+   "category": "kids",
+   "effort": "M"
+  },
+  {
+   "topic_id": "f4fed67c-82d8-4cc5-8e60-b32471c01e2c",
+   "text_hash": "a7b440f793b1d53020b19d2996bea23c57158e522e0031c1fc97417f1be32f0d",
+   "category": "groceries",
+   "effort": "S"
+  },
+  {
+   "topic_id": "f50fc900-6e03-467a-bbe0-c3760e432b0b",
+   "text_hash": "0704026db411056b5977563c17f0ca407e78700106547da49f231ee94868e4b0",
+   "category": "other",
+   "effort": "S"
+  },
+  {
+   "topic_id": "f56bc2ea-43e4-4736-866a-be4fa758dec2",
+   "text_hash": "d6c760a447ac7614b47c7cb7fa276481c3abb434c3a5a56d0a61a9c9ef9c4d68",
+   "category": "groceries",
+   "effort": "S"
+  },
+  {
+   "topic_id": "f5783538-a707-47c0-998e-bf5be833e26c",
+   "text_hash": "735e673a614c5380eb92d18cdbc1562872df8d22503044dd539a388b9bdc535a",
+   "category": "home_maintenance",
+   "effort": "S"
+  },
+  {
+   "topic_id": "f599326f-6256-4ce2-a484-c1de13a5fcfd",
+   "text_hash": "66de46a1793a8f121ccd1f3cbe0877f68cbf0c5e2bcb821684bb33649ade9da2",
+   "category": "chores",
+   "effort": "S"
+  },
+  {
+   "topic_id": "f64a59c4-f751-4c74-8e5c-ecdbbb8a622c",
+   "text_hash": "bbb04aeb27ec4afd154941fb05333fdbf5c26b1a823924ae71d91d352ad4683a",
+   "category": "kids",
+   "effort": "S"
+  },
+  {
+   "topic_id": "f6ae3d35-caff-4c01-ab6d-02db8766fe93",
+   "text_hash": "aad54254efa62b737f8bd1ee0f7dfc4762521af4054b704ed4c44ab48426e70b",
+   "category": "kids",
+   "effort": "S"
+  },
+  {
+   "topic_id": "f6e74566-68c8-4b7d-a051-a9f7e0708a8e",
+   "text_hash": "78039076fa74e0d9cb5240207bf17890183e4035f7c98a9be7425f7bd80ec664",
+   "category": "chores",
+   "effort": "S"
+  },
+  {
+   "topic_id": "f7b374dc-c841-4176-b83a-9b82061e1f94",
+   "text_hash": "36d0bd0827c3edde37da4390f4beed485bc955c53569aee0f0b7138d49c1338c",
+   "category": "chores",
+   "effort": "S"
+  },
+  {
+   "topic_id": "f83ec6ac-34d8-459d-85a3-9a1e532e3a33",
+   "text_hash": "faed18e73962db1580a27bd7f6a1b0fafecef16033fd53da3d880feff3ac4f88",
+   "category": "chores",
+   "effort": "M"
+  },
+  {
+   "topic_id": "f884b89f-ec55-40c2-b7a9-a58787647392",
+   "text_hash": "411aad63e06f8e142c51d2c100515a34f046fc36b5ca212196a7c91b49f6ba78",
+   "category": "kids",
+   "effort": "S"
+  },
+  {
+   "topic_id": "f8ad4824-8cf8-4aa4-8969-a8c6bc84a9d8",
+   "text_hash": "f1b33e7464b4f8cbc5201fd73ea3d0b975f05b92074bb1264c30d8326425a79d",
+   "category": "social",
+   "effort": "L"
+  },
+  {
+   "topic_id": "f924b032-c990-41c2-a479-ef1a3f858bf6",
+   "text_hash": "ee8ab7240b7be9db869708161630ef2dc08e11302728280c12271728ce03f1a4",
+   "category": "social",
+   "effort": "S"
+  },
+  {
+   "topic_id": "f94da3a3-189f-44fa-b17f-f0dbdd6ca175",
+   "text_hash": "ac40618b5356faf22df00b15323fd2c3412707a3ee69d68b8ea6bbe5187058c0",
+   "category": "home_maintenance",
+   "effort": "S"
+  },
+  {
+   "topic_id": "f9d28e64-636b-4369-9faa-c1e2c3e0258f",
+   "text_hash": "c4321e907e4ddf693f1b14287da565288b44b19716adfae21d12ef4bc5cb53cf",
+   "category": "chores",
+   "effort": "S"
+  },
+  {
+   "topic_id": "f9d5f399-1435-4a9f-bfe1-8e64ee17dd21",
+   "text_hash": "8be84deac41d9ce4497af3a77487a9aeddad0c1a28f33f59c69c6475cb43ccde",
+   "category": "home_maintenance",
+   "effort": "S"
+  },
+  {
+   "topic_id": "fa0c710b-948d-4e65-968b-d4c8ccbfd559",
+   "text_hash": "1178fa203c24746b49020d5b91dfb61bfcd6d145f1b74553f27cfcea16fe6115",
+   "category": "groceries",
+   "effort": "S"
+  },
+  {
+   "topic_id": "fa70d7da-1dad-45ba-9eab-6877e3010934",
+   "text_hash": "acc12d83c6b2d3de8705908698dd42159aadf2ac4df4ad2529d2d75a78feac67",
+   "category": "groceries",
+   "effort": "S"
+  },
+  {
+   "topic_id": "fab1cb8e-dd07-47ef-9b36-9b3749626dac",
+   "text_hash": "e4681bd9f3d8d39c5b0f09fa8fd37a9ff4159608d5f7ca36423cf72f8883e400",
+   "category": "social",
+   "effort": "S"
+  },
+  {
+   "topic_id": "faffe57b-bd83-4ac1-917e-28adf4e6160a",
+   "text_hash": "f34f0f34118a632c00ada092926e4c109d7e2812b3340bc3ab2f75439b97c009",
+   "category": "groceries",
+   "effort": "S"
+  },
+  {
+   "topic_id": "fb5ec985-e485-4bbc-8068-dd1d307ddbe6",
+   "text_hash": "9d0adaf602f73ea5544170e6cddc31523844c21d7fa9bfad5456f35a21fa20f3",
+   "category": "kids",
+   "effort": "M"
+  },
+  {
+   "topic_id": "fd77d26c-3234-4400-b080-c347322bcb6a",
+   "text_hash": "08da1ab56da13efe286a9fda576b4fe82cd221e2db0f297aeb9b557d89fe0c74",
+   "category": "groceries",
+   "effort": "S"
+  },
+  {
+   "topic_id": "fda913c7-df0a-4e41-ba86-e32150865138",
+   "text_hash": "94aafc88b1ba6cf982d6764acedcb9d244c0a0bf2b54af2318966eb15d25edd5",
+   "category": "chores",
+   "effort": "S"
+  },
+  {
+   "topic_id": "fdd20e0a-9249-4743-8698-8fe0b18c9b87",
+   "text_hash": "b102997967be53993abfb04a093070e8cb9b238914285b833ee34c079269c08c",
+   "category": "home_maintenance",
+   "effort": "M"
+  },
+  {
+   "topic_id": "fea559aa-f0f0-4b4d-8ac1-4f01c9d0f2a6",
+   "text_hash": "16fdcb46c0a2e65f0f3f8eaa86b03133afba49d50169d77bd5131883358c1314",
+   "category": "social",
+   "effort": "S"
+  },
+  {
+   "topic_id": "fefa3151-004b-405b-aa4a-71f4289f5151",
+   "text_hash": "af24d81d7452b7a1c3bdf0a302b3f88afd4f800e8995d3ef75e755624de62af8",
+   "category": "chores",
+   "effort": "S"
+  },
+  {
+   "topic_id": "ff01d73f-6881-4b37-8126-8e00584f5ab7",
+   "text_hash": "89ca5f97f6d2404501bf0cfda589773178f2a9a4c22b087b0023cd68706b62da",
+   "category": "finance",
+   "effort": "S"
+  },
+  {
+   "topic_id": "ff5d1e76-a3e2-4127-8f8f-3019cea7cbb5",
+   "text_hash": "bdff8714eb8570ce5c486ee53ceadeb15c5ec60385fb1a0ca3309822430b218b",
+   "category": "kids",
+   "effort": "S"
+  },
+  {
+   "topic_id": "ffb88927-885a-481f-82c4-03e56f9f654a",
+   "text_hash": "345b3ae1c4369d3e56c9142a90a8818dd0bcebcc46fddcc1d3635c7348b1af29",
+   "category": "chores",
+   "effort": "S"
+  }
+ ]
+}

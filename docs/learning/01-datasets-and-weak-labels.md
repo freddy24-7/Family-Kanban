@@ -76,6 +76,17 @@ estimate performance on new data. Rules:
    the model can just memorise it. Training excludes any text whose normalised hash is
    in a holdout manifest.
 
+## What happened in this project
+
+- 2,400 synthetic tickets, 12 families. Class imbalance 6.4× (`chores` 24% → `other` 4%);
+  effort 80% S, 19% M, **1.4% L**.
+- Weak-label noise seen by hand: *"huiswerk maken geschiedenis"* labelled `other` (rules say
+  `kids`); genuinely ambiguous cases like *"band plakken bram"*.
+- Gemini invented pets for 0.8% of tickets (hallucination) → prompt `gen-v2`.
+- `holdout-sim-v1`: 3 whole families (600 tickets). Excluding exact duplicates of holdout
+  texts removed **85** tickets (5%) from training that would otherwise have leaked answers.
+- Details: [EDA notebook](../../notebooks/01-eda-seed-dataset.ipynb).
+
 ## Self-check
 
 1. Why is `household_id` not a feature, even though it might improve accuracy?

@@ -1,6 +1,6 @@
 # Build Plan — Family Kanban
 
-**Status**: Phase 1 complete (2026-09-25) · next: Phase 2
+**Status**: Phase 2 complete (2026-09-29) · next: Phase 3
 
 Sized for ~8–10 hours/week. Each phase ends with something demonstrable.
 Phases marked 🎓 include ML lessons: before building, the concept is explained;
@@ -87,6 +87,14 @@ Railway deploy is a manual step for the developer: [deploy.md](deploy.md).
 
 **Done when**: a seed dataset of a few thousand Dutch tickets exists, EDA notebook
 reviewed, holdout frozen.
+
+**Outcome**: 2,400 tickets (12 families × 200) in production, prompt `gen-v1`, ~345k tokens.
+Snapshot `seed-v1` (hash `b81598bf…`). `holdout-sim-v1` frozen: typical-2, typical-5,
+city-apartment (600 tickets); training frame 1,715 tickets after excluding holdout families
+and 85 exact duplicates of holdout texts. EDA findings in `notebooks/01-eda-seed-dataset.ipynb`
+(effort 80% S / 1.4% L, 34% of tickets mention names, ~600 cross-family near-duplicates).
+Carry into Phase 3: majority baseline for effort, class weights, exclude *near*-duplicates
+of holdout texts, optional name-masking experiment.
 
 ---
 
