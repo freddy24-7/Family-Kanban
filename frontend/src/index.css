@@ -1,9 +1,93 @@
+@import 'tailwindcss';
+
+/* Design tokens. Category colours follow the validated categorical palette order
+   (blue, orange, aqua, yellow, magenta, green, violet): the same colour means the same
+   category everywhere, including the later model dashboard. */
 :root {
-  font-family: system-ui, sans-serif;
-  color-scheme: light dark;
+  --page: #f9f9f7;
+  --surface: #ffffff;
+  --surface-2: #f0efec;
+  --border: #e4e2dc;
+  --ink: #0b0b0b;
+  --ink-2: #52514e;
+  --ink-3: #898781;
+  --accent: #2a78d6;
+  --accent-ink: #ffffff;
+  --warn: #b25e00;
+  --warn-bg: #fff4e0;
+  --danger: #d03b3b;
+  --good: #0c7a0c;
+  --cat-chores: #2a78d6;
+  --cat-groceries: #eb6834;
+  --cat-kids: #1baf7a;
+  --cat-home_maintenance: #c98500;
+  --cat-finance: #e87ba4;
+  --cat-social: #008300;
+  --cat-other: #4a3aa7;
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --page: #0d0d0d;
+    --surface: #1a1a19;
+    --surface-2: #262624;
+    --border: #383835;
+    --ink: #ffffff;
+    --ink-2: #c3c2b7;
+    --ink-3: #898781;
+    --accent: #3987e5;
+    --warn: #fab219;
+    --warn-bg: #2e2412;
+    --danger: #e66767;
+    --good: #3fb83f;
+    --cat-chores: #3987e5;
+    --cat-groceries: #d95926;
+    --cat-kids: #199e70;
+    --cat-home_maintenance: #c98500;
+    --cat-finance: #d55181;
+    --cat-social: #2f9e2f;
+    --cat-other: #9085e9;
+    color-scheme: dark;
+  }
+}
+
+@theme inline {
+  --color-page: var(--page);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-line: var(--border);
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-ink-3: var(--ink-3);
+  --color-accent: var(--accent);
+  --color-accent-ink: var(--accent-ink);
+  --color-warn: var(--warn);
+  --color-warn-bg: var(--warn-bg);
+  --color-danger: var(--danger);
+  --color-good: var(--good);
+}
+
+html,
+body {
+  background: var(--page);
+  color: var(--ink);
+  font-family:
+    system-ui,
+    -apple-system,
+    'Segoe UI',
+    Roboto,
+    sans-serif;
+  -webkit-tap-highlight-color: transparent;
 }
 
 body {
   margin: 0;
-  padding: 16px;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
 }
