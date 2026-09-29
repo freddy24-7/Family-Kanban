@@ -1,6 +1,6 @@
 # Build Plan — Family Kanban
 
-**Status**: Phase 2 complete (2026-09-29) · next: Phase 3
+**Status**: Phase 3 complete (2026-09-29) · next: Phase 4
 
 Sized for ~8–10 hours/week. Each phase ends with something demonstrable.
 Phases marked 🎓 include ML lessons: before building, the concept is explained;
@@ -127,6 +127,13 @@ of holdout texts, optional name-masking experiment.
 
 **Done when**: submitting a topic returns a real prediction from `ModelVersion 1`,
 metrics on holdout-sim-v1 are recorded, and you can explain the confusion matrix.
+
+**Outcome**: `category-v1` (holdout macro-F1 0.929, 95% CI 0.899–0.952; keyword rules 0.662)
+and `effort-v1` (ordinal; macro-F1 0.709 vs majority 0.295; L recall 0.5 on 10 tickets) active
+in production, promoted by a paired-bootstrap gate. Role tokens (`naamkind`/`naamouder`) replace
+household names (needs `Membership.is_child`); temperature scaling (ECE ≈ 0.03 on holdout);
+review threshold 0.8. Artifacts in Postgres. An ML review before promotion found 3 blockers
+(temperature class order, DB-dependent masking, missing CLI flag), all fixed. Lessons 02 and 03.
 
 ---
 
