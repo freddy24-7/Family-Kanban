@@ -74,3 +74,17 @@ CORS_ORIGINS = [
 # classifier reports 0.0, so everything is flagged until a real model exists.
 # Phase 3 replaces this default with a value chosen from calibration data.
 LOW_CONFIDENCE_THRESHOLD = _env_number("LOW_CONFIDENCE_THRESHOLD", 0.6, float)
+
+# --- LLM (Gemini): dormant until GEMINI_API_KEY is set ------------------------------
+GEMINI_API_KEY = _env("GEMINI_API_KEY")
+# Tried in order; falls through on overload/rate-limit/retired-model errors. The
+# floating "-latest" alias last is the safety net against model retirement.
+GEMINI_MODELS = [
+    m.strip()
+    for m in _env("GEMINI_MODELS", "gemini-3.5-flash,gemini-3.8-flash,gemini-flash-latest").split(
+        ","
+    )
+    if m.strip()
+]
+# Hard cap per generation run (input + output tokens), to bound cost.
+LLM_MAX_TOKENS_PER_RUN = _env_number("LLM_MAX_TOKENS_PER_RUN", 600_000, int)

@@ -24,6 +24,8 @@ see [backend/ml/CLAUDE.md](backend/ml/CLAUDE.md).
   (tests build a `famkanban_test` DB from the real migrations; the DB container must be running)
 - Migrations: `cd backend && uv run alembic revision --autogenerate -m "..."` → review → `uv run alembic upgrade head`; `uv run alembic check` must be clean
 - Make platform admin: `cd backend && uv run python -m app.cli make-admin <email>`
+- Demo families / synthetic tickets: `cd backend && uv run python -m sim.seed_dataset --presets typical-1 --tickets 25`
+  (writes to whatever `DATABASE_URL` points at; label rules: `backend/app/labeling_guidelines.md`)
 - Deploy: see [docs/deploy.md](docs/deploy.md)
 - Frontend: `cd frontend && npm run dev` · `npm run build` · `npm run lint` · `npm run format`
 
@@ -48,7 +50,7 @@ Dutch). Code, identifiers, comments, docs, commits: **English**. Never Norwegian
 - **Training eligibility**: only households with `training_eligible = true` feed training.
 - **Clock**: domain time comes from the injectable clock, never `datetime.now()` directly
   (the simulator fast-forwards time).
-- **One module per external dependency**: Gemini only in `llm.py`, email only in
+- **One module per external dependency**: Gemini only in `app/llm.py`, email only in
   `app/mailer.py`, fastapi-users only in `app/auth.py`, DB queries only in
   `app/repository.py`, artifacts only via `ml/registry.py`.
   External services are env-gated and fail soft; the database fails loud.

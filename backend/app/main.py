@@ -7,7 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app import config, repository
 from app.auth import include_auth_routers
 from app.db import SessionFactory
-from app.routers import households, topics
+from app.routers import demo, households, topics
 
 # App loggers at INFO (uvicorn only configures its own). In development the
 # mailer logs verification/reset/invite links here.
@@ -43,3 +43,4 @@ def health() -> dict[str, str]:
 include_auth_routers(app)
 app.include_router(households.router)
 app.include_router(topics.router)
+app.include_router(demo.router)

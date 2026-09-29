@@ -2,8 +2,8 @@
 
 Tenancy: every tenant-owned table carries household_id.
 Provenance: topics and predictions carry `source` (real | simulated).
-Predictions are append-only. Sprint tables arrive in Phase 4, simulator
-tables (FamilyProfile, SimulationRun, HoldoutSet) in Phase 2.
+Predictions are append-only. Sprint tables arrive in Phase 4, SimulationRun in
+Phase 5. Frozen holdouts are committed manifest files (data/holdout/), not tables.
 """
 
 import uuid
@@ -160,6 +160,10 @@ class Topic(Base):
     # bias: if people rubber-stamp predictions, measured accuracy is inflated.
     category_prediction_changed: Mapped[bool | None] = mapped_column(Boolean)
     effort_prediction_changed: Mapped[bool | None] = mapped_column(Boolean)
+    # Data lineage: which generator run produced this (synthetic) topic.
+    generation_run_id: Mapped[uuid.UUID | None] = mapped_column(
+        ForeignKey("generation_run.id", ondelete="SET NULL"), index=True
+    )
 
 
 class ModelVersion(Base):
@@ -213,3 +217,49 @@ class Prediction(Base):
     source: Mapped[Source] = mapped_column(str_enum(Source), nullable=False)
     occurred_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
     created_at: Mapped[datetime] = created_at()
+
+
+# --- Demo / simulation ------------------------------------------------------------
+
+
+class FamilyProfile(Base):
+    """Definition of a simulated family (members, home, pets, vehicles)."""
+
+    __tablename__ = "family_profile"
+
+    household_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("household.id", ondelete="CASCADE"), primary_key=True
+    )
+    spec: Mapped[dict[str, Any]] = mapped_column(JSONB, nullable=False)
+    preset_key: Mapped[str | None] = mapped_column(String(50))
+    random_seed: Mapped[int] = mapped_column(Integer, nullable=False)
+    created_at: Mapped[datetime] = created_at()
+
+
+class GenerationRun(Base):
+    """One call of the ticket generator for a household: what was asked, what came
+    back, what was rejected, and what it cost. LLM output is not reproducible, so
+    this record (plus the prompt version) is the lineage of every synthetic topic."""
+
+    __tablename__ = "generation_run"
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    household_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("household.id", ondelete="CASCADE"), index=True, nullable=False
+    )
+    status: Mapped[str] = mapped_column(String(20), nullable=False)  # running|completed|failed
+    prompt_version: Mapped[str] = mapped_column(String(20), nullable=False)
+    random_seed: Mapped[int] = mapped_column(Integer, nullable=False)
+    requested: Mapped[int] = mapped_column(Integer, nullable=False)
+    produced: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    rejected_invalid: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    rejected_duplicate: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    # Gemini labelled the text differently from the category we asked for:
+    # a direct measure of how ambiguous the categories are.
+    category_mismatches: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    models_used: Mapped[dict[str, int]] = mapped_column(JSONB, default=dict, nullable=False)
+    tokens_in: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    tokens_out: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    error: Mapped[str | None] = mapped_column(Text)
+    created_at: Mapped[datetime] = created_at()
+    finished_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))

@@ -6,6 +6,7 @@ from datetime import date, datetime
 from pydantic import BaseModel, ConfigDict, EmailStr, Field
 
 from app.domain import Category, Effort, LabelSource, Source
+from sim.family import FamilySpec
 
 
 class ORMModel(BaseModel):
@@ -110,3 +111,39 @@ class TopicRead(BaseModel):
     source: Source
     prediction: PredictionRead
     labels: LabelsRead
+
+
+# --- Demo families (platform admin) --------------------------------------------------
+
+
+class DemoFamilyCreate(BaseModel):
+    """Either a preset key or a full spec."""
+
+    preset: str | None = None
+    spec: FamilySpec | None = None
+    name: str | None = Field(default=None, max_length=100)
+    training_eligible: bool = False
+    random_seed: int | None = None
+
+
+class GenerationRequest(BaseModel):
+    count: int = Field(ge=1, le=500)
+    random_seed: int | None = None
+
+
+class GenerationRunRead(ORMModel):
+    id: uuid.UUID
+    household_id: uuid.UUID
+    status: str
+    prompt_version: str
+    requested: int
+    produced: int
+    rejected_invalid: int
+    rejected_duplicate: int
+    category_mismatches: int
+    models_used: dict[str, int]
+    tokens_in: int
+    tokens_out: int
+    error: str | None
+    created_at: datetime
+    finished_at: datetime | None

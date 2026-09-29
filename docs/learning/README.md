@@ -5,4 +5,4 @@ language, where it lives in this codebase, how to read its results, and self-che
 
 | # | Topic | Phase |
 |---|---|---|
-| — | (notes are added from Phase 2 onwards) | |
+| 01 | [Datasets, weak labels and the frozen holdout](01-datasets-and-weak-labels.md) | 2 |

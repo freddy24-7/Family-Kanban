@@ -8,7 +8,17 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.domain import ModelStatus, Source, Task
-from app.models import Household, Invite, Membership, ModelVersion, Prediction, Topic, User
+from app.models import (
+    FamilyProfile,
+    GenerationRun,
+    Household,
+    Invite,
+    Membership,
+    ModelVersion,
+    Prediction,
+    Topic,
+    User,
+)
 
 # --- Households & memberships -------------------------------------------------
 
@@ -143,3 +153,22 @@ async def ensure_stub_model_versions(session: AsyncSession) -> None:
 def source_for(household: Household) -> Source:
     """Provenance is derived from the household, never chosen by the caller."""
     return household.kind
+
+
+# --- Demo families ----------------------------------------------------------------
+
+
+async def get_family_profile(
+    session: AsyncSession, household_id: uuid.UUID
+) -> FamilyProfile | None:
+    return await session.get(FamilyProfile, household_id)
+
+
+async def list_topic_texts(session: AsyncSession, household_id: uuid.UUID) -> Sequence[str]:
+    return (
+        await session.scalars(select(Topic.text).where(Topic.household_id == household_id))
+    ).all()
+
+
+async def get_generation_run(session: AsyncSession, run_id: uuid.UUID) -> GenerationRun | None:
+    return await session.get(GenerationRun, run_id)

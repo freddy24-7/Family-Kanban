@@ -52,8 +52,8 @@ async def clean_tables(database):
     async with SessionFactory() as session:
         await session.execute(
             text(
-                "TRUNCATE prediction, topic, invite, membership, accesstoken, oauth_account, "
-                '"user", household, model_version CASCADE'
+                "TRUNCATE prediction, topic, generation_run, family_profile, invite, membership, "
+                'accesstoken, oauth_account, "user", household, model_version CASCADE'
             )
         )
         await session.commit()
