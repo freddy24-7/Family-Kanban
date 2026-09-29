@@ -72,8 +72,17 @@ def dataset_hash(df: pd.DataFrame) -> str:
     return digest.hexdigest()
 
 
-def save_snapshot(df: pd.DataFrame, name: str, directory: Path = SNAPSHOT_DIR) -> dict:
-    """Write <name>.parquet + <name>.json (metadata). Never overwrites."""
+def save_snapshot(
+    df: pd.DataFrame,
+    name: str,
+    directory: Path = SNAPSHOT_DIR,
+    members: dict[str, list[tuple[str, bool]]] | None = None,
+) -> dict:
+    """Write <name>.parquet + <name>.json (metadata). Never overwrites.
+
+    `members` (household -> [(name, is_child)]) is stored in the metadata so that
+    role-token masking is reproducible from the snapshot alone, independent of which
+    database happens to be configured."""
     directory.mkdir(parents=True, exist_ok=True)
     data_path, meta_path = directory / f"{name}.parquet", directory / f"{name}.json"
     if data_path.exists() or meta_path.exists():
@@ -88,6 +97,11 @@ def save_snapshot(df: pd.DataFrame, name: str, directory: Path = SNAPSHOT_DIR) -
         "by_category": df["category"].value_counts().to_dict(),
         "by_effort": df["effort"].value_counts().to_dict(),
     }
+    if members is not None:
+        households = set(df["household_id"])
+        kept = {h: [list(m) for m in ms] for h, ms in sorted(members.items()) if h in households}
+        meta["members"] = kept
+        meta["members_hash"] = hashlib.sha256(json.dumps(kept, sort_keys=True).encode()).hexdigest()
     df.to_parquet(data_path, index=False)
     meta_path.write_text(json.dumps(meta, indent=2, default=str) + "\n")
     return meta
@@ -145,3 +159,16 @@ def load_household_members(database_url: str | None = None) -> dict[str, list[tu
     for household_id, name, is_child in rows:
         members.setdefault(household_id, []).append((name, bool(is_child)))
     return members
+
+
+def load_snapshot_members(
+    name: str, directory: Path = SNAPSHOT_DIR
+) -> dict[str, list[tuple[str, bool]]]:
+    meta = json.loads((directory / f"{name}.json").read_text())
+    if "members" not in meta:
+        raise ValueError(f"Snapshot {name!r} has no member lists; create a newer snapshot")
+    members = meta["members"]
+    digest = hashlib.sha256(json.dumps(members, sort_keys=True).encode()).hexdigest()
+    if digest != meta["members_hash"]:
+        raise ValueError(f"Snapshot {name!r} member lists do not match their hash")
+    return {h: [(n, bool(c)) for n, c in ms] for h, ms in members.items()}

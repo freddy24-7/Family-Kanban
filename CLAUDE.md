@@ -26,7 +26,7 @@ see [backend/ml/CLAUDE.md](backend/ml/CLAUDE.md).
 - Make platform admin: `cd backend && uv run python -m app.cli make-admin <email>`
 - Demo families / synthetic tickets: `cd backend && uv run python -m sim.seed_dataset --presets typical-1 --tickets 25`
   (writes to whatever `DATABASE_URL` points at; label rules: `backend/app/labeling_guidelines.md`)
-- Train/evaluate/register: `cd backend && uv run python -m ml.train --snapshot seed-v1 --task all [--dry-run | --promote]`
+- Train/evaluate/register: `cd backend && uv run python -m ml.train --snapshot seed-v2 --task all [--dry-run | --promote]`
   (reads snapshot + household members; evaluates on every frozen holdout next to the champion)
 - Holdouts: `uv run python -m ml.holdout suggest|freeze ...` · snapshots in `data/datasets/` (not committed)
 - Deploy: see [docs/deploy.md](docs/deploy.md)

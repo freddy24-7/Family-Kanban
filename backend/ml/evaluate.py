@@ -42,6 +42,23 @@ def bootstrap_ci(
     return float(np.quantile(scores, alpha)), float(np.quantile(scores, 1 - alpha))
 
 
+def paired_bootstrap_delta(
+    y_true, pred_new, pred_old, metric: Callable = macro_f1, n: int = 1000, seed: int = 0
+) -> tuple[float, float, float]:
+    """Difference metric(new) - metric(old) on the SAME resampled rows each time.
+    Pairing removes the noise both models share (which tickets happened to be in the
+    test set), so it detects real improvements that two separate intervals would miss.
+    Returns (delta, ci95_low, ci95_high)."""
+    y_true, pred_new, pred_old = np.asarray(y_true), np.asarray(pred_new), np.asarray(pred_old)
+    rng = np.random.default_rng(seed)
+    deltas = []
+    for _ in range(n):
+        idx = rng.integers(0, len(y_true), len(y_true))
+        deltas.append(metric(y_true[idx], pred_new[idx]) - metric(y_true[idx], pred_old[idx]))
+    delta = metric(y_true, pred_new) - metric(y_true, pred_old)
+    return float(delta), float(np.quantile(deltas, 0.025)), float(np.quantile(deltas, 0.975))
+
+
 def summarise(y_true, y_pred, ordinal: bool = False, ci: bool = True) -> dict:
     out = {
         "n": len(y_true),

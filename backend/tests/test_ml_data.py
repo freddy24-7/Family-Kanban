@@ -115,3 +115,26 @@ def test_near_duplicates_of_holdout_are_excluded(tmp_path):
     train, report = training_frame(df, load_manifests(tmp_path))
     assert list(train["topic_id"]) == ["t2"]
     assert report["excluded_near_duplicate_of_holdout"] == 1
+
+
+def test_snapshot_members_roundtrip_and_tamper_check(df, tmp_path):
+    from ml.datasets import load_snapshot_members
+
+    members = {"h1": [("Lieke", True)], "h2": [("Jeroen", False)], "other": [("X", False)]}
+    save_snapshot(df, "snap", tmp_path, members=members)
+    loaded = load_snapshot_members("snap", tmp_path)
+    assert loaded == {
+        "h1": [("Lieke", True)],
+        "h2": [("Jeroen", False)],
+    }  # only snapshot households
+    meta_path = tmp_path / "snap.json"
+    meta_path.write_text(meta_path.read_text().replace("Lieke", "Sem"))
+    with pytest.raises(ValueError, match="hash"):
+        load_snapshot_members("snap", tmp_path)
+
+
+def test_exclude_similar_on_masked_text():
+    from ml.holdout import exclude_similar
+
+    mask = exclude_similar(["naamkind zwemles", "gras maaien", "melk halen"], ["Naamkind zwemles!"])
+    assert list(mask) == [True, False, False]

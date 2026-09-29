@@ -9,6 +9,7 @@ from app.domain import ModelStatus, Task
 from app.models import ModelVersion, Prediction
 from ml import registry
 from ml.calibration import TemperatureScaled, apply_temperature, fit_temperature
+from ml.evaluate import macro_f1, paired_bootstrap_delta
 from ml.models import TextModelConfig, build_text_classifier
 from ml.text import mask_member_names
 from ml.train import promotion_decision
@@ -53,13 +54,30 @@ def test_temperature_scaling_direction():
     assert np.allclose(p.sum(axis=1), 1) and p.max() > 0.6
 
 
+def _holdout(delta, low, high, missing=0, real=None):
+    h = {"report": {"missing": missing}, "delta_vs_champion": {"delta": delta, "ci95": (low, high)}}
+    if real is not None:
+        h["delta_vs_champion_real"] = {"delta": real}
+    return h
+
+
 def test_promotion_gate():
-    assert promotion_decision({"h1": {"macro_f1": 0.9}}, {"h1": {"macro_f1": 0.1}})[0]
-    ok, reason = promotion_decision(
-        {"h1": {"macro_f1": 0.9}, "h2": {"macro_f1": 0.5}},
-        {"h1": {"macro_f1": 0.1}, "h2": {"macro_f1": 0.6}},
-    )
-    assert not ok and "h2" in reason
+    assert promotion_decision({"h1": _holdout(0.5, 0.4, 0.6)})[0]
+    ok, reason = promotion_decision({"h1": _holdout(0.02, -0.01, 0.05)})  # within noise
+    assert not ok and "not clearly above zero" in reason
+    ok, reason = promotion_decision({"h1": _holdout(0.5, 0.4, 0.6, missing=3)})
+    assert not ok and "missing" in reason
+    ok, reason = promotion_decision({"h1": _holdout(0.5, 0.4, 0.6, real=-0.02)})
+    assert not ok and "real data" in reason
+
+
+def test_paired_bootstrap_detects_improvement():
+    y = np.array(["a", "b"] * 50)
+    better, worse = y.copy(), y.copy()
+    worse[:20] = np.where(worse[:20] == "a", "b", "a")
+    delta, low, high = paired_bootstrap_delta(y, better, worse, macro_f1)
+    assert delta > 0 and low > 0
+    assert paired_bootstrap_delta(y, y, y, macro_f1) == (0.0, 0.0, 0.0)
 
 
 def _register_and_promote(estimator, preprocessing="role-mask-v1", sklearn_version=None) -> str:
@@ -138,3 +156,12 @@ def test_version_mismatch_is_refused():
         registry._deserialize(data, digest, {"sklearn_version": "0.1.0"})
     with pytest.raises(registry.ModelLoadError, match="hash"):
         registry._deserialize(data, "0" * 64, {})
+
+
+def test_temperature_respects_non_alphabetical_class_order():
+    """Effort columns are S, M, L (not alphabetical). A searchsorted lookup would
+    point at the wrong column or crash."""
+    y = np.array(["S", "M", "L"] * 30)
+    proba = np.tile([0.2, 0.2, 0.2], (90, 1))
+    proba[np.arange(90), np.arange(90) % 3] = 0.6  # right answer always gets 0.6
+    assert fit_temperature(proba, y, ["S", "M", "L"]) < 1  # underconfident -> sharpen

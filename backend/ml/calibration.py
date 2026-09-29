@@ -17,7 +17,10 @@ def apply_temperature(proba: np.ndarray, temperature: float) -> np.ndarray:
 
 def fit_temperature(proba: np.ndarray, y, classes) -> float:
     """T minimising the negative log-likelihood of the true labels."""
-    index = np.searchsorted(np.asarray(classes), np.asarray(y))
+    # Column position of each true label. Not searchsorted: `classes` may be in a
+    # meaningful, non-alphabetical order (effort is S, M, L).
+    position = {str(c): i for i, c in enumerate(classes)}
+    index = np.array([position[str(label)] for label in y])
 
     def nll(t: float) -> float:
         p = apply_temperature(proba, t)

@@ -24,6 +24,7 @@ import numpy as np
 import pandas as pd
 
 from ml.datasets import dataset_hash, load_labelled
+from ml.text import text_hash
 
 HOLDOUT_DIR = Path(__file__).resolve().parent / "holdouts"
 # Cosine similarity (character n-grams) above which a training text counts as a
@@ -213,3 +214,16 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+
+
+def exclude_similar(
+    candidates, reference, threshold: float | None = NEAR_DUPLICATE_THRESHOLD
+) -> np.ndarray:
+    """Mask over `candidates`: exact (normalised) or near duplicate of any reference
+    text. Used on role-masked text, where "Liekes zwemles" and "Sems zwemles" both
+    become "naamkind zwemles" and would otherwise leak across the holdout boundary."""
+    candidates, reference = pd.Series(list(candidates)), pd.Series(list(reference))
+    exact = candidates.map(text_hash).isin(set(reference.map(text_hash))).to_numpy()
+    if threshold is None or not len(candidates) or not len(reference):
+        return exact
+    return exact | _near_duplicates(candidates, reference, threshold)
