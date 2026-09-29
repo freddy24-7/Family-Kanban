@@ -26,6 +26,9 @@ see [backend/ml/CLAUDE.md](backend/ml/CLAUDE.md).
 - Make platform admin: `cd backend && uv run python -m app.cli make-admin <email>`
 - Demo families / synthetic tickets: `cd backend && uv run python -m sim.seed_dataset --presets typical-1 --tickets 25`
   (writes to whatever `DATABASE_URL` points at; label rules: `backend/app/labeling_guidelines.md`)
+- Train/evaluate/register: `cd backend && uv run python -m ml.train --snapshot seed-v1 --task all [--dry-run | --promote]`
+  (reads snapshot + household members; evaluates on every frozen holdout next to the champion)
+- Holdouts: `uv run python -m ml.holdout suggest|freeze ...` · snapshots in `data/datasets/` (not committed)
 - Deploy: see [docs/deploy.md](docs/deploy.md)
 - Frontend: `cd frontend && npm run dev` · `npm run build` · `npm run lint` · `npm run format`
 
@@ -52,10 +55,13 @@ Dutch). Code, identifiers, comments, docs, commits: **English**. Never Norwegian
   (the simulator fast-forwards time).
 - **One module per external dependency**: Gemini only in `app/llm.py`, email only in
   `app/mailer.py`, fastapi-users only in `app/auth.py`, DB queries only in
-  `app/repository.py`, artifacts only via `ml/registry.py`.
+  `app/repository.py` (ML batch reads via `ml/datasets.py`), model artifacts only via
+  `ml/registry.py` (stored in Postgres `model_artifact`).
   External services are env-gated and fail soft; the database fails loud.
 - **Migrations** via Alembic; never drop tables holding real family data. Enum columns use
   `str_enum()` in `models.py` (VARCHAR + CHECK constraint).
+- **Train/serve consistency**: text preprocessing (role tokens, `ml/text.py`) is shared by
+  training and serving; models declare the preprocessing they expect in their metadata.
 - **Layering**: routers stay thin; logic lives in `app/services/` so the simulator can call
   it directly with a `SimulatedClock`.
 

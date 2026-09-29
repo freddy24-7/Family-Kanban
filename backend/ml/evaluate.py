@@ -63,19 +63,27 @@ def summarise(y_true, y_pred, ordinal: bool = False, ci: bool = True) -> dict:
 # --- Cross-validation on training families only ------------------------------------------
 
 
-def group_cv_predict(estimator, texts, y, groups, n_splits: int = 3, proba: bool = False):
+def group_cv_predict(
+    estimator, texts, y, groups, n_splits: int = 3, proba: bool = False, classes=None
+):
     """Out-of-fold predictions with whole households per fold (mirrors the holdout
-    design). Every ticket is predicted by a model that never saw its family."""
+    design). Every ticket is predicted by a model that never saw its family.
+
+    With proba=True the columns follow `classes` (default: sorted labels). We loop
+    ourselves instead of cross_val_predict, which silently re-encodes labels as
+    integers for probabilities and would break the S < M < L order of the ordinal model."""
+    X, y = np.asarray(texts, dtype=object), np.asarray(y)
     cv = GroupKFold(n_splits=n_splits)
-    method = "predict_proba" if proba else "predict"
-    return cross_val_predict(
-        clone(estimator),
-        np.asarray(texts, dtype=object),
-        np.asarray(y),
-        groups=groups,
-        cv=cv,
-        method=method,
-    )
+    if not proba:
+        return cross_val_predict(clone(estimator), X, y, groups=groups, cv=cv)
+    classes = list(classes) if classes is not None else sorted(set(y))
+    out = np.zeros((len(y), len(classes)))
+    for train_idx, test_idx in cv.split(X, y, groups):
+        model = clone(estimator).fit(X[train_idx], y[train_idx])
+        fold = model.predict_proba(X[test_idx])
+        for j, cls in enumerate(model.classes_):
+            out[test_idx, classes.index(str(cls))] = fold[:, j]
+    return out
 
 
 # --- Calibration -------------------------------------------------------------------------

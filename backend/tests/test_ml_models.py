@@ -82,3 +82,12 @@ def test_metrics():
         "accuracy_of_accepted": 1.0,
         "flagged_for_review": 0.5,
     }
+
+
+def test_group_cv_proba_keeps_ordinal_column_order():
+    efforts = ["S", "M", "L", "S", "M", "L"] * 4
+    model = build_text_classifier(TextModelConfig(features="word", ordinal=True, C=10))
+    proba = group_cv_predict(
+        model, TEXTS, efforts, GROUPS, n_splits=4, proba=True, classes=["S", "M", "L"]
+    )
+    assert proba.shape == (len(TEXTS), 3) and np.allclose(proba.sum(axis=1), 1)

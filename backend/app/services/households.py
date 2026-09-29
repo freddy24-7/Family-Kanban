@@ -49,6 +49,7 @@ async def create_invite(
     is_planner: bool,
     is_reviewer: bool,
     clock: Clock,
+    is_child: bool = False,
 ) -> Invite:
     token = secrets.token_urlsafe(32)
     invite = Invite(
@@ -57,6 +58,7 @@ async def create_invite(
         token_hash=hash_token(token),
         is_planner=is_planner,
         is_reviewer=is_reviewer,
+        is_child=is_child,
         invited_by=inviter.id,
         expires_at=clock.now() + timedelta(days=config.INVITE_LIFETIME_DAYS),
     )
@@ -86,6 +88,7 @@ async def accept_invite(session: AsyncSession, user: User, token: str, clock: Cl
         household_id=invite.household_id,
         is_planner=invite.is_planner,
         is_reviewer=invite.is_reviewer,
+        is_child=invite.is_child,
     )
     invite.accepted_at = clock.now()
     session.add(membership)

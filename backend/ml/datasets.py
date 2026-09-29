@@ -123,3 +123,25 @@ def load_generation_runs(database_url: str | None = None) -> pd.DataFrame:
             return pd.read_sql(GENERATION_RUNS_SQL, conn)
     finally:
         engine.dispose()
+
+
+HOUSEHOLD_MEMBERS_SQL = text(
+    """
+    SELECT m.household_id::text AS household_id, u.display_name AS name, m.is_child
+    FROM membership m JOIN "user" u ON u.id = m.user_id
+    """
+)
+
+
+def load_household_members(database_url: str | None = None) -> dict[str, list[tuple[str, bool]]]:
+    """household_id -> [(display name, is_child)], for role-token masking."""
+    engine = create_engine(database_url or config.DATABASE_URL)
+    try:
+        with engine.connect() as conn:
+            rows = conn.execute(HOUSEHOLD_MEMBERS_SQL).all()
+    finally:
+        engine.dispose()
+    members: dict[str, list[tuple[str, bool]]] = {}
+    for household_id, name, is_child in rows:
+        members.setdefault(household_id, []).append((name, bool(is_child)))
+    return members

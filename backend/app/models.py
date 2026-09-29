@@ -25,6 +25,7 @@ from sqlalchemy import (
     ForeignKey,
     Index,
     Integer,
+    LargeBinary,
     String,
     Text,
     Uuid,
@@ -105,6 +106,10 @@ class Membership(Base):
     )
     is_planner: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
     is_reviewer: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+    # Used by the classifier's role tokens: a child's name becomes "naamkind".
+    is_child: Mapped[bool] = mapped_column(
+        Boolean, default=False, server_default=text("false"), nullable=False
+    )
     # Simulator-only person attributes (gender, age, world-model traits).
     profile: Mapped[dict[str, Any] | None] = mapped_column(JSONB)
     joined_at: Mapped[datetime] = created_at()
@@ -124,6 +129,9 @@ class Invite(Base):
     token_hash: Mapped[str] = mapped_column(String(64), unique=True, nullable=False)
     is_planner: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
     is_reviewer: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+    is_child: Mapped[bool] = mapped_column(
+        Boolean, default=False, server_default=text("false"), nullable=False
+    )
     invited_by: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("user.id", ondelete="SET NULL"))
     expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
     accepted_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
@@ -190,6 +198,21 @@ class ModelVersion(Base):
     metrics: Mapped[dict[str, Any]] = mapped_column(JSONB, default=dict, nullable=False)
     parent_version_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("model_version.id"))
     notes: Mapped[str | None] = mapped_column(Text)
+    created_at: Mapped[datetime] = created_at()
+
+
+class ModelArtifact(Base):
+    """Serialized model bytes (joblib, compressed). Stored in Postgres because the
+    database is the one thing the training machine and the API share; only
+    ml/registry.py reads or writes this table."""
+
+    __tablename__ = "model_artifact"
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    data: Mapped[bytes] = mapped_column(LargeBinary, nullable=False)
+    sha256: Mapped[str] = mapped_column(String(64), nullable=False)
+    size_bytes: Mapped[int] = mapped_column(Integer, nullable=False)
+    meta: Mapped[dict[str, Any]] = mapped_column(JSONB, default=dict, nullable=False)
     created_at: Mapped[datetime] = created_at()
 
 

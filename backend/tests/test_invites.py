@@ -22,7 +22,7 @@ async def invite(client, headers, household, email="kid@example.com", **roles):
 async def test_invite_accept_flow(client, outbox):
     parent = await register_and_login(client, "parent@example.com", "Mama")
     household = await create_household(client, parent, "Familie Jansen")
-    await invite(client, parent, household, "Kid@Example.com")
+    await invite(client, parent, household, "Kid@Example.com", is_child=True)
     token = invite_token(outbox)
     assert "Mama" in outbox[-1]["body"] and "Familie Jansen" in outbox[-1]["body"]
 
@@ -33,7 +33,7 @@ async def test_invite_accept_flow(client, outbox):
 
     members = (await client.get(f"/households/{household}", headers=kid)).json()["members"]
     sem = next(m for m in members if m["display_name"] == "Sem")
-    assert (sem["is_planner"], sem["is_reviewer"]) == (False, False)
+    assert (sem["is_planner"], sem["is_reviewer"], sem["is_child"]) == (False, False, True)
 
     # Token is single use, and the pending list is now empty.
     assert (

@@ -73,10 +73,10 @@ CORS_ORIGINS = [
     origin.strip() for origin in _env("CORS_ORIGINS", FRONTEND_URL).split(",") if origin.strip()
 ]
 
-# Predictions below this confidence are flagged for manual review. The stub
-# classifier reports 0.0, so everything is flagged until a real model exists.
-# Phase 3 replaces this default with a value chosen from calibration data.
-LOW_CONFIDENCE_THRESHOLD = _env_number("LOW_CONFIDENCE_THRESHOLD", 0.6, float)
+# Predictions below this (calibrated) confidence are flagged for manual review.
+# 0.8 was chosen in Phase 3 from out-of-fold predictions on the training families:
+# ~87% auto-accepted at ~96% accuracy (notebooks/02-model-experiments.ipynb).
+LOW_CONFIDENCE_THRESHOLD = _env_number("LOW_CONFIDENCE_THRESHOLD", 0.8, float)
 
 # --- LLM (Gemini): dormant until GEMINI_API_KEY is set ------------------------------
 GEMINI_API_KEY = _env("GEMINI_API_KEY")

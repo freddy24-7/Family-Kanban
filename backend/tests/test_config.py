@@ -30,7 +30,7 @@ def test_blank_values_fall_back_to_defaults(monkeypatch):
         monkeypatch, INVITE_LIFETIME_DAYS="", LOW_CONFIDENCE_THRESHOLD="  ", FRONTEND_URL=""
     )
     assert config.INVITE_LIFETIME_DAYS == 7
-    assert config.LOW_CONFIDENCE_THRESHOLD == 0.6
+    assert config.LOW_CONFIDENCE_THRESHOLD == 0.8
     assert config.FRONTEND_URL == "http://localhost:5173"
 
 

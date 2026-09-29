@@ -95,6 +95,7 @@ async def test_create_demo_family_members():
         )
         assert len(members) == 5
         assert all(m.user.is_simulated and not m.user.is_active for m in members)
+        assert sorted(m.is_child for m in members) == [False, False, True, True, True]
         assert sorted((m.profile["role"], m.is_planner) for m in members) == [
             ("adult", True),
             ("adult", True),

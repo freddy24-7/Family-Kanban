@@ -43,6 +43,7 @@ class MemberRead(BaseModel):
     email: str
     is_planner: bool
     is_reviewer: bool
+    is_child: bool
     is_simulated: bool
 
 
@@ -57,6 +58,7 @@ class InviteCreate(BaseModel):
     email: EmailStr
     is_planner: bool = False
     is_reviewer: bool = False
+    is_child: bool = False
 
 
 class InviteRead(ORMModel):
@@ -65,6 +67,7 @@ class InviteRead(ORMModel):
     email: str
     is_planner: bool
     is_reviewer: bool
+    is_child: bool
     expires_at: datetime
     accepted_at: datetime | None
 

@@ -56,6 +56,7 @@ async def get_household(
                 email=m.user.email,
                 is_planner=m.is_planner,
                 is_reviewer=m.is_reviewer,
+                is_child=m.is_child,
                 is_simulated=m.user.is_simulated,
             )
             for m in members
@@ -75,7 +76,14 @@ async def create_invite(
     clock: Clock = Depends(get_clock),
 ):
     return await service.create_invite(
-        session, access.household, access.user, body.email, body.is_planner, body.is_reviewer, clock
+        session,
+        access.household,
+        access.user,
+        body.email,
+        body.is_planner,
+        body.is_reviewer,
+        clock,
+        is_child=body.is_child,
     )
 
 

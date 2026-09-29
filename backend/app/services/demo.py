@@ -76,6 +76,7 @@ async def create_demo_family(
                 household_id=household.id,
                 is_planner=person.role == "adult",
                 is_reviewer=person.role == "adult",
+                is_child=person.role == "kid",
                 profile=person.model_dump(),
             )
         )
