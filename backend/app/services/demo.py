@@ -12,6 +12,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app import config, llm, repository
 from app.clock import Clock
+from app.db import SessionFactory
 from app.domain import LabelSource, Source
 from app.models import FamilyProfile, GenerationRun, Household, Membership, Topic, User
 from app.services.classification import classify_topics
@@ -198,8 +199,18 @@ async def continue_generation(
 
 
 async def _mark_failed(session: AsyncSession, run: GenerationRun, error: str, clock: Clock) -> None:
-    await session.rollback()  # discard the half-finished batch, keep committed ones
-    run.status = "failed"
-    run.error = error[:2000]
-    run.finished_at = clock.now()
-    await session.commit()
+    """Record the failure through a FRESH session: after a database error the
+    original session may be unusable. Batches committed earlier are kept."""
+    run_id, finished_at = run.id, clock.now()
+    try:
+        await session.rollback()  # discard the half-finished batch
+    except Exception:
+        log.exception("Rollback failed while recording run %s failure", run_id)
+    async with SessionFactory() as fresh:
+        stored = await fresh.get(GenerationRun, run_id)
+        stored.status, stored.error, stored.finished_at = "failed", error[:2000], finished_at
+        await fresh.commit()
+    try:
+        await session.refresh(run)  # let the caller see the stored state
+    except Exception:
+        run.status, run.error, run.finished_at = "failed", error[:2000], finished_at

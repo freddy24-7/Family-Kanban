@@ -350,3 +350,50 @@ async def test_transient_503_is_retried_on_same_model(monkeypatch):
     monkeypatch.setattr(llm, "_get_client", lambda: FakeClient)
     result = await llm.generate_json_list("sys", "p", {"type": "INTEGER"})
     assert tried == ["model-a", "model-a"] and result.model == "model-a"
+
+
+def test_generated_text_is_cleaned_of_control_characters():
+    from sim.generator import GeneratedTicket
+
+    ticket = GeneratedTicket(
+        index=0, text=" spaarpot\x00 \x07storten\n", category="finance", effort="S"
+    )
+    assert ticket.text == "spaarpot storten"
+
+
+async def test_database_error_marks_run_failed_via_fresh_session(monkeypatch):
+    """A DB error mid-batch leaves the session unusable; the run must still be
+    recorded as failed, and earlier batches kept."""
+    from sqlalchemy import literal
+    from sqlalchemy.exc import DBAPIError
+
+    monkeypatch.setattr(config, "GEMINI_API_KEY", "fake-key")
+    monkeypatch.setattr(llm, "generate_json_list", fake_gemini(misbehave=False))
+    from app.services import classification
+
+    calls = {"n": 0}
+    original = classification.classify_topics
+
+    async def classify_then_break(session, topics, clock):
+        calls["n"] += 1
+        if calls["n"] == 2:
+            # The real production failure: Postgres rejects NUL bytes in text.
+            await session.execute(select(literal("spaarpot\x00storten")))
+        return await original(session, topics, clock)
+
+    monkeypatch.setattr(demo, "classify_topics", classify_then_break)
+    async with SessionFactory() as session:
+        household = await demo.create_demo_family(session, PRESETS["single-parent"], random_seed=1)
+        household_id = household.id
+        run = await demo.start_generation(session, household, 50)
+        with pytest.raises(DBAPIError):
+            await demo.continue_generation(session, household, run, SystemClock())
+    async with SessionFactory() as check:
+        from app.models import GenerationRun
+
+        stored = await check.get(GenerationRun, run.id)
+        assert stored.status == "failed" and "DataError" in stored.error
+        kept = await check.scalar(
+            select(func.count()).select_from(Topic).where(Topic.household_id == household_id)
+        )
+        assert kept == 25  # first batch committed before the failure

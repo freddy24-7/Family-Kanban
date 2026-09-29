@@ -8,11 +8,12 @@ counted and dropped, never allowed to break the batch.
 """
 
 import random
+import unicodedata
 from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
 
-from pydantic import BaseModel, Field, ValidationError
+from pydantic import BaseModel, Field, ValidationError, field_validator
 
 from app import llm
 from app.domain import Category, Effort
@@ -21,7 +22,7 @@ from sim.family import FamilyWorld, Person, category_weights
 
 # Bump when the prompt changes meaningfully: it is stored on every GenerationRun,
 # so datasets from different prompt versions can be told apart.
-PROMPT_VERSION = "gen-v1"
+PROMPT_VERSION = "gen-v2"  # v2: no invented pets (EDA finding 6)
 BATCH_SIZE = 25
 
 GUIDELINES_PATH = Path(__file__).resolve().parents[1] / "app" / "labeling_guidelines.md"
@@ -51,12 +52,22 @@ class TicketRequest:
 
 
 class GeneratedTicket(BaseModel):
-    """One validated item from Gemini."""
+    """One validated item from Gemini (untrusted input)."""
 
     index: int
     text: str = Field(min_length=3, max_length=300)
     category: Category
     effort: Effort
+
+    @field_validator("text", mode="before")
+    @classmethod
+    def _strip_control_characters(cls, value: object) -> object:
+        # LLM output occasionally contains control characters; Postgres rejects
+        # NUL bytes outright. Remove them before length validation.
+        if isinstance(value, str):
+            value = "".join(c for c in value if unicodedata.category(c) != "Cc" or c in "\n\t")
+            return " ".join(value.split())
+        return value
 
 
 @dataclass
@@ -146,6 +157,8 @@ def build_prompt(
         "actually wrote. Estimate `effort` per the guidelines. Return the same `index`.",
         "Use the family's real names and pets where natural. Vary wording and topics:",
         "no two tickets should be near-identical.",
+        "Only mention people, pets and things this family actually has (listed above);",
+        "never invent other pets, vehicles, rooms or family members.",
         "",
         "Requests:",
     ]

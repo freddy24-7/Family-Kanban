@@ -170,6 +170,8 @@ class FamilyWorld(BaseModel):
             lines.append(f"Dog(s): {', '.join(self.dog_names)}")
         if self.cat_names:
             lines.append(f"Cat(s): {', '.join(self.cat_names)}")
+        if not self.dog_names and not self.cat_names:
+            lines.append("Pets: none")
         lines.append(f"Cars: {spec.cars}" if spec.cars else "No car")
         return "\n".join(lines)
 

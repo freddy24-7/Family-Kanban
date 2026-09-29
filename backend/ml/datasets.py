@@ -99,3 +99,27 @@ def load_snapshot(name: str, directory: Path = SNAPSHOT_DIR) -> pd.DataFrame:
     if dataset_hash(df) != meta["dataset_hash"]:
         raise ValueError(f"Snapshot {name!r} does not match its recorded hash")
     return df
+
+
+GENERATION_RUNS_SQL = text(
+    """
+    SELECT gr.id::text AS run_id, fp.preset_key, gr.status, gr.prompt_version,
+           gr.requested, gr.produced, gr.rejected_invalid, gr.rejected_duplicate,
+           gr.category_mismatches, gr.models_used, gr.tokens_in, gr.tokens_out, gr.error
+    FROM generation_run gr
+    JOIN household h ON h.id = gr.household_id
+    LEFT JOIN family_profile fp ON fp.household_id = gr.household_id
+    WHERE h.training_eligible
+    ORDER BY gr.created_at
+    """
+)
+
+
+def load_generation_runs(database_url: str | None = None) -> pd.DataFrame:
+    """Generator lineage/quality per run (for EDA; not training data)."""
+    engine = create_engine(database_url or config.DATABASE_URL)
+    try:
+        with engine.connect() as conn:
+            return pd.read_sql(GENERATION_RUNS_SQL, conn)
+    finally:
+        engine.dispose()
