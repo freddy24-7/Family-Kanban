@@ -5,7 +5,7 @@ from datetime import date, datetime
 
 from pydantic import BaseModel, ConfigDict, EmailStr, Field
 
-from app.domain import Category, Effort, LabelSource, Source
+from app.domain import Category, Effort, ItemStatus, LabelSource, Source, SprintStatus
 from sim.family import FamilySpec
 
 
@@ -150,3 +150,73 @@ class GenerationRunRead(ORMModel):
     error: str | None
     created_at: datetime
     finished_at: datetime | None
+
+
+# --- Sprints ------------------------------------------------------------------------
+
+
+class SprintCreate(BaseModel):
+    name: str = Field(min_length=1, max_length=100)
+    start_date: date
+    end_date: date
+
+
+class SprintRead(BaseModel):
+    id: uuid.UUID
+    name: str
+    start_date: date
+    end_date: date
+    status: SprintStatus
+    started_at: datetime | None
+    completed_at: datetime | None
+    item_count: int
+    done_count: int
+
+
+class SprintItemCreate(BaseModel):
+    topic_id: uuid.UUID
+    assignee_id: uuid.UUID | None = None
+
+
+class SprintItemUpdate(BaseModel):
+    assignee_id: uuid.UUID | None
+
+
+class SprintItemMove(BaseModel):
+    status: ItemStatus
+    position: int = Field(default=0, ge=0)
+
+
+class SprintItemReviewIn(BaseModel):
+    completed: bool
+    effort_actual: Effort | None = None
+    note: str | None = Field(default=None, max_length=1000)
+
+
+class SprintItemRead(BaseModel):
+    id: uuid.UUID
+    topic: TopicRead
+    assignee_id: uuid.UUID | None
+    assignee_name: str | None
+    status: ItemStatus
+    position: int
+    completed: bool | None
+    effort_actual: Effort | None
+    review_note: str | None
+    reviewed_at: datetime | None
+
+
+class SprintCompleteIn(BaseModel):
+    notes: str | None = Field(default=None, max_length=2000)
+
+
+class SprintReviewRead(ORMModel):
+    notes: str | None
+    completed_count: int
+    total_count: int
+    created_at: datetime
+
+
+class SprintDetail(SprintRead):
+    items: list[SprintItemRead]
+    review: SprintReviewRead | None

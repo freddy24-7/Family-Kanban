@@ -40,6 +40,21 @@ async def test_list_only_own_households(client, two_families):
         ("PUT", "/households/{h}/topics/{t}/labels", {"category": "chores", "effort": "S"}),
         ("POST", "/households/{h}/invites", {"email": "x@example.com"}),
         ("GET", "/households/{h}/invites", None),
+        ("GET", "/households/{h}/backlog", None),
+        ("GET", "/households/{h}/sprints", None),
+        (
+            "POST",
+            "/households/{h}/sprints",
+            {"name": "x", "start_date": "2026-01-01", "end_date": "2026-01-02"},
+        ),
+        ("GET", "/households/{h}/sprints/{t}", None),
+        ("POST", "/households/{h}/sprints/{t}/start", None),
+        ("POST", "/households/{h}/sprints/{t}/complete", {}),
+        ("POST", "/households/{h}/sprints/{t}/items", {"topic_id": "{t}"}),
+        ("PUT", "/households/{h}/sprints/{t}/items/{t}/status", {"status": "done"}),
+        ("PUT", "/households/{h}/sprints/{t}/items/{t}/review", {"completed": False}),
+        ("PATCH", "/households/{h}/sprints/{t}/items/{t}", {"assignee_id": None}),
+        ("DELETE", "/households/{h}/sprints/{t}/items/{t}", None),
     ],
 )
 async def test_other_family_gets_404(client, two_families, method, path, body):

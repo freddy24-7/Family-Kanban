@@ -2,8 +2,8 @@
 
 Tenancy: every tenant-owned table carries household_id.
 Provenance: topics and predictions carry `source` (real | simulated).
-Predictions are append-only. Sprint tables arrive in Phase 4, SimulationRun in
-Phase 5. Frozen holdouts are committed manifest files (backend/ml/holdouts/), not tables.
+Predictions are append-only. SimulationRun arrives in Phase 5. Frozen holdouts are
+committed manifest files (backend/ml/holdouts/), not tables.
 """
 
 import uuid
@@ -28,6 +28,7 @@ from sqlalchemy import (
     LargeBinary,
     String,
     Text,
+    UniqueConstraint,
     Uuid,
     func,
     text,
@@ -36,7 +37,16 @@ from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db import Base
-from app.domain import Category, Effort, LabelSource, ModelStatus, Source, Task
+from app.domain import (
+    Category,
+    Effort,
+    ItemStatus,
+    LabelSource,
+    ModelStatus,
+    Source,
+    SprintStatus,
+    Task,
+)
 
 
 def str_enum(enum_cls: type[StrEnum]) -> Enum:
@@ -286,3 +296,82 @@ class GenerationRun(Base):
     error: Mapped[str | None] = mapped_column(Text)
     created_at: Mapped[datetime] = created_at()
     finished_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+
+# --- Sprints ----------------------------------------------------------------------
+
+
+class Sprint(Base):
+    __tablename__ = "sprint"
+    __table_args__ = (Index("ix_sprint_household_status", "household_id", "status"),)
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    household_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("household.id", ondelete="CASCADE"), nullable=False
+    )
+    name: Mapped[str] = mapped_column(String(100), nullable=False)
+    start_date: Mapped[date] = mapped_column(Date, nullable=False)
+    end_date: Mapped[date] = mapped_column(Date, nullable=False)
+    status: Mapped[SprintStatus] = mapped_column(str_enum(SprintStatus), nullable=False)
+    created_at: Mapped[datetime] = created_at()
+    started_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    completed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+
+class SprintItem(Base):
+    """A backlog topic planned into a sprint, with its board state and its review.
+    The review's `effort_actual` is kept next to the planner's estimate on the topic
+    (topic.effort_label): estimate vs actual are both useful signals."""
+
+    __tablename__ = "sprint_item"
+    __table_args__ = (UniqueConstraint("sprint_id", "topic_id", name="uq_sprint_item_topic"),)
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    sprint_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("sprint.id", ondelete="CASCADE"), index=True, nullable=False
+    )
+    # Denormalised for household-scoped queries.
+    household_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("household.id", ondelete="CASCADE"), index=True, nullable=False
+    )
+    topic_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("topic.id", ondelete="CASCADE"), index=True, nullable=False
+    )
+    assignee_id: Mapped[uuid.UUID | None] = mapped_column(
+        ForeignKey("user.id", ondelete="SET NULL")
+    )
+    status: Mapped[ItemStatus] = mapped_column(str_enum(ItemStatus), nullable=False)
+    position: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    created_at: Mapped[datetime] = created_at()
+    status_changed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    # Sprint review (labelling point #2)
+    completed: Mapped[bool | None] = mapped_column(Boolean)
+    effort_actual: Mapped[Effort | None] = mapped_column(str_enum(Effort))
+    review_note: Mapped[str | None] = mapped_column(Text)
+    reviewed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    reviewed_by: Mapped[uuid.UUID | None] = mapped_column(
+        ForeignKey("user.id", ondelete="SET NULL")
+    )
+
+    topic: Mapped[Topic] = relationship(lazy="joined")
+
+
+class SprintReview(Base):
+    """Sprint-level review, written when the sprint is completed."""
+
+    __tablename__ = "sprint_review"
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    sprint_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("sprint.id", ondelete="CASCADE"), unique=True, nullable=False
+    )
+    household_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("household.id", ondelete="CASCADE"), index=True, nullable=False
+    )
+    notes: Mapped[str | None] = mapped_column(Text)
+    completed_count: Mapped[int] = mapped_column(Integer, nullable=False)
+    total_count: Mapped[int] = mapped_column(Integer, nullable=False)
+    reviewed_by: Mapped[uuid.UUID | None] = mapped_column(
+        ForeignKey("user.id", ondelete="SET NULL")
+    )
+    created_at: Mapped[datetime] = created_at()

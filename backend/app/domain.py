@@ -47,3 +47,15 @@ class ModelStatus(StrEnum):
     ACTIVE = "active"
     RETIRED = "retired"
     REJECTED = "rejected"
+
+
+class SprintStatus(StrEnum):
+    PLANNED = "planned"
+    ACTIVE = "active"
+    COMPLETED = "completed"
+
+
+class ItemStatus(StrEnum):
+    TODO = "todo"
+    IN_PROGRESS = "in_progress"
+    DONE = "done"

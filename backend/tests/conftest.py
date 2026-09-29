@@ -18,8 +18,12 @@ import pytest  # noqa: E402
 from httpx import ASGITransport, AsyncClient  # noqa: E402
 from sqlalchemy import text  # noqa: E402
 
-from app import mailer, repository  # noqa: E402
-from app.db import SessionFactory, engine  # noqa: E402
+from app import (  # noqa: E402
+    mailer,
+    models,  # noqa: E402,F401  (registers all tables on Base.metadata)
+    repository,
+)
+from app.db import Base, SessionFactory, engine  # noqa: E402
 from app.main import app  # noqa: E402
 
 BACKEND_DIR = Path(__file__).resolve().parents[1]
@@ -50,13 +54,9 @@ async def database():
 @pytest.fixture(autouse=True)
 async def clean_tables(database):
     async with SessionFactory() as session:
-        await session.execute(
-            text(
-                "TRUNCATE prediction, topic, generation_run, family_profile, invite, membership, "
-                'model_artifact, accesstoken, oauth_account, "user", household, model_version '
-                "CASCADE"
-            )
-        )
+        # Every table from the models, so new tables are cleaned automatically.
+        tables = ", ".join(f'"{t.name}"' for t in Base.metadata.sorted_tables)
+        await session.execute(text(f"TRUNCATE {tables} CASCADE"))
         await session.commit()
         await repository.ensure_stub_model_versions(session)
     yield

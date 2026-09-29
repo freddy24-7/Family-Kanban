@@ -44,3 +44,9 @@ async def planner_access(access: HouseholdAccess = Depends(household_access)) ->
     if not access.is_planner:
         raise HTTPException(status.HTTP_403_FORBIDDEN, "Planner role required")
     return access
+
+
+async def reviewer_access(access: HouseholdAccess = Depends(household_access)) -> HouseholdAccess:
+    if not access.is_reviewer:
+        raise HTTPException(status.HTTP_403_FORBIDDEN, "Reviewer role required")
+    return access

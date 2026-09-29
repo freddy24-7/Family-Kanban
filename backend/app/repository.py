@@ -7,7 +7,7 @@ from collections.abc import Sequence
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.domain import ModelStatus, Source, Task
+from app.domain import ModelStatus, Source, SprintStatus, Task
 from app.models import (
     FamilyProfile,
     GenerationRun,
@@ -16,6 +16,9 @@ from app.models import (
     Membership,
     ModelVersion,
     Prediction,
+    Sprint,
+    SprintItem,
+    SprintReview,
     Topic,
     User,
 )
@@ -193,3 +196,88 @@ async def find_demo_household(session: AsyncSession, preset_key: str) -> Househo
 async def count_topics(session: AsyncSession, household_id: uuid.UUID) -> int:
     stmt = select(func.count()).select_from(Topic).where(Topic.household_id == household_id)
     return await session.scalar(stmt) or 0
+
+
+# --- Sprints & backlog ----------------------------------------------------------------
+
+OPEN_SPRINT_STATUSES = (SprintStatus.PLANNED, SprintStatus.ACTIVE)
+
+
+async def list_backlog(
+    session: AsyncSession, household_id: uuid.UUID, limit: int, offset: int
+) -> Sequence[Topic]:
+    """Topics that still need planning: not in a planned/active sprint, and not
+    completed in an earlier sprint."""
+    in_open_sprint = (
+        select(SprintItem.id)
+        .join(Sprint, Sprint.id == SprintItem.sprint_id)
+        .where(SprintItem.topic_id == Topic.id, Sprint.status.in_(OPEN_SPRINT_STATUSES))
+        .exists()
+    )
+    done = (
+        select(SprintItem.id)
+        .where(SprintItem.topic_id == Topic.id, SprintItem.completed.is_(True))
+        .exists()
+    )
+    stmt = (
+        select(Topic)
+        .where(Topic.household_id == household_id, ~in_open_sprint, ~done)
+        .order_by(Topic.occurred_at.desc())
+        .limit(limit)
+        .offset(offset)
+    )
+    return (await session.scalars(stmt)).all()
+
+
+async def list_sprints(session: AsyncSession, household_id: uuid.UUID) -> Sequence[Sprint]:
+    stmt = (
+        select(Sprint).where(Sprint.household_id == household_id).order_by(Sprint.start_date.desc())
+    )
+    return (await session.scalars(stmt)).all()
+
+
+async def get_sprint(
+    session: AsyncSession, household_id: uuid.UUID, sprint_id: uuid.UUID
+) -> Sprint | None:
+    stmt = select(Sprint).where(Sprint.id == sprint_id, Sprint.household_id == household_id)
+    return await session.scalar(stmt)
+
+
+async def sprints_with_status(
+    session: AsyncSession, household_id: uuid.UUID, status: SprintStatus
+) -> Sequence[Sprint]:
+    stmt = select(Sprint).where(Sprint.household_id == household_id, Sprint.status == status)
+    return (await session.scalars(stmt)).all()
+
+
+async def list_sprint_items(session: AsyncSession, sprint_id: uuid.UUID) -> Sequence[SprintItem]:
+    stmt = (
+        select(SprintItem)
+        .where(SprintItem.sprint_id == sprint_id)
+        .order_by(SprintItem.status, SprintItem.position, SprintItem.created_at)
+    )
+    return (await session.scalars(stmt)).unique().all()
+
+
+async def get_sprint_item(
+    session: AsyncSession, sprint_id: uuid.UUID, item_id: uuid.UUID
+) -> SprintItem | None:
+    stmt = select(SprintItem).where(SprintItem.id == item_id, SprintItem.sprint_id == sprint_id)
+    return await session.scalar(stmt)
+
+
+async def topic_is_planned_or_done(session: AsyncSession, topic_id: uuid.UUID) -> bool:
+    stmt = (
+        select(SprintItem.id)
+        .join(Sprint, Sprint.id == SprintItem.sprint_id)
+        .where(
+            SprintItem.topic_id == topic_id,
+            (Sprint.status.in_(OPEN_SPRINT_STATUSES)) | (SprintItem.completed.is_(True)),
+        )
+        .limit(1)
+    )
+    return await session.scalar(stmt) is not None
+
+
+async def get_sprint_review(session: AsyncSession, sprint_id: uuid.UUID) -> SprintReview | None:
+    return await session.scalar(select(SprintReview).where(SprintReview.sprint_id == sprint_id))
