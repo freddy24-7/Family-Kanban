@@ -20,11 +20,15 @@ from dataclasses import dataclass
 from datetime import UTC, datetime
 from pathlib import Path
 
+import numpy as np
 import pandas as pd
 
 from ml.datasets import dataset_hash, load_labelled
 
 HOLDOUT_DIR = Path(__file__).resolve().parent / "holdouts"
+# Cosine similarity (character n-grams) above which a training text counts as a
+# near-duplicate of a holdout text. Chosen from the EDA examples (reordered words ~0.9).
+NEAR_DUPLICATE_THRESHOLD = 0.9
 
 
 @dataclass(frozen=True)
@@ -105,10 +109,14 @@ def load_manifests(directory: Path = HOLDOUT_DIR) -> list[Manifest]:
 
 
 def training_frame(
-    df: pd.DataFrame, manifests: list[Manifest] | None = None
+    df: pd.DataFrame,
+    manifests: list[Manifest] | None = None,
+    near_duplicate_threshold: float | None = NEAR_DUPLICATE_THRESHOLD,
 ) -> tuple[pd.DataFrame, dict]:
     """Everything that may be trained on: drops holdout topics, anything from a
-    holdout household, and any text duplicating a holdout text."""
+    holdout household, any text duplicating a holdout text, and (by default) any
+    text that is a *near*-duplicate of a holdout text (character n-gram cosine
+    similarity >= threshold, e.g. the same words in a different order)."""
     manifests = load_manifests() if manifests is None else manifests
     ids = frozenset().union(*(m.topic_ids for m in manifests)) if manifests else frozenset()
     households = (
@@ -123,8 +131,27 @@ def training_frame(
         "excluded_duplicate_of_holdout": int(duplicate.sum()),
     }
     train = df[~in_holdout & ~duplicate]
+    report["excluded_near_duplicate_of_holdout"] = 0
+    if near_duplicate_threshold is not None and len(train) and in_holdout.any():
+        near = _near_duplicates(train["text"], df.loc[in_holdout, "text"], near_duplicate_threshold)
+        report["excluded_near_duplicate_of_holdout"] = int(near.sum())
+        train = train[~near]
     report["rows_out"] = len(train)
     return train, report
+
+
+def _near_duplicates(candidates: pd.Series, reference: pd.Series, threshold: float) -> np.ndarray:
+    """Boolean mask over `candidates`: max cosine similarity to any reference text
+    >= threshold. The vectorizer here is a similarity tool, not a model feature."""
+    from sklearn.feature_extraction.text import TfidfVectorizer
+    from sklearn.metrics.pairwise import cosine_similarity
+
+    vectorizer = TfidfVectorizer(analyzer="char_wb", ngram_range=(3, 5), strip_accents="unicode")
+    vectorizer.fit(pd.concat([candidates, reference]).str.lower())
+    sims = cosine_similarity(
+        vectorizer.transform(candidates.str.lower()), vectorizer.transform(reference.str.lower())
+    )
+    return sims.max(axis=1) >= threshold
 
 
 def holdout_frame(

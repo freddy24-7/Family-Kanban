@@ -6,3 +6,4 @@ language, where it lives in this codebase, how to read its results, and self-che
 | # | Topic | Phase |
 |---|---|---|
 | 01 | [Datasets, weak labels and the frozen holdout](01-datasets-and-weak-labels.md) | 2 |
+| 02 | [Text classification: baselines, TF-IDF, logistic regression, honest evaluation](02-text-classification-and-evaluation.md) | 3 |
