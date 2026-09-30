@@ -42,6 +42,7 @@ LABELLED_TOPICS_SQL = text(
     LEFT JOIN family_profile fp ON fp.household_id = t.household_id
     LEFT JOIN membership m ON m.user_id = t.created_by AND m.household_id = t.household_id
     WHERE h.training_eligible
+      AND t.deleted_at IS NULL
       AND t.category_label IS NOT NULL
       AND t.effort_label IS NOT NULL
     ORDER BY t.id

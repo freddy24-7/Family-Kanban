@@ -1,13 +1,13 @@
 import uuid
 
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi import APIRouter, Depends, HTTPException, Query, Response, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app import repository
 from app.clock import Clock, get_clock
 from app.db import get_session
 from app.domain import LabelSource
-from app.schemas import LabelsUpdate, TopicCreate, TopicRead
+from app.schemas import LabelsUpdate, TopicCreate, TopicRead, TopicUpdate
 from app.services import topics as service
 from app.tenancy import HouseholdAccess, household_access, planner_access
 
@@ -66,3 +66,42 @@ async def set_labels(
         session, topic, body.category, body.effort, access.user.id, LabelSource.PLANNER, clock
     )
     return (await service.to_read_models(session, [topic]))[0]
+
+
+@router.patch("/{topic_id}", response_model=TopicRead)
+async def update_topic(
+    topic_id: uuid.UUID,
+    body: TopicUpdate,
+    access: HouseholdAccess = Depends(household_access),
+    session: AsyncSession = Depends(get_session),
+    clock: Clock = Depends(get_clock),
+):
+    """Creator or planner: fix the text (re-classified) or change the due date."""
+    topic = await repository.get_topic(session, access.household.id, topic_id)
+    if topic is None:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Topic not found")
+    await service.update_topic(
+        session,
+        topic,
+        access.user.id,
+        access.is_planner,
+        body.text,
+        body.due_by,
+        "due_by" in body.model_fields_set,
+        clock,
+    )
+    return (await service.to_read_models(session, [topic]))[0]
+
+
+@router.delete("/{topic_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_topic(
+    topic_id: uuid.UUID,
+    access: HouseholdAccess = Depends(household_access),
+    session: AsyncSession = Depends(get_session),
+    clock: Clock = Depends(get_clock),
+):
+    topic = await repository.get_topic(session, access.household.id, topic_id)
+    if topic is None:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Topic not found")
+    await service.delete_topic(session, topic, access.user.id, access.is_planner, clock)
+    return Response(status_code=status.HTTP_204_NO_CONTENT)

@@ -88,7 +88,9 @@ async def list_pending_invites(session: AsyncSession, household_id: uuid.UUID) -
 async def get_topic(
     session: AsyncSession, household_id: uuid.UUID, topic_id: uuid.UUID
 ) -> Topic | None:
-    stmt = select(Topic).where(Topic.id == topic_id, Topic.household_id == household_id)
+    stmt = select(Topic).where(
+        Topic.id == topic_id, Topic.household_id == household_id, Topic.deleted_at.is_(None)
+    )
     return await session.scalar(stmt)
 
 
@@ -97,7 +99,7 @@ async def list_topics(
 ) -> Sequence[Topic]:
     stmt = (
         select(Topic)
-        .where(Topic.household_id == household_id)
+        .where(Topic.household_id == household_id, Topic.deleted_at.is_(None))
         .order_by(Topic.occurred_at.desc())
         .limit(limit)
         .offset(offset)
@@ -221,7 +223,12 @@ async def list_backlog(
     )
     stmt = (
         select(Topic)
-        .where(Topic.household_id == household_id, ~in_open_sprint, ~done)
+        .where(
+            Topic.household_id == household_id,
+            Topic.deleted_at.is_(None),
+            ~in_open_sprint,
+            ~done,
+        )
         .order_by(Topic.occurred_at.desc())
         .limit(limit)
         .offset(offset)

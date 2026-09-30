@@ -112,6 +112,11 @@ export const nl = {
     category: 'Categorie',
     effort: 'Moeite',
     plannerOnly: 'Alleen planners kunnen labels bevestigen.',
+    edit: 'Bewerken',
+    editTitle: 'Taak aanpassen',
+    delete: 'Verwijderen',
+    confirmDelete: 'Weet je het zeker? De taak verdwijnt uit de backlog.',
+    yesDelete: 'Ja, verwijderen',
   },
   plan: {
     title: 'Sprint plannen',

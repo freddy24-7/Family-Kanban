@@ -194,3 +194,27 @@ export function useInvite(h: string) {
     onSuccess: () => invalidate([...keys.invites(h)]),
   })
 }
+
+export function useUpdateTopic(h: string) {
+  const invalidate = useInvalidate()
+  return useMutation({
+    mutationFn: ({
+      topicId,
+      ...body
+    }: {
+      topicId: string
+      text?: string
+      due_by?: string | null
+    }) => api<Topic>(`/households/${h}/topics/${topicId}`, { method: 'PATCH', body }),
+    onSuccess: () => invalidate([...keys.backlog(h)], ['sprint', h]),
+  })
+}
+
+export function useDeleteTopic(h: string) {
+  const invalidate = useInvalidate()
+  return useMutation({
+    mutationFn: (topicId: string) =>
+      api<void>(`/households/${h}/topics/${topicId}`, { method: 'DELETE' }),
+    onSuccess: () => invalidate([...keys.backlog(h)]),
+  })
+}

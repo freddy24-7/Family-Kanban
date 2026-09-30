@@ -84,6 +84,13 @@ class TopicCreate(BaseModel):
     due_by: date | None = None
 
 
+class TopicUpdate(BaseModel):
+    """Only the fields that are sent are changed (due_by: null clears the date)."""
+
+    text: str | None = Field(default=None, min_length=1, max_length=2000)
+    due_by: date | None = None
+
+
 class LabelsUpdate(BaseModel):
     category: Category
     effort: Effort

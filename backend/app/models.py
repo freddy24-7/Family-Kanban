@@ -178,6 +178,11 @@ class Topic(Base):
     # bias: if people rubber-stamp predictions, measured accuracy is inflated.
     category_prediction_changed: Mapped[bool | None] = mapped_column(Boolean)
     effort_prediction_changed: Mapped[bool | None] = mapped_column(Boolean)
+    # Edits re-run the classifier (new predictions are appended). Deletion is soft:
+    # hidden from the app and excluded from training, but kept so frozen holdouts
+    # and history stay intact.
+    updated_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    deleted_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     # Data lineage: which generator run produced this (synthetic) topic.
     generation_run_id: Mapped[uuid.UUID | None] = mapped_column(
         ForeignKey("generation_run.id", ondelete="SET NULL"), index=True

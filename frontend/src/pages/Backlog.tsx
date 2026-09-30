@@ -1,15 +1,26 @@
 import { useState } from 'react'
-import { useBacklog, useSetLabels } from '../api/hooks'
+import { useBacklog, useDeleteTopic, useSetLabels, useUpdateTopic } from '../api/hooks'
 import { CATEGORIES, EFFORTS, type Category, type Effort, type Topic } from '../api/types'
 import { REVIEW_THRESHOLD, TopicLabels } from '../components/badges'
-import { Button, Card, Empty, ErrorText, PageTitle, Segmented, Spinner } from '../components/ui'
+import {
+  Button,
+  Card,
+  Empty,
+  ErrorText,
+  Field,
+  Input,
+  PageTitle,
+  Segmented,
+  Spinner,
+  TextArea,
+} from '../components/ui'
 import { categoryLabels, effortHints, effortLabels, nl } from '../i18n/nl'
 import { useCurrentHousehold } from '../state/household'
 
 const needsCheck = (t: Topic) => !t.labels.category || !t.labels.effort
 
 export function BacklogPage() {
-  const { household, isPlanner } = useCurrentHousehold()
+  const { household, isPlanner, me } = useCurrentHousehold()
   const backlog = useBacklog(household.id)
   const [filter, setFilter] = useState<'review' | 'all'>('review')
   const [open, setOpen] = useState<string | null>(null)
@@ -55,11 +66,14 @@ export function BacklogPage() {
                   <TopicLabels topic={t} />
                 </button>
                 {open === t.id && (
-                  <div className="border-t border-line p-4">
+                  <div className="space-y-4 border-t border-line p-4">
                     {isPlanner ? (
                       <LabelEditor topic={t} onDone={() => setOpen(null)} />
                     ) : (
                       <p className="text-sm text-ink-3">{nl.backlog.plannerOnly}</p>
+                    )}
+                    {(isPlanner || t.created_by === me?.user_id) && (
+                      <TopicActions topic={t} onDone={() => setOpen(null)} />
                     )}
                   </div>
                 )}
@@ -123,6 +137,84 @@ function LabelEditor({ topic, onDone }: { topic: Topic; onDone: () => void }) {
         className="w-full"
       >
         {nl.backlog.confirm}
+      </Button>
+    </div>
+  )
+}
+
+/** Edit text / due date, or delete (creator or planner). Editing the text makes the
+ *  model predict again; confirmed labels stay. */
+function TopicActions({ topic, onDone }: { topic: Topic; onDone: () => void }) {
+  const { household } = useCurrentHousehold()
+  const update = useUpdateTopic(household.id)
+  const remove = useDeleteTopic(household.id)
+  const [mode, setMode] = useState<'idle' | 'edit' | 'delete'>('idle')
+  const [text, setText] = useState(topic.text)
+  const [dueBy, setDueBy] = useState(topic.due_by ?? '')
+
+  async function save() {
+    await update.mutateAsync({ topicId: topic.id, text: text.trim(), due_by: dueBy || null })
+    setMode('idle')
+  }
+
+  if (mode === 'edit') {
+    return (
+      <div className="space-y-3 border-t border-line pt-4">
+        <div className="text-sm font-medium text-ink-2">{nl.backlog.editTitle}</div>
+        <TextArea
+          aria-label={nl.backlog.editTitle}
+          value={text}
+          maxLength={2000}
+          onChange={(e) => setText(e.target.value)}
+        />
+        <Field label={`${nl.intake.dueBy} (${nl.common.optional})`}>
+          <Input type="date" value={dueBy} onChange={(e) => setDueBy(e.target.value)} />
+        </Field>
+        <ErrorText error={update.error} />
+        <div className="flex gap-2">
+          <Button onClick={save} disabled={!text.trim() || update.isPending} className="flex-1">
+            {nl.common.save}
+          </Button>
+          <Button variant="ghost" onClick={() => setMode('idle')}>
+            {nl.common.cancel}
+          </Button>
+        </div>
+      </div>
+    )
+  }
+
+  if (mode === 'delete') {
+    return (
+      <div className="space-y-3 border-t border-line pt-4">
+        <p className="text-sm">{nl.backlog.confirmDelete}</p>
+        <ErrorText error={remove.error} />
+        <div className="flex gap-2">
+          <Button
+            variant="danger"
+            className="flex-1 border border-danger"
+            disabled={remove.isPending}
+            onClick={async () => {
+              await remove.mutateAsync(topic.id)
+              onDone()
+            }}
+          >
+            {nl.backlog.yesDelete}
+          </Button>
+          <Button variant="ghost" onClick={() => setMode('idle')}>
+            {nl.common.cancel}
+          </Button>
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <div className="flex gap-2 border-t border-line pt-4">
+      <Button variant="secondary" onClick={() => setMode('edit')}>
+        {nl.backlog.edit}
+      </Button>
+      <Button variant="danger" onClick={() => setMode('delete')}>
+        {nl.backlog.delete}
       </Button>
     </div>
   )

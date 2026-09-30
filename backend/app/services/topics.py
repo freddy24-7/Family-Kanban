@@ -4,6 +4,7 @@ import uuid
 from collections.abc import Sequence
 from datetime import date
 
+from fastapi import HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app import config, repository
@@ -110,3 +111,50 @@ async def to_read_models(session: AsyncSession, topics: Sequence[Topic]) -> list
             )
         )
     return result
+
+
+def _check_can_change(topic: Topic, user_id: uuid.UUID, is_planner: bool) -> None:
+    if not is_planner and topic.created_by != user_id:
+        raise HTTPException(
+            status.HTTP_403_FORBIDDEN, "Only the creator or a planner can change this"
+        )
+
+
+async def update_topic(
+    session: AsyncSession,
+    topic: Topic,
+    user_id: uuid.UUID,
+    is_planner: bool,
+    text: str | None,
+    due_by: date | None,
+    due_by_set: bool,
+    clock: Clock,
+) -> Topic:
+    """Edit text and/or due date. A changed text is re-classified: the new
+    predictions are appended (the old ones stay, predictions are append-only).
+    Confirmed labels are kept: a typo fix doesn't change what the task is."""
+    _check_can_change(topic, user_id, is_planner)
+    changed_text = text is not None and text.strip() != topic.text
+    if changed_text:
+        topic.text = text.strip()
+    if due_by_set:
+        topic.due_by = due_by
+    topic.updated_at = clock.now()
+    if changed_text:
+        await classify_topics(session, [topic], clock)
+    await session.commit()
+    return topic
+
+
+async def delete_topic(
+    session: AsyncSession, topic: Topic, user_id: uuid.UUID, is_planner: bool, clock: Clock
+) -> None:
+    """Soft delete: hidden from the app and excluded from training data."""
+    _check_can_change(topic, user_id, is_planner)
+    if await repository.topic_is_planned_or_done(session, topic.id):
+        raise HTTPException(
+            status.HTTP_409_CONFLICT,
+            "Topic is in a sprint or already done; remove it from the sprint first",
+        )
+    topic.deleted_at = clock.now()
+    await session.commit()
