@@ -176,3 +176,30 @@ async def test_full_run_and_deterministic_replay(gemini):
         replay = await run_simulation(session, replay)
         strip = lambda stats: [{k: v for k, v in s.items()} for s in stats]  # noqa: E731
         assert strip(replay.weekly_stats) == strip(run.weekly_stats)
+
+
+async def test_simulation_api(gemini, client, outbox):
+    from tests.helpers import make_superuser, register_and_login
+
+    user = await register_and_login(client, "u@example.com")
+    assert (await client.get("/admin/simulations", headers=user)).status_code == 403
+    admin = await register_and_login(client, "root@example.com")
+    await make_superuser("root@example.com")
+    assert "drift-demo" in (await client.get("/admin/simulations/scenarios", headers=admin)).json()
+
+    started = await client.post(
+        "/admin/simulations",
+        json={"scenario": "drift-demo", "weeks": 3, "seed": 1, "family_seed": 1},
+        headers=admin,
+    )
+    assert started.status_code == 202
+    run = (await client.get(f"/admin/simulations/{started.json()['id']}", headers=admin)).json()
+    assert run["status"] == "completed" and len(run["weekly_stats"]) == 3
+
+    replay = await client.post(
+        f"/admin/simulations/{run['id']}/replay", json={"seed": 1}, headers=admin
+    )
+    assert replay.status_code == 202 and replay.json()["pool_run_id"] == run["id"]
+    again = (await client.get(f"/admin/simulations/{replay.json()['id']}", headers=admin)).json()
+    assert again["weekly_stats"] == run["weekly_stats"]
+    assert len((await client.get("/admin/simulations", headers=admin)).json()) == 2

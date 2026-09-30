@@ -44,6 +44,7 @@ export const nl = {
     board: 'Bord',
     review: 'Review',
     family: 'Gezin',
+    admin: 'Beheer',
   },
   auth: {
     login: 'Inloggen',
@@ -181,5 +182,29 @@ export const nl = {
     sent: 'Uitnodiging verstuurd.',
     pending: 'Openstaande uitnodigingen',
     expires: 'verloopt',
+  },
+  admin: {
+    title: 'Simulaties',
+    intro:
+      'Een gesimuleerd gezin leeft week voor week door de echte app, met geplante veranderingen (drift). De simulator kent de waarheid, dus je ziet hoe goed het model het écht doet.',
+    scenario: 'Scenario',
+    weeks: 'Weken',
+    start: 'Startdatum',
+    rubberStamp: 'Blind accepteren (kans)',
+    rubberStampHelp: 'Hoe vaak de planner een zekere voorspelling ongecontroleerd overneemt.',
+    run: 'Simulatie starten',
+    replay: 'Opnieuw afspelen',
+    runs: 'Runs',
+    progress: (w: number, total: number) => `week ${w}/${total}`,
+    weekly: 'Per week',
+    legend:
+      'cat/moeite = juist t.o.v. de verborgen waarheid · cat* = t.o.v. de labels van de planner (wat je normaal zou meten) · zeker = gemiddelde zekerheid · gemarkeerd = te controleren',
+    status: {
+      pool_pending: 'tickets schrijven…',
+      pool_ready: 'klaar om te draaien',
+      running: 'draait…',
+      completed: 'klaar',
+      failed: 'mislukt',
+    },
   },
 } as const

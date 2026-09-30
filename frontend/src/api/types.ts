@@ -119,3 +119,54 @@ export interface SprintDetail extends Sprint {
     created_at: string
   } | null
 }
+
+export interface WeekStats {
+  week: number
+  monday: string
+  events: string[]
+  n: number
+  true_category_acc: number | null
+  true_effort_acc: number | null
+  effort_mae: number | null
+  measured_category_acc: number | null
+  mean_category_conf: number | null
+  mean_effort_conf: number | null
+  flagged_rate: number | null
+  mean_words: number | null
+  true_mix: Record<string, number>
+  predicted_mix: Record<string, number>
+  labelled: number
+  sprint_items: number
+  sprint_done: number
+}
+
+export interface SimulationRun {
+  id: string
+  household_id: string
+  pool_run_id: string | null
+  scenario: {
+    name: string
+    description: string
+    events: { week: number; kind: string; note: string }[]
+  }
+  planner: {
+    check_rate: number
+    rubber_stamp_rate: number
+    label_error_rate: number
+    capacity_per_person: number
+  }
+  start_date: string
+  weeks: number
+  random_seed: number
+  status: 'pool_pending' | 'pool_ready' | 'running' | 'completed' | 'failed'
+  current_week: number
+  tokens_in: number
+  tokens_out: number
+  error: string | null
+  created_at: string
+  finished_at: string | null
+}
+
+export interface SimulationDetail extends SimulationRun {
+  weekly_stats: WeekStats[]
+}

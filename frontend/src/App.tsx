@@ -9,6 +9,7 @@ import {
   ResetPasswordPage,
   VerifyEmailPage,
 } from './pages/Auth'
+import { AdminPage } from './pages/Admin'
 import { BacklogPage } from './pages/Backlog'
 import { BoardPage } from './pages/Board'
 import { FamilyPage } from './pages/Family'
@@ -26,6 +27,11 @@ function RequireAuth({ children }: { children: ReactNode }) {
   if (loading) return <Spinner />
   if (!user) return <Navigate to={`/login?next=${encodeURIComponent(location.pathname)}`} replace />
   return <>{children}</>
+}
+
+function AdminOnly() {
+  const { user } = useAuth()
+  return user?.is_superuser ? <AdminPage /> : <Navigate to="/" replace />
 }
 
 export default function App() {
@@ -54,6 +60,7 @@ export default function App() {
         <Route path="/board" element={<BoardPage />} />
         <Route path="/review" element={<ReviewPage />} />
         <Route path="/family" element={<FamilyPage />} />
+        <Route path="/admin" element={<AdminOnly />} />
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>

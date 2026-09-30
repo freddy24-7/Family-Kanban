@@ -16,6 +16,7 @@ from app.models import (
     Membership,
     ModelVersion,
     Prediction,
+    SimulationRun,
     Sprint,
     SprintItem,
     SprintReview,
@@ -288,3 +289,15 @@ async def topic_is_planned_or_done(session: AsyncSession, topic_id: uuid.UUID) -
 
 async def get_sprint_review(session: AsyncSession, sprint_id: uuid.UUID) -> SprintReview | None:
     return await session.scalar(select(SprintReview).where(SprintReview.sprint_id == sprint_id))
+
+
+# --- Simulations ------------------------------------------------------------------------
+
+
+async def list_simulation_runs(session: AsyncSession) -> Sequence[SimulationRun]:
+    stmt = select(SimulationRun).order_by(SimulationRun.created_at.desc())
+    return (await session.scalars(stmt)).all()
+
+
+async def get_simulation_run(session: AsyncSession, run_id: uuid.UUID) -> SimulationRun | None:
+    return await session.get(SimulationRun, run_id)

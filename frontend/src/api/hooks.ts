@@ -7,6 +7,8 @@ import type {
   HouseholdDetail,
   Invite,
   ItemStatus,
+  SimulationDetail,
+  SimulationRun,
   Sprint,
   SprintDetail,
   SprintItem,
@@ -216,5 +218,48 @@ export function useDeleteTopic(h: string) {
     mutationFn: (topicId: string) =>
       api<void>(`/households/${h}/topics/${topicId}`, { method: 'DELETE' }),
     onSuccess: () => invalidate([...keys.backlog(h)]),
+  })
+}
+
+const isRunning = (status?: string) =>
+  status === 'pool_pending' || status === 'pool_ready' || status === 'running'
+
+export const useSimulations = () =>
+  useQuery({
+    queryKey: ['simulations'],
+    queryFn: () => api<SimulationRun[]>('/admin/simulations'),
+    refetchInterval: (q) => ((q.state.data ?? []).some((r) => isRunning(r.status)) ? 5000 : false),
+  })
+
+export const useSimulation = (id: string | null) =>
+  useQuery({
+    queryKey: ['simulation', id],
+    queryFn: () => api<SimulationDetail>(`/admin/simulations/${id}`),
+    enabled: !!id,
+    refetchInterval: (q) => (isRunning(q.state.data?.status) ? 5000 : false),
+  })
+
+export function useStartSimulation() {
+  const invalidate = useInvalidate()
+  return useMutation({
+    mutationFn: (body: {
+      scenario: string
+      weeks: number
+      start_date: string
+      planner: { rubber_stamp_rate: number }
+    }) => api<SimulationRun>('/admin/simulations', { method: 'POST', body }),
+    onSuccess: () => invalidate(['simulations']),
+  })
+}
+
+export function useReplaySimulation() {
+  const invalidate = useInvalidate()
+  return useMutation({
+    mutationFn: ({ id, rubber_stamp_rate }: { id: string; rubber_stamp_rate: number }) =>
+      api<SimulationRun>(`/admin/simulations/${id}/replay`, {
+        method: 'POST',
+        body: { planner: { rubber_stamp_rate } },
+      }),
+    onSuccess: () => invalidate(['simulations']),
   })
 }

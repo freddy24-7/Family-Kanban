@@ -7,6 +7,7 @@ from pydantic import BaseModel, ConfigDict, EmailStr, Field
 
 from app.domain import Category, Effort, ItemStatus, LabelSource, Source, SprintStatus
 from sim.family import FamilySpec
+from sim.world import PlannerBehaviour
 
 
 class ORMModel(BaseModel):
@@ -227,3 +228,42 @@ class SprintReviewRead(ORMModel):
 class SprintDetail(SprintRead):
     items: list[SprintItemRead]
     review: SprintReviewRead | None
+
+
+# --- Simulations (platform admin) -------------------------------------------------------
+
+
+class SimulationCreate(BaseModel):
+    scenario: str = "drift-demo"
+    weeks: int = Field(26, ge=1, le=104)
+    start_date: date = date(2026, 7, 6)
+    seed: int | None = None
+    family_seed: int | None = None
+    planner: PlannerBehaviour = Field(default_factory=PlannerBehaviour)
+
+
+class SimulationReplay(BaseModel):
+    seed: int | None = None
+    planner: PlannerBehaviour = Field(default_factory=PlannerBehaviour)
+
+
+class SimulationRead(ORMModel):
+    id: uuid.UUID
+    household_id: uuid.UUID
+    pool_run_id: uuid.UUID | None
+    scenario: dict
+    planner: dict
+    start_date: date
+    weeks: int
+    random_seed: int
+    status: str
+    current_week: int
+    tokens_in: int
+    tokens_out: int
+    error: str | None
+    created_at: datetime
+    finished_at: datetime | None
+
+
+class SimulationDetail(SimulationRead):
+    weekly_stats: list[dict]

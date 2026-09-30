@@ -39,9 +39,12 @@ function Icon({ path }: { path: string }) {
   )
 }
 
+const adminItem = { to: '/admin', key: 'admin', label: nl.nav.admin }
+
 export function Layout() {
-  const { logout } = useAuth()
+  const { logout, user } = useAuth()
   const { household } = useCurrentHousehold()
+  const nav = user?.is_superuser ? [...items, adminItem] : items
   return (
     <div className="min-h-dvh pb-[calc(4.5rem+env(safe-area-inset-bottom))] md:pb-0">
       <header className="sticky top-0 z-10 border-b border-line bg-page/90 backdrop-blur">
@@ -52,7 +55,7 @@ export function Layout() {
             <div className="truncate text-xs text-ink-3">{household.name}</div>
           </div>
           <nav className="hidden gap-1 md:flex">
-            {items.map((i) => (
+            {nav.map((i) => (
               <NavLink
                 key={i.to}
                 to={i.to}
@@ -76,8 +79,8 @@ export function Layout() {
         <Outlet />
       </main>
       <nav className="fixed inset-x-0 bottom-0 z-10 border-t border-line bg-surface pb-[env(safe-area-inset-bottom)] md:hidden">
-        <div className="grid grid-cols-6">
-          {items.map((i) => (
+        <div className={`grid ${nav.length > 6 ? 'grid-cols-7' : 'grid-cols-6'}`}>
+          {nav.map((i) => (
             <NavLink
               key={i.to}
               to={i.to}
