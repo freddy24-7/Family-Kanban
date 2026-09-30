@@ -156,7 +156,12 @@ function RunDetail({ id, onReplay }: { id: string; onReplay: (id: string) => voi
   return (
     <section className="space-y-3">
       <h2 className="font-semibold">{nl.admin.weekly}</h2>
-      {r.error && <ErrorText error={new Error(r.error)} />}
+      {r.error && (
+        // The run's own recorded reason (ErrorText would show a generic message).
+        <p className="rounded-xl bg-warn-bg px-3 py-2 text-sm text-warn" role="status">
+          {r.error}
+        </p>
+      )}
       <p className="text-xs text-ink-3">{nl.admin.legend}</p>
       <div className="overflow-x-auto rounded-2xl border border-line bg-surface">
         <table className="w-full text-right text-xs tabular-nums">
