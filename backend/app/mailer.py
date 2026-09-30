@@ -16,6 +16,13 @@ log = logging.getLogger(__name__)
 RESEND_URL = "https://api.resend.com/emails"
 
 
+def _payload(to: str, subject: str, body_text: str) -> dict:
+    payload = {"from": config.EMAIL_FROM, "to": [to], "subject": subject, "text": body_text}
+    if config.EMAIL_REPLY_TO:
+        payload["reply_to"] = config.EMAIL_REPLY_TO
+    return payload
+
+
 async def send_email(to: str, subject: str, body_text: str) -> bool:
     if not config.RESEND_API_KEY:
         log.info(
@@ -30,7 +37,7 @@ async def send_email(to: str, subject: str, body_text: str) -> bool:
             response = await client.post(
                 RESEND_URL,
                 headers={"Authorization": f"Bearer {config.RESEND_API_KEY}"},
-                json={"from": config.EMAIL_FROM, "to": [to], "subject": subject, "text": body_text},
+                json=_payload(to, subject, body_text),
             )
             response.raise_for_status()
         return True

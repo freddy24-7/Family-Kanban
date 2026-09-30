@@ -67,6 +67,8 @@ GOOGLE_OAUTH_CLIENT_SECRET = _env("GOOGLE_OAUTH_CLIENT_SECRET")
 
 RESEND_API_KEY = _env("RESEND_API_KEY")
 EMAIL_FROM = _env("EMAIL_FROM", "Gezinsbord <noreply@example.com>")
+# Optional: where replies go when EMAIL_FROM has no mailbox behind it.
+EMAIL_REPLY_TO = _env("EMAIL_REPLY_TO")
 
 FRONTEND_URL = _env("FRONTEND_URL", "http://localhost:5173").rstrip("/")
 CORS_ORIGINS = [

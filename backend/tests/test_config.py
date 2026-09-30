@@ -55,3 +55,14 @@ def _restore_config():
     import app.config
 
     importlib.reload(app.config)
+
+
+def test_mail_payload_reply_to(monkeypatch):
+    from app import config, mailer
+
+    monkeypatch.setattr(config, "EMAIL_FROM", "Gezinsbord <gezinsbord@scalarox.nl>")
+    monkeypatch.setattr(config, "EMAIL_REPLY_TO", "")
+    assert "reply_to" not in mailer._payload("a@b.nl", "s", "t")
+    monkeypatch.setattr(config, "EMAIL_REPLY_TO", "info@scalarox.nl")
+    payload = mailer._payload("a@b.nl", "s", "t")
+    assert payload["reply_to"] == "info@scalarox.nl" and payload["to"] == ["a@b.nl"]
