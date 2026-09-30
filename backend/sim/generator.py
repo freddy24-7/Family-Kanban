@@ -39,6 +39,11 @@ STYLES: dict[str, tuple[str, float]] = {
         0.07,
     ),
 }
+EFFORT_HINTS = {
+    Effort.S: "up to 30 minutes",
+    Effort.M: "30 minutes to 2 hours",
+    Effort.L: "more than 2 hours",
+}
 MONTHS_NL = ["januari", "februari", "maart", "april", "mei", "juni", "juli", "augustus",
              "september", "oktober", "november", "december"]  # fmt: skip
 
@@ -49,6 +54,8 @@ class TicketRequest:
     category: Category
     submitter: Person
     style: str
+    # Simulator only: the effort the ticket should plausibly describe.
+    effort: Effort | None = None
 
 
 class GeneratedTicket(BaseModel):
@@ -72,6 +79,7 @@ class GeneratedTicket(BaseModel):
 
 @dataclass
 class AcceptedTicket:
+    index: int
     text: str
     category: Category
     effort: Effort
@@ -162,10 +170,16 @@ def build_prompt(
         "",
         "Requests:",
     ]
+    if any(r.effort for r in requests):
+        lines.insert(
+            -1, "When a request gives an effort, write a task that plausibly takes that long."
+        )
     for r in requests:
         who = r.submitter.name + (f" (age {r.submitter.age})" if r.submitter.role == "kid" else "")
+        effort = f"; effort={r.effort.value} ({EFFORT_HINTS[r.effort]})" if r.effort else ""
         lines.append(
-            f"{r.index}. category={r.category.value}; typed by {who}; style: {STYLES[r.style][0]}"
+            f"{r.index}. category={r.category.value}{effort}; typed by {who}; "
+            f"style: {STYLES[r.style][0]}"
         )
     if avoid:
         lines += ["", "Already written for this family (do not repeat these):"]
@@ -205,6 +219,7 @@ async def generate_batch(
             batch.category_mismatches += 1
         batch.accepted.append(
             AcceptedTicket(
+                index=ticket.index,
                 text=ticket.text.strip(),
                 category=ticket.category,
                 effort=ticket.effort,

@@ -29,6 +29,11 @@ class SimulatedClock:
     def advance(self, delta: timedelta) -> None:
         self._now += delta
 
+    def set(self, moment: datetime) -> None:
+        if moment.tzinfo is None:
+            raise ValueError("SimulatedClock needs timezone-aware times")
+        self._now = moment
+
 
 _system_clock = SystemClock()
 

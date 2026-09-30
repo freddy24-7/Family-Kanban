@@ -2,7 +2,7 @@
 
 Tenancy: every tenant-owned table carries household_id.
 Provenance: topics and predictions carry `source` (real | simulated).
-Predictions are append-only. SimulationRun arrives in Phase 5. Frozen holdouts are
+Predictions are append-only. Frozen holdouts are
 committed manifest files (backend/ml/holdouts/), not tables.
 """
 
@@ -49,15 +49,17 @@ from app.domain import (
 )
 
 
-def str_enum(enum_cls: type[StrEnum]) -> Enum:
-    """Store enum values as VARCHAR + CHECK constraint (easy to extend via migrations)."""
+def str_enum(enum_cls: type[StrEnum], name: str | None = None) -> Enum:
+    """Store enum values as VARCHAR + CHECK constraint (easy to extend via migrations).
+    `name` becomes the CHECK constraint's name; it must be unique per table, so pass it
+    when a table has several columns of the same enum."""
     return Enum(
         enum_cls,
         native_enum=False,
         create_constraint=True,
         length=32,
         values_callable=lambda e: [m.value for m in e],
-        name=enum_cls.__name__.lower(),
+        name=name or enum_cls.__name__.lower(),
     )
 
 
@@ -186,6 +188,10 @@ class Topic(Base):
     # Data lineage: which generator run produced this (synthetic) topic.
     generation_run_id: Mapped[uuid.UUID | None] = mapped_column(
         ForeignKey("generation_run.id", ondelete="SET NULL"), index=True
+    )
+    # Simulator lineage: the pool ticket (with hidden ground truth) this topic replays.
+    sim_ticket_id: Mapped[uuid.UUID | None] = mapped_column(
+        ForeignKey("sim_ticket.id", ondelete="SET NULL"), index=True
     )
 
 
@@ -380,3 +386,66 @@ class SprintReview(Base):
         ForeignKey("user.id", ondelete="SET NULL")
     )
     created_at: Mapped[datetime] = created_at()
+
+
+# --- Simulation (Phase 5) -------------------------------------------------------------
+
+
+class SimulationRun(Base):
+    """One simulated household living through `weeks` sprints under a scenario.
+
+    Two stages: the *pool* (Gemini writes each week's tickets for their hidden truth;
+    stored in sim_ticket) and the *run* (replays the pool through the real app
+    services with a seeded RNG and a simulated clock). A replay run reuses another
+    run's pool (`pool_run_id`) with its own household, so the same world can be
+    re-lived with, say, a sloppier planner or a newer model."""
+
+    __tablename__ = "simulation_run"
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    household_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("household.id", ondelete="CASCADE"), index=True, nullable=False
+    )
+    pool_run_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("simulation_run.id"))
+    scenario: Mapped[dict[str, Any]] = mapped_column(JSONB, nullable=False)
+    planner: Mapped[dict[str, Any]] = mapped_column(JSONB, nullable=False)
+    start_date: Mapped[date] = mapped_column(Date, nullable=False)
+    weeks: Mapped[int] = mapped_column(Integer, nullable=False)
+    random_seed: Mapped[int] = mapped_column(Integer, nullable=False)
+    # pool_pending | pool_ready | running | completed | failed
+    status: Mapped[str] = mapped_column(String(20), nullable=False)
+    current_week: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    tokens_in: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    tokens_out: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    weekly_stats: Mapped[list[dict[str, Any]]] = mapped_column(JSONB, default=list, nullable=False)
+    error: Mapped[str | None] = mapped_column(Text)
+    created_at: Mapped[datetime] = created_at()
+    finished_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+
+class SimTicket(Base):
+    """A pool ticket: text written by Gemini for a truth decided by the world model."""
+
+    __tablename__ = "sim_ticket"
+    __table_args__ = (Index("ix_sim_ticket_run_week", "simulation_run_id", "week"),)
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    simulation_run_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("simulation_run.id", ondelete="CASCADE"), nullable=False
+    )
+    week: Mapped[int] = mapped_column(Integer, nullable=False)
+    text: Mapped[str] = mapped_column(Text, nullable=False)
+    submitter: Mapped[str] = mapped_column(String(100), nullable=False)
+    style: Mapped[str] = mapped_column(String(20), nullable=False)
+    # Hidden ground truth (never shown in the app, never a feature).
+    true_category: Mapped[Category] = mapped_column(
+        str_enum(Category, "true_category"), nullable=False
+    )
+    true_effort: Mapped[Effort] = mapped_column(str_enum(Effort, "true_effort"), nullable=False)
+    # The effort the TEXT was written for. Differs from true_effort only under
+    # planted concept drift (same kind of text, different real effort).
+    text_effort: Mapped[Effort] = mapped_column(str_enum(Effort, "text_effort"), nullable=False)
+    # Gemini's own (weak) labels for the text it wrote, for comparison.
+    gemini_category: Mapped[Category | None] = mapped_column(str_enum(Category, "gemini_category"))
+    gemini_effort: Mapped[Effort | None] = mapped_column(str_enum(Effort, "gemini_effort"))
+    events: Mapped[list[str]] = mapped_column(JSONB, default=list, nullable=False)
