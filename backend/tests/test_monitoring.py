@@ -138,3 +138,44 @@ def test_ongoing_alarm_does_not_count_as_detecting_a_later_event():
     result = summary(weekly, [{"week": 4, "kind": "x"}], START)
     assert result["false_alarms"] == [{"week": week(1), "alarms": ["effort_accuracy"]}]
     assert result["detections"][0]["delay_weeks"] == 2  # the category_mix onset, not the old alarm
+
+
+def test_two_proportion_test():
+    from ml.monitoring import worse_than_before
+
+    assert worse_than_before(40, 50, 3, 25) < 1e-6  # 80% -> 12%: clearly worse
+    assert worse_than_before(40, 50, 20, 25) > 0.3  # 80% -> 80%: no evidence
+    assert worse_than_before(0, 0, 3, 5) is None
+
+
+def test_segment_alarm_catches_drift_diluted_in_the_average():
+    """One category's effort estimates break (concept drift) while six others are fine:
+    the overall accuracy barely moves, the segment alarm fires."""
+    rng = random.Random(1)
+    rows = []
+    for w in range(16):
+        for i in range(40):
+            cat = CATEGORIES[i % 7]
+            broken = cat == "groceries" and w >= 10
+            right = rng.random() < (0.1 if broken else 0.8)
+            rows.append(
+                {
+                    "week": START + timedelta(weeks=w),
+                    "text": "a b c",
+                    "pred_category": cat,
+                    "category_conf": 0.9,
+                    "pred_effort": "S",
+                    "effort_conf": 0.9,
+                    "actual_effort": "S" if right else "M",
+                }
+            )
+    weekly = monitor(rows, profile(rows[:160]), window_weeks=4)
+    alarm_weeks = [w["week"] for w in weekly if "effort_accuracy:groceries" in w["alarms"]]
+    assert alarm_weeks and min(alarm_weeks) >= (START + timedelta(weeks=10)).isoformat()
+    assert all(
+        not any(
+            a.startswith("effort_accuracy:") and a != "effort_accuracy:groceries"
+            for a in w["alarms"]
+        )
+        for w in weekly
+    )

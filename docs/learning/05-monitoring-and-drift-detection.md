@@ -95,6 +95,38 @@ Lessons learned the hard way:
 - At household scale, label-free drift mostly measures **seasons**. The reliable harm signal is
   labelled accuracy, which is why the sprint review matters.
 
+### Replication in production (new Gemini pools, same seeds)
+
+| | Local runs | Production runs |
+|---|---|---|
+| Dog | category mix, 0 wk, also in control | same: **confounded with September** |
+| Concept drift, overall effort accuracy | alarm after 2 weeks | **no alarm** (0.66 → 0.49, but CI ±0.14 and a weak reference) |
+| Control run, overall effort accuracy | quiet | **false alarm** in late October (autumn tasks, 0.72 → 0.49) |
+
+The "real detection" of concept drift didn't replicate. **One run proves little**; replicate
+before believing a detector.
+
+### Why: dilution and statistical power
+
+Per predicted category the concept drift is unmistakable: groceries effort accuracy **0.52 → 0.12**
+(95% intervals [0.34, 0.69] vs [0.04, 0.31]) in drift-demo, vs 0.68 → 0.58 in the control. In the
+overall average that one category's collapse is diluted by six healthy ones and drowned by the
+seasonal effect.
+
+So the dashboard now monitors **effort accuracy per category**, comparing the current window with
+all earlier weeks (a two-proportion test), with a **Bonferroni correction** (7 categories tested
+every week → each test at p < 0.01/7). Result: still no formal alarm. A family produces ~2 reviewed
+groceries tickets a week: 5-9 per 4-week window, giving p ≈ 0.03-0.04 (8-week window: p ≈ 0.006),
+while the corrected threshold is 0.0014.
+
+**Relaxing the threshold until the alarm fires would be p-hacking.** The honest conclusions:
+
+- With one household's volume, a concept drift in one category needs **2-3 months of reviews**
+  to be statistically provable.
+- The segment table still shows it to a human immediately (0.12 now vs 0.48 before).
+- Power comes from **more data**: pooling households (the multi-tenant design) or sequential tests
+  that accumulate evidence over time (e.g. CUSUM) are the next steps, not looser thresholds.
+
 ## Self-check
 
 1. Which signal would catch "groceries now take longer", and how late?

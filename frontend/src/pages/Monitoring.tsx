@@ -154,6 +154,7 @@ function Report({ report }: { report: MonitoringReport }) {
         />
       </div>
       <MixChart weeks={weeks} />
+      <Segments week={last} />
       {report.detection && <Detection detection={report.detection} />}
     </div>
   )
@@ -625,6 +626,62 @@ function ModelLog() {
                 </td>
               </tr>
             ))}
+          </tbody>
+        </table>
+      </div>
+    </ChartCard>
+  )
+}
+
+/** Effort accuracy per predicted category in the latest window vs all earlier weeks.
+ *  Drift that hits one category is diluted in the average but visible here, even when
+ *  there are too few tickets for a formal alarm. */
+function Segments({ week }: { week: MonitoringWeek }) {
+  const rows = CATEGORIES.map((c) => [c, week.effort_by_category?.[c]] as const).filter(
+    ([, s]) => s,
+  )
+  if (rows.length === 0) return null
+  return (
+    <ChartCard title={t.segmentsTitle}>
+      <p className="mb-2 text-xs text-ink-3">{t.segmentsHelp}</p>
+      <div className="overflow-x-auto">
+        <table className="w-full text-right text-sm tabular-nums">
+          <thead className="text-xs text-ink-3">
+            <tr>
+              <th className="py-1 text-left font-medium">{t.category}</th>
+              <th className="py-1 font-medium">{t.now}</th>
+              <th className="py-1 font-medium">{t.before}</th>
+              <th className="py-1 font-medium">p</th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map(([c, s]) => {
+              const alarm = week.alarms.includes(`effort_accuracy:${c}`)
+              const drop = s!.prior_value !== null && s!.value < s!.prior_value - 0.15
+              return (
+                <tr key={c} className="border-t border-line">
+                  <td className="py-1.5 text-left">
+                    <span
+                      className="mr-1.5 inline-block size-2 rounded-full"
+                      style={{ background: `var(--cat-${c})` }}
+                    />
+                    {categoryLabels[c]}
+                  </td>
+                  <td
+                    className={`py-1.5 ${alarm ? 'font-semibold text-warn' : drop ? 'text-warn' : ''}`}
+                  >
+                    {pct(s!.value)} <span className="text-xs text-ink-3">n={s!.n}</span>
+                  </td>
+                  <td className="py-1.5">
+                    {pct(s!.prior_value)} <span className="text-xs text-ink-3">n={s!.prior_n}</span>
+                  </td>
+                  <td className="py-1.5 text-xs text-ink-3">
+                    {s!.p_worse === null ? '–' : s!.p_worse.toFixed(3)}
+                    {alarm ? ` · ${t.alarm}` : ''}
+                  </td>
+                </tr>
+              )
+            })}
           </tbody>
         </table>
       </div>

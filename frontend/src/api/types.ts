@@ -195,6 +195,16 @@ export interface MonitoringWeek {
   true_category_accuracy?: Accuracy
   true_effort_accuracy?: Accuracy
   correction_rate: number | null
+  effort_by_category: Record<
+    string,
+    {
+      n: number
+      value: number
+      prior_n: number
+      prior_value: number | null
+      p_worse: number | null
+    }
+  >
   alarms: string[]
 }
 

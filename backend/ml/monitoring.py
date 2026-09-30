@@ -29,6 +29,8 @@ PSI_ALARM = 0.25  # "significant shift" rule of thumb
 P_ALARM = 0.01
 MIN_WINDOW = 30  # tickets in a window before label-free tests may alarm
 MIN_LABELLED = 15  # labelled tickets before accuracy may alarm
+# Segment tests (effort accuracy per predicted category): window vs all earlier weeks.
+MIN_SEGMENT_WINDOW, MIN_SEGMENT_PRIOR = 10, 20
 
 
 # --- Binning and basic statistics ------------------------------------------------------------
@@ -105,6 +107,19 @@ def wilson(k: int, n: int, z: float = 1.96) -> tuple[float, float] | None:
     return (max(0.0, centre - half), min(1.0, centre + half))
 
 
+def worse_than_before(k_prior: int, n_prior: int, k_now: int, n_now: int) -> float | None:
+    """One-sided two-proportion z-test: p-value for 'the current rate is lower than the
+    earlier rate'. None when either side has no data."""
+    if n_prior == 0 or n_now == 0:
+        return None
+    p1, p2 = k_prior / n_prior, k_now / n_now
+    pooled = (k_prior + k_now) / (n_prior + n_now)
+    se = math.sqrt(pooled * (1 - pooled) * (1 / n_prior + 1 / n_now))
+    if se == 0:
+        return None if p2 >= p1 else 0.0
+    return float(stats.norm.cdf((p2 - p1) / se))
+
+
 # --- Reference profile -------------------------------------------------------------------------
 
 
@@ -169,13 +184,46 @@ def monitor(
         lo = current - timedelta(weeks=window_weeks - 1)
         window = [r for r in rows if lo <= r["week"] <= current]
         this_week = [r for r in rows if r["week"] == current]
-        out.append(_window_stats(current, window, this_week, reference))
+        prior = [r for r in rows if r["week"] < lo]
+        out.append(_window_stats(current, window, this_week, reference, prior))
         current += timedelta(weeks=1)
     return out
 
 
+def _effort_segments(window: list[dict], prior: list[dict]) -> dict[str, dict[str, Any]]:
+    """Effort accuracy per predicted category, now vs all earlier weeks. A change that hits
+    one category (e.g. groceries take longer) is diluted in the overall average but
+    obvious within its segment."""
+    out = {}
+    for cat in CATEGORIES:
+        now = [
+            r["pred_effort"] == r["actual_effort"]
+            for r in window
+            if r.get("pred_category") == cat and r.get("actual_effort")
+        ]
+        before = [
+            r["pred_effort"] == r["actual_effort"]
+            for r in prior
+            if r.get("pred_category") == cat and r.get("actual_effort")
+        ]
+        if not now:
+            continue
+        out[cat] = {
+            "n": len(now),
+            "value": sum(now) / len(now),
+            "prior_n": len(before),
+            "prior_value": sum(before) / len(before) if before else None,
+            "p_worse": worse_than_before(sum(before), len(before), sum(now), len(now)),
+        }
+    return out
+
+
 def _window_stats(
-    week: date, window: list[dict], this_week: list[dict], ref: dict
+    week: date,
+    window: list[dict],
+    this_week: list[dict],
+    ref: dict,
+    prior: list[dict] | None = None,
 ) -> dict[str, Any]:
     n = len(window)
     cat = [r for r in window if r.get("pred_category")]
@@ -212,6 +260,7 @@ def _window_stats(
         "category_accuracy": _accuracy(labelled),
         "effort_accuracy": _accuracy(reviewed),
         "correction_rate": float(np.mean(changed)) if changed else None,
+        "effort_by_category": _effort_segments(window, prior or []),
     }
     if any(r.get("truth_category") for r in window):
         entry["true_category_accuracy"] = _accuracy(
@@ -247,6 +296,12 @@ def _alarms(e: dict[str, Any], ref: dict[str, Any]) -> list[str]:
         below = acc["ci95"] is not None and acc["ci95"][1] < (target or 0) - 1e-9
         if target is not None and acc["n"] >= MIN_LABELLED and below:
             alarms.append(key)
+    # Segments: 7 tests every week, so Bonferroni: each uses P_ALARM / number of segments.
+    segments = e.get("effort_by_category", {})
+    for cat, seg in segments.items():
+        enough = seg["n"] >= MIN_SEGMENT_WINDOW and seg["prior_n"] >= MIN_SEGMENT_PRIOR
+        if enough and seg["p_worse"] is not None and seg["p_worse"] < P_ALARM / len(CATEGORIES):
+            alarms.append(f"effort_accuracy:{cat}")
     return alarms
 
 

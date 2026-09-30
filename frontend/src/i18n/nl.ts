@@ -240,6 +240,11 @@ export const nl = {
     psiLength: 'Drift: tekstlengte (PSI)',
     alarm: 'alarm',
     mixTitle: 'Voorspelde categoriemix per week',
+    segmentsTitle: 'Moeite juist, per categorie',
+    segmentsHelp:
+      'Laatste venster tegenover alle eerdere weken. Een verandering in één categorie verdwijnt in het gemiddelde, maar is hier zichtbaar, ook als er te weinig taken zijn voor een formeel alarm (drempel met Bonferroni-correctie).',
+    now: 'Nu',
+    before: 'Eerder',
     detectionTitle: 'Detectie van geplante veranderingen',
     detectionHelp:
       'Eerste nieuw alarm na elke geplante verandering, en alarmen vóór de eerste verandering (vals alarm of seizoen).',

@@ -216,8 +216,10 @@ you can explain why it triggered when it did.
 intervals, rolling windows, onset-based detection summary), reference profiles stored per model
 version (backfilled for v1), admin dashboard "Modelgezondheid" (accuracy with bands and truth,
 PSI small multiples with alarm dots, category mix, detection table, model log). Validated against a
-control (baseline) run: concept drift detected after 2 weeks; the dog event is confounded with the
-September season; the new typist is missed. See lesson 05.
+control (baseline) run, locally and in production: the dog event is confounded with the September
+season; overall-accuracy detection of the concept drift did not replicate; per-category effort
+segments show it clearly (groceries 0.52 → 0.12) but one household lacks the statistical power for a
+Bonferroni-corrected alarm (needs ~2-3 months or pooled households). See lesson 05.
 
 ---
 
