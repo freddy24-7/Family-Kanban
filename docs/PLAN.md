@@ -1,6 +1,6 @@
 # Build Plan — Family Kanban
 
-**Status**: Phase 3 complete (2026-09-29) · next: Phase 4
+**Status**: Phase 4 deployed (2026-09-30): app live, family onboarding next · then Phase 5
 
 Sized for ~8–10 hours/week. Each phase ends with something demonstrable.
 Phases marked 🎓 include ML lessons: before building, the concept is explained;
@@ -150,6 +150,12 @@ review threshold 0.8. Artifacts in Postgres. An ML review before promotion found
 - Freeze **holdout-real-v1** once enough real labelled topics exist (Phase 7+).
 
 **Done when**: family members can install the PWA, submit topics, and run a sprint end-to-end.
+
+**Outcome (2026-09-30)**: sprint API + Dutch PWA live on Railway
+(https://ideal-achievement-production-6b63.up.railway.app, Dockerfile + Caddy). Verified end to
+end in headless Chromium (phone viewport) locally, and CORS/login/service worker live. Open:
+invite emails (Resend needs an own domain; until then invite links are copied from the API
+logs), family onboarding, first real sprint.
 
 ---
 
