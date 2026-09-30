@@ -170,3 +170,60 @@ export interface SimulationRun {
 export interface SimulationDetail extends SimulationRun {
   weekly_stats: WeekStats[]
 }
+
+export interface Accuracy {
+  n: number
+  value: number | null
+  ci95: [number, number] | null
+}
+
+export interface MonitoringWeek {
+  week: string
+  n_week: number
+  n_window: number
+  mean_confidence: number | null
+  flagged_rate: number | null
+  psi_category: number | null
+  p_category: number | null
+  psi_confidence: number | null
+  p_confidence: number | null
+  psi_length: number | null
+  p_length: number | null
+  category_mix: Record<string, number>
+  category_accuracy: Accuracy
+  effort_accuracy: Accuracy
+  true_category_accuracy?: Accuracy
+  true_effort_accuracy?: Accuracy
+  correction_rate: number | null
+  alarms: string[]
+}
+
+export interface MonitoringReport {
+  reference_kind: 'holdout' | 'first_weeks'
+  reference: { category_accuracy: number | null; effort_accuracy: number | null; n: number } | null
+  n_tickets?: number
+  weekly: MonitoringWeek[]
+  detection: {
+    false_alarms: { week: string; alarms: string[] }[]
+    detections: {
+      event: string
+      note: string
+      first_alarm_week: string | null
+      delay_weeks: number | null
+      detectors: string[]
+    }[]
+  } | null
+  run?: { id: string; scenario: SimulationRun['scenario']; start_date: string }
+}
+
+export interface ModelLogEntry {
+  name: string
+  task: string
+  status: string
+  created_at: string
+  training_set_size: number
+  holdout_macro_f1: number | null
+  holdout_macro_f1_ci95: [number, number] | null
+  cv_macro_f1: number | null
+  notes: string | null
+}

@@ -28,7 +28,7 @@ import numpy as np
 import pandas as pd
 
 from app.domain import Category, Task
-from ml import registry
+from ml import monitoring, registry
 from ml.calibration import TemperatureScaled, apply_temperature, fit_temperature
 from ml.datasets import dataset_hash, load_snapshot, load_snapshot_members
 from ml.evaluate import (
@@ -104,6 +104,54 @@ def promotion_decision(holdouts: dict[str, dict]) -> tuple[bool, str]:
     return True, "significantly beats the champion on every holdout"
 
 
+def task_profile(task: Task, texts: list[str], outputs, labels) -> dict:
+    """The monitoring reference for one task (see ml/monitoring.py)."""
+    if task == Task.CATEGORY:
+        rows = [
+            {
+                "text": t,
+                "pred_category": o.predicted,
+                "category_conf": o.confidence,
+                "label_category": y,
+            }
+            for t, o, y in zip(texts, outputs, labels, strict=True)
+        ]
+        prof = monitoring.profile(rows)
+        keep = ("n", "category_mix", "confidence", "text_length", "category_accuracy")
+        return {k: prof[k] for k in keep}
+    return {
+        "n": len(texts),
+        "effort_confidence": monitoring.distribution(
+            [monitoring.conf_bin(o.confidence) for o in outputs], monitoring.CONF_BINS
+        ),
+        "effort_accuracy": float(
+            np.mean([o.predicted == y for o, y in zip(outputs, labels, strict=True)])
+        ),
+    }
+
+
+def backfill_reference(df: pd.DataFrame, members) -> None:
+    """Add reference profiles to the ACTIVE model versions (trained before Phase 6).
+    Only derived monitoring data is added; the model and its evaluation are untouched."""
+    session = registry.sync_session()
+    for task in (Task.CATEGORY, Task.EFFORT):
+        version = registry.active_version(session, task)
+        if version is None:
+            continue
+        model = registry.load_model_sync(session, version)
+        profiles = {}
+        for manifest in load_manifests():
+            held, _ = holdout_frame(df, manifest.name)
+            outputs = model.predict(list(masked_texts(held, members)))
+            profiles[manifest.name] = task_profile(
+                task, list(held["text"]), outputs, held[LABEL_COLUMN[task]].to_numpy()
+            )
+        version.metrics = {**version.metrics, "reference_profile": profiles}
+        session.commit()
+        print(f"{version.name}: reference profile stored for {list(profiles)}")
+    session.close()
+
+
 def _git_commit() -> str:
     try:
         return subprocess.run(
@@ -170,7 +218,7 @@ def train_task(
     session = registry.sync_session()
     champion_version = registry.active_version(session, task)
     champion = registry.load_model_sync(session, champion_version) if champion_version else None
-    holdouts = {}
+    holdouts, reference_profiles = {}, {}
     for manifest in manifests:
         held, held_report = holdout_frame(df, manifest.name, manifests)
         y_held, X_held = held[label].to_numpy(), masked_texts(held, members)
@@ -211,6 +259,7 @@ def train_task(
                 )
             }
         holdouts[manifest.name] = entry
+        reference_profiles[manifest.name] = task_profile(task, list(held["text"]), outputs, y_held)
 
     # 6. Register + gate
     passed, reason = promotion_decision(holdouts)
@@ -232,6 +281,9 @@ def train_task(
         "holdouts": holdouts,
         "champion_at_training": _champion_name(champion_version),
         "temperature": round(temperature, 4),
+        # What "normal" looks like for monitoring (Phase 6): distributions and accuracy
+        # of this model's predictions on each frozen holdout.
+        "reference_profile": reference_profiles,
     }
     meta = {
         "task": task.value,
@@ -282,10 +334,18 @@ def main() -> None:
     parser.add_argument("--task", choices=["category", "effort", "all"], default="all")
     parser.add_argument("--promote", action="store_true", help="activate if the gate passes")
     parser.add_argument("--dry-run", action="store_true", help="evaluate, register nothing")
+    parser.add_argument(
+        "--backfill-reference",
+        action="store_true",
+        help="add monitoring references to active models",
+    )
     args = parser.parse_args()
 
     df = load_snapshot(args.snapshot)
     members = load_snapshot_members(args.snapshot)
+    if args.backfill_reference:
+        backfill_reference(df, members)
+        return
     tasks = [Task.CATEGORY, Task.EFFORT] if args.task == "all" else [Task(args.task)]
     for task in tasks:
         result = train_task(task, df, args.snapshot, members, args.promote, args.dry_run)

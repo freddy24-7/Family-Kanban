@@ -1,6 +1,6 @@
 # Build Plan — Family Kanban
 
-**Status**: Phase 5 complete (2026-09-30) · next: Phase 6 (monitoring dashboard)
+**Status**: Phase 6 complete (2026-09-30) · next: Phase 7 (retraining loop)
 
 Sized for ~8–10 hours/week. Each phase ends with something demonstrable.
 Phases marked 🎓 include ML lessons: before building, the concept is explained;
@@ -211,6 +211,13 @@ new-typist covariate drift hidden in averages, automation bias measurable by rep
 
 **Done when**: the dashboard shows the planted drift from a Phase 5 simulation, and
 you can explain why it triggered when it did.
+
+**Outcome**: ml/monitoring.py (PSI + chi-square with smoothing and small-bin merging, Wilson
+intervals, rolling windows, onset-based detection summary), reference profiles stored per model
+version (backfilled for v1), admin dashboard "Modelgezondheid" (accuracy with bands and truth,
+PSI small multiples with alarm dots, category mix, detection table, model log). Validated against a
+control (baseline) run: concept drift detected after 2 weeks; the dog event is confounded with the
+September season; the new typist is missed. See lesson 05.
 
 ---
 

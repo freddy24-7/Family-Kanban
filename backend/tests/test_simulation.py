@@ -203,3 +203,49 @@ async def test_simulation_api(gemini, client, outbox):
     again = (await client.get(f"/admin/simulations/{replay.json()['id']}", headers=admin)).json()
     assert again["weekly_stats"] == run["weekly_stats"]
     assert len((await client.get("/admin/simulations", headers=admin)).json()) == 2
+
+
+async def test_monitoring_api(gemini, client, outbox):
+    from tests.helpers import make_superuser, register_and_login
+
+    admin = await register_and_login(client, "mon@example.com")
+    await make_superuser("mon@example.com")
+    user = await register_and_login(client, "plain@example.com")
+    assert (await client.get("/admin/monitoring/models", headers=user)).status_code == 403
+
+    run = (
+        await client.post(
+            "/admin/simulations",
+            json={"scenario": "drift-demo", "weeks": 6, "seed": 2, "family_seed": 2},
+            headers=admin,
+        )
+    ).json()
+    report = (
+        await client.get(
+            f"/admin/monitoring/simulations/{run['id']}?reference=first_weeks&window=2",
+            headers=admin,
+        )
+    ).json()
+    assert report["reference_kind"] == "first_weeks" and report["n_tickets"] > 0
+    assert len(report["weekly"]) == 6
+    week = report["weekly"][-1]
+    assert {
+        "psi_category",
+        "p_category",
+        "category_accuracy",
+        "true_category_accuracy",
+        "alarms",
+    } <= set(week)
+    assert report["detection"] is not None and report["detection"]["detections"]
+
+    # Stub models carry no holdout profile: no reference, no weekly entries (not an error).
+    assert (await client.get(f"/admin/monitoring/simulations/{run['id']}", headers=admin)).json()[
+        "reference"
+    ] is None
+    assert (
+        await client.get("/admin/monitoring/real?reference=first_weeks", headers=admin)
+    ).status_code == 200
+    names = {
+        m["name"] for m in (await client.get("/admin/monitoring/models", headers=admin)).json()
+    }
+    assert {"category-stub-0", "effort-stub-0"} <= names

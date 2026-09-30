@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react'
+import { lazy, Suspense, type ReactNode } from 'react'
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
 import { Layout } from './components/Layout'
 import { Spinner } from './components/ui'
@@ -9,7 +9,6 @@ import {
   ResetPasswordPage,
   VerifyEmailPage,
 } from './pages/Auth'
-import { AdminPage } from './pages/Admin'
 import { BacklogPage } from './pages/Backlog'
 import { BoardPage } from './pages/Board'
 import { FamilyPage } from './pages/Family'
@@ -29,9 +28,17 @@ function RequireAuth({ children }: { children: ReactNode }) {
   return <>{children}</>
 }
 
+// Admin-only code (charts) is split into its own chunk: families never download it.
+const AdminPage = lazy(() => import('./pages/Admin').then((m) => ({ default: m.AdminPage })))
+
 function AdminOnly() {
   const { user } = useAuth()
-  return user?.is_superuser ? <AdminPage /> : <Navigate to="/" replace />
+  if (!user?.is_superuser) return <Navigate to="/" replace />
+  return (
+    <Suspense fallback={<Spinner />}>
+      <AdminPage />
+    </Suspense>
+  )
 }
 
 export default function App() {

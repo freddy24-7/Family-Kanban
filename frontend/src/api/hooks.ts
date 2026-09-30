@@ -7,6 +7,8 @@ import type {
   HouseholdDetail,
   Invite,
   ItemStatus,
+  ModelLogEntry,
+  MonitoringReport,
   SimulationDetail,
   SimulationRun,
   Sprint,
@@ -263,3 +265,22 @@ export function useReplaySimulation() {
     onSuccess: () => invalidate(['simulations']),
   })
 }
+
+export type ReferenceKind = 'holdout' | 'first_weeks'
+
+export const useMonitoring = (source: string, reference: ReferenceKind, window: number) =>
+  useQuery({
+    queryKey: ['monitoring', source, reference, window],
+    queryFn: () =>
+      api<MonitoringReport>(
+        source === 'real'
+          ? `/admin/monitoring/real?reference=${reference}&window=${window}`
+          : `/admin/monitoring/simulations/${source}?reference=${reference}&window=${window}`,
+      ),
+  })
+
+export const useModelLog = () =>
+  useQuery({
+    queryKey: ['model-log'],
+    queryFn: () => api<ModelLogEntry[]>('/admin/monitoring/models'),
+  })

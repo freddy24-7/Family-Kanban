@@ -6,12 +6,42 @@ import {
   useStartSimulation,
 } from '../api/hooks'
 import type { WeekStats } from '../api/types'
-import { Button, Card, Empty, ErrorText, Field, Input, PageTitle, Spinner } from '../components/ui'
+import {
+  Button,
+  Card,
+  Empty,
+  ErrorText,
+  Field,
+  Input,
+  PageTitle,
+  Segmented,
+  Spinner,
+} from '../components/ui'
 import { nl } from '../i18n/nl'
+import { MonitoringPage } from './Monitoring'
 
 const pct = (v: number | null) => (v === null ? '–' : `${Math.round(v * 100)}%`)
 
 export function AdminPage() {
+  const [tab, setTab] = useState<'monitoring' | 'simulations'>('monitoring')
+  return (
+    <div className="space-y-5">
+      <PageTitle>{nl.nav.admin}</PageTitle>
+      <Segmented
+        label={nl.nav.admin}
+        value={tab}
+        onChange={setTab}
+        options={[
+          { value: 'monitoring', label: nl.monitoring.tab },
+          { value: 'simulations', label: nl.admin.title },
+        ]}
+      />
+      {tab === 'monitoring' ? <MonitoringPage /> : <SimulationsPage />}
+    </div>
+  )
+}
+
+function SimulationsPage() {
   const runs = useSimulations()
   const start = useStartSimulation()
   const [selected, setSelected] = useState<string | null>(null)
@@ -23,7 +53,6 @@ export function AdminPage() {
 
   return (
     <div className="space-y-6">
-      <PageTitle>{nl.admin.title}</PageTitle>
       <p className="text-sm text-ink-2">{nl.admin.intro}</p>
       <Card className="space-y-3">
         <div className="grid grid-cols-2 gap-3">
