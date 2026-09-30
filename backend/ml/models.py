@@ -167,12 +167,13 @@ class OrdinalClassifier(ClassifierMixin, BaseEstimator):
         self.estimator = estimator
         self.order = order
 
-    def fit(self, X, y):
+    def fit(self, X, y, sample_weight=None):
         order = list(self.order or EFFORT_ORDER)
         rank = np.array([order.index(v) for v in y])
         self.classes_ = np.array(order)
         self.models_ = [
-            clone(self.estimator).fit(X, (rank > k).astype(int)) for k in range(len(order) - 1)
+            clone(self.estimator).fit(X, (rank > k).astype(int), sample_weight=sample_weight)
+            for k in range(len(order) - 1)
         ]
         return self
 

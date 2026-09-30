@@ -23,6 +23,7 @@ async def create_run(
     seed: int | None = None,
     family_seed: int | None = None,
     pool_run: SimulationRun | None = None,
+    model_versions: dict[str, str] | None = None,
 ) -> SimulationRun:
     """New household + run. With `pool_run`, the run replays that run's pool: same
     family (spec + name seed), same scenario and calendar, own household."""
@@ -32,6 +33,8 @@ async def create_run(
         family_seed = profile.random_seed
         scenario = Scenario.model_validate(pool_run.scenario)
         start, weeks = pool_run.start_date, pool_run.weeks
+    if model_versions:
+        await repository.model_versions_by_name(session, model_versions)  # validate early
     family_seed = family_seed if family_seed is not None else secrets.randbelow(2**31)
     household = await demo.create_demo_family(
         session,
@@ -50,6 +53,7 @@ async def create_run(
         weeks=weeks,
         random_seed=seed if seed is not None else secrets.randbelow(2**31),
         status="pool_ready" if pool_run else "pool_pending",
+        model_versions=model_versions or None,
         weekly_stats=[],
     )
     session.add(run)

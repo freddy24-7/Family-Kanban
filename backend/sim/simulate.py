@@ -69,6 +69,9 @@ async def main() -> None:
         p.add_argument("--check-rate", type=float, default=0.9)
         p.add_argument("--rubber-stamp", type=float, default=0.2)
         p.add_argument("--label-error", type=float, default=0.03)
+        if name == "replay":  # shadow evaluation of candidate models
+            p.add_argument("--category-model")
+            p.add_argument("--effort-model")
     for name in ("resume", "report"):
         sub.add_parser(name).add_argument("run_id", type=uuid.UUID)
     args = parser.parse_args()
@@ -90,8 +93,21 @@ async def main() -> None:
             run = await _continue(session, run)
         elif args.command == "replay":
             pool_run = await session.get(SimulationRun, args.pool_run_id)
+            overrides = {
+                k: v
+                for k, v in (("category", args.category_model), ("effort", args.effort_model))
+                if v
+            }
             run = await service.create_run(
-                session, SIM_FAMILY, None, planner_from(args), None, 0, args.seed, pool_run=pool_run
+                session,
+                SIM_FAMILY,
+                None,
+                planner_from(args),
+                None,
+                0,
+                args.seed,
+                pool_run=pool_run,
+                model_versions=overrides or None,
             )
             print(f"replay run {run.id} of pool {pool_run.id}")
             run = await run_simulation(session, run)

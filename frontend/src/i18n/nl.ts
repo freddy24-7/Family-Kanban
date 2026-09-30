@@ -195,6 +195,8 @@ export const nl = {
     run: 'Simulatie starten',
     replay: 'Opnieuw afspelen',
     resume: 'Hervatten',
+    modelFor: 'Model voor',
+    activeModel: 'actieve model',
     resumeHelp: 'Gestopt tijdens het schrijven van tickets: hervatten gaat verder waar het bleef.',
     runs: 'Runs',
     progress: (w: number, total: number) => `week ${w}/${total}`,

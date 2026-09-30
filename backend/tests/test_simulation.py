@@ -11,9 +11,10 @@ from sqlalchemy import func, select
 
 from app import config, llm
 from app.db import SessionFactory
-from app.domain import Category, Effort
+from app.domain import Category, Effort, Task
 from app.llm import LLMResult
 from app.models import SimTicket, Sprint, Topic
+from app.models import SimulationRun as SimulationRunModel
 from app.services import simulation as service
 from sim.family import build_world
 from sim.pool import build_pool
@@ -306,3 +307,91 @@ def uuid_of(value: str):
     import uuid
 
     return uuid.UUID(value)
+
+
+async def test_shadow_replay_uses_pinned_model_versions(gemini, client, outbox):
+    """A replay can pin model versions (shadow evaluation) without promoting them."""
+    from app.models import ModelVersion, Prediction
+    from ml import registry
+    from ml.models import TextModelConfig, build_text_classifier
+    from tests.helpers import make_superuser, register_and_login
+
+    admin = await register_and_login(client, "shadow@example.com")
+    await make_superuser("shadow@example.com")
+    texts, cats = (
+        ["gras maaien", "melk halen", "zwemles"] * 4,
+        ["home_maintenance", "groceries", "kids"] * 4,
+    )
+    model = build_text_classifier(TextModelConfig(features="word", C=10)).fit(texts, cats)
+    with registry.sync_session() as s:
+        candidate = registry.save_and_register(
+            s,
+            Task.CATEGORY,
+            model,
+            {"preprocessing": "role-mask-v1"},
+            {},
+            12,
+            "h",
+            None,
+            "shadow test",
+        )
+        name = candidate.name
+    source = (
+        await client.post(
+            "/admin/simulations",
+            json={"scenario": "baseline", "weeks": 2, "seed": 3, "family_seed": 3},
+            headers=admin,
+        )
+    ).json()
+
+    bad = await client.post(
+        f"/admin/simulations/{source['id']}/replay",
+        json={"model_versions": {"category": "nope"}},
+        headers=admin,
+    )
+    assert bad.status_code == 422
+    shadow = (
+        await client.post(
+            f"/admin/simulations/{source['id']}/replay",
+            json={"model_versions": {"category": name}},
+            headers=admin,
+        )
+    ).json()
+    assert shadow["model_versions"] == {"category": name}
+
+    async with SessionFactory() as session:
+        run = await session.get(SimulationRunModel, uuid_of(shadow["id"]))
+        used = set(
+            (
+                await session.scalars(
+                    select(ModelVersion.name)
+                    .join(Prediction, Prediction.model_version_id == ModelVersion.id)
+                    .where(
+                        Prediction.household_id == run.household_id,
+                        Prediction.task == Task.CATEGORY,
+                    )
+                )
+            ).all()
+        )
+        assert used == {name}
+        still_active = await session.scalar(
+            select(ModelVersion.status).where(ModelVersion.name == name)
+        )
+        assert str(still_active) == "candidate"  # never promoted
+
+
+async def test_rollback_reactivates_parent():
+    from app.models import ModelVersion
+    from ml import registry
+    from ml.models import TextModelConfig, build_text_classifier
+
+    model = build_text_classifier(TextModelConfig(features="word", C=10)).fit(
+        ["gras maaien", "melk halen"] * 3, ["S", "M"] * 3
+    )
+    with registry.sync_session() as s:
+        stub = registry.active_version(s, Task.EFFORT)
+        v1 = registry.save_and_register(s, Task.EFFORT, model, {}, {}, 6, "h", stub, "v1")
+        registry.promote(s, v1)
+        retired, active = registry.rollback(s, Task.EFFORT)
+        assert (retired.name, active.name) == (v1.name, stub.name)
+        assert str(s.get(ModelVersion, v1.id).status) == "retired"

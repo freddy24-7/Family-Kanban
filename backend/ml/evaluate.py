@@ -7,7 +7,7 @@ import numpy as np
 import pandas as pd
 from sklearn.base import clone
 from sklearn.metrics import accuracy_score, f1_score, precision_recall_fscore_support
-from sklearn.model_selection import GroupKFold, cross_val_predict
+from sklearn.model_selection import GroupKFold
 
 from ml.models import EFFORT_ORDER
 
@@ -81,26 +81,38 @@ def summarise(y_true, y_pred, ordinal: bool = False, ci: bool = True) -> dict:
 
 
 def group_cv_predict(
-    estimator, texts, y, groups, n_splits: int = 3, proba: bool = False, classes=None
+    estimator,
+    texts,
+    y,
+    groups,
+    n_splits: int = 3,
+    proba: bool = False,
+    classes=None,
+    sample_weight=None,
 ):
     """Out-of-fold predictions with whole households per fold (mirrors the holdout
     design). Every ticket is predicted by a model that never saw its family.
 
     With proba=True the columns follow `classes` (default: sorted labels). We loop
     ourselves instead of cross_val_predict, which silently re-encodes labels as
-    integers for probabilities and would break the S < M < L order of the ordinal model."""
+    integers for probabilities and would break the S < M < L order of the ordinal model.
+    `sample_weight` (e.g. real tickets counting more than synthetic ones) is applied to
+    each fold's training part."""
     X, y = np.asarray(texts, dtype=object), np.asarray(y)
+    weights = None if sample_weight is None else np.asarray(sample_weight, dtype=float)
     cv = GroupKFold(n_splits=n_splits)
-    if not proba:
-        return cross_val_predict(clone(estimator), X, y, groups=groups, cv=cv)
     classes = list(classes) if classes is not None else sorted(set(y))
-    out = np.zeros((len(y), len(classes)))
+    out = np.zeros((len(y), len(classes))) if proba else np.empty(len(y), dtype=object)
     for train_idx, test_idx in cv.split(X, y, groups):
-        model = clone(estimator).fit(X[train_idx], y[train_idx])
+        fit_params = {} if weights is None else {"classifier__sample_weight": weights[train_idx]}
+        model = clone(estimator).fit(X[train_idx], y[train_idx], **fit_params)
+        if not proba:
+            out[test_idx] = model.predict(X[test_idx])
+            continue
         fold = model.predict_proba(X[test_idx])
         for j, cls in enumerate(model.classes_):
             out[test_idx, classes.index(str(cls))] = fold[:, j]
-    return out
+    return out if proba else out.astype(str)
 
 
 # --- Calibration -------------------------------------------------------------------------

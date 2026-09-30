@@ -40,6 +40,9 @@ class Manifest:
     text_hashes: frozenset[str]
     labels: dict[str, tuple[str, str]]  # topic_id -> (category, effort) at freeze time
     raw: dict
+    # Member lists of holdout households outside the training snapshot (simulated
+    # worlds), for reproducible role-token masking. Never used for real families.
+    members: dict[str, list[tuple[str, bool]]] | None = None
 
 
 def manifest_path(name: str, directory: Path = HOLDOUT_DIR) -> Path:
@@ -104,6 +107,9 @@ def load_manifests(directory: Path = HOLDOUT_DIR) -> list[Manifest]:
                 text_hashes=frozenset(t["text_hash"] for t in raw["topics"]),
                 labels={t["topic_id"]: (t["category"], t["effort"]) for t in raw["topics"]},
                 raw=raw,
+                members={
+                    h: [(n, bool(c)) for n, c in ms] for h, ms in raw.get("members", {}).items()
+                },
             )
         )
     return manifests
@@ -113,6 +119,7 @@ def training_frame(
     df: pd.DataFrame,
     manifests: list[Manifest] | None = None,
     near_duplicate_threshold: float | None = NEAR_DUPLICATE_THRESHOLD,
+    holdout_texts: pd.Series | None = None,
 ) -> tuple[pd.DataFrame, dict]:
     """Everything that may be trained on: drops holdout topics, anything from a
     holdout household, any text duplicating a holdout text, and (by default) any
@@ -133,8 +140,11 @@ def training_frame(
     }
     train = df[~in_holdout & ~duplicate]
     report["excluded_near_duplicate_of_holdout"] = 0
-    if near_duplicate_threshold is not None and len(train) and in_holdout.any():
-        near = _near_duplicates(train["text"], df.loc[in_holdout, "text"], near_duplicate_threshold)
+    reference = df.loc[in_holdout, "text"]
+    if holdout_texts is not None:  # holdout topics that aren't in df (other households)
+        reference = pd.concat([reference, holdout_texts]).drop_duplicates()
+    if near_duplicate_threshold is not None and len(train) and len(reference):
+        near = _near_duplicates(train["text"], reference, near_duplicate_threshold)
         report["excluded_near_duplicate_of_holdout"] = int(near.sum())
         train = train[~near]
     report["rows_out"] = len(train)
@@ -178,6 +188,88 @@ def holdout_frame(
     return held, report
 
 
+SIM_HOLDOUT_SQL = """
+    SELECT t.id::text AS topic_id, t.text, s.true_category::text AS category,
+           s.true_effort::text AS effort, s.week
+    FROM topic t JOIN sim_ticket s ON s.id = t.sim_ticket_id
+    WHERE t.household_id = CAST(:household AS uuid)
+      AND t.deleted_at IS NULL
+      AND s.week >= :from_week
+    ORDER BY t.id
+"""
+
+
+def freeze_simulation(
+    run_id: str, from_week: int, name: str, note: str, directory: Path = HOLDOUT_DIR
+) -> dict:
+    """Freeze a simulated world's tickets from `from_week` on as a holdout, labelled with
+    the HIDDEN TRUTH (not planner labels): a test set for 'the world after the change'.
+    Freeze it before any model trains on data from that world."""
+    from sqlalchemy import create_engine, text
+
+    from app import config
+    from ml.text import text_hash
+
+    path = manifest_path(name, directory)
+    if path.exists():
+        raise FileExistsError(f"Holdout {name!r} is frozen; freeze a new version instead")
+    engine = create_engine(config.DATABASE_URL)
+    with engine.connect() as conn:
+        run = conn.execute(
+            text(
+                "SELECT household_id::text, scenario, start_date FROM simulation_run "
+                "WHERE id = CAST(:r AS uuid)"
+            ),
+            {"r": run_id},
+        ).one()
+        household_id = run[0]
+        rows = conn.execute(
+            text(SIM_HOLDOUT_SQL), {"household": household_id, "from_week": from_week}
+        ).all()
+        members = conn.execute(
+            text(
+                "SELECT u.display_name, m.is_child FROM membership m "
+                'JOIN "user" u ON u.id = m.user_id WHERE m.household_id = CAST(:h AS uuid)'
+            ),
+            {"h": household_id},
+        ).all()
+    engine.dispose()
+    if not rows:
+        raise ValueError("No simulated tickets in that range")
+    manifest = {
+        "name": name,
+        "frozen_at": datetime.now(UTC).isoformat(),
+        "note": note,
+        "split": f"simulated world (hidden truth), weeks >= {from_week + 1} of run {run_id}",
+        "dataset_hash_at_freeze": None,
+        "households": [
+            {
+                "household_id": household_id,
+                "name": f"simulation {run[1]['name']}",
+                "preset_key": None,
+            }
+        ],
+        "members": {household_id: [[n, bool(c)] for n, c in members]},
+        "counts": {
+            "topics": len(rows),
+            "by_category": dict(pd.Series([r.category for r in rows]).value_counts()),
+            "by_effort": dict(pd.Series([r.effort for r in rows]).value_counts()),
+        },
+        "topics": [
+            {
+                "topic_id": r.topic_id,
+                "text_hash": text_hash(r.text),
+                "category": r.category,
+                "effort": r.effort,
+            }
+            for r in rows
+        ],
+    }
+    directory.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(manifest, indent=1, default=str) + "\n")
+    return manifest
+
+
 def _suggest(df: pd.DataFrame) -> None:
     summary = (
         df.groupby(["preset_key", "household_id", "household_name"])
@@ -198,7 +290,18 @@ def main() -> None:
     f.add_argument("--name", required=True)
     f.add_argument("--presets", required=True, help="comma-separated preset keys to hold out")
     f.add_argument("--note", default="")
+    fs = sub.add_parser("freeze-sim", help="freeze a simulated world's later weeks (hidden truth)")
+    fs.add_argument("--run", required=True)
+    fs.add_argument("--from-week", type=int, required=True, help="0-based week index")
+    fs.add_argument("--name", required=True)
+    fs.add_argument("--note", default="")
     args = parser.parse_args()
+    if args.command == "freeze-sim":
+        manifest = freeze_simulation(args.run, args.from_week, args.name, args.note)
+        print(
+            json.dumps({k: manifest[k] for k in ("name", "split", "counts")}, indent=1, default=str)
+        )
+        return
 
     df = load_labelled()
     if args.command == "suggest":

@@ -62,13 +62,30 @@ def _holdout(delta, low, high, missing=0, real=None):
 
 
 def test_promotion_gate():
-    assert promotion_decision({"h1": _holdout(0.5, 0.4, 0.6)})[0]
-    ok, reason = promotion_decision({"h1": _holdout(0.02, -0.01, 0.05)})  # within noise
-    assert not ok and "not clearly above zero" in reason
-    ok, reason = promotion_decision({"h1": _holdout(0.5, 0.4, 0.6, missing=3)})
-    assert not ok and "missing" in reason
-    ok, reason = promotion_decision({"h1": _holdout(0.5, 0.4, 0.6, real=-0.02)})
-    assert not ok and "real data" in reason
+    ok = lambda d, lo, hi, **kw: _holdout(d, lo, hi, **kw)  # noqa: E731
+    assert promotion_decision({"h1": ok(0.5, 0.4, 0.6)}, "h1")[0]
+    passed, reason = promotion_decision({"h1": ok(0.02, -0.01, 0.05)}, "h1")  # within noise
+    assert not passed and "not clearly above zero" in reason
+    passed, reason = promotion_decision({"h1": ok(0.5, 0.4, 0.6, missing=3)}, "h1")
+    assert not passed and "missing" in reason
+    passed, reason = promotion_decision({"h1": ok(0.5, 0.4, 0.6, real=-0.02)}, "h1")
+    assert not passed and "real data" in reason
+
+
+def test_gate_primary_and_secondary_holdouts():
+    """New world (primary) clearly better; old world a bit worse but within noise: pass.
+    Old world clearly worse: fail (needs a deliberate decision)."""
+    new, old_noise, old_worse = (
+        _holdout(0.3, 0.2, 0.4),
+        _holdout(-0.02, -0.06, 0.02),
+        _holdout(-0.1, -0.15, -0.05),
+    )
+    assert promotion_decision({"new": new, "old": old_noise}, "new")[0]
+    passed, reason = promotion_decision({"new": new, "old": old_worse}, "new")
+    assert not passed and "old: clearly worse" in reason
+    # A small gain on a secondary holdout doesn't need to be significant.
+    assert promotion_decision({"new": new, "old": _holdout(0.01, -0.03, 0.05)}, "new")[0]
+    assert not promotion_decision({"new": new}, "missing-name")[0]
 
 
 def test_paired_bootstrap_detects_improvement():

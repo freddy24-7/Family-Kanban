@@ -167,3 +167,18 @@ def reject(session: Session, candidate: ModelVersion, reason: str) -> None:
     candidate.status = ModelStatus.REJECTED
     candidate.notes = f"{candidate.notes or ''}\nRejected: {reason}".strip()
     session.commit()
+
+
+def rollback(session: Session, task: Task) -> tuple[ModelVersion, ModelVersion]:
+    """Re-activate the version the current one replaced (its parent). One transaction;
+    no retraining. Returns (retired, reactivated)."""
+    current = active_version(session, task)
+    if current is None or current.parent_version_id is None:
+        raise ValueError(f"No earlier {task.value} version to roll back to")
+    previous = session.get(ModelVersion, current.parent_version_id)
+    current.status = ModelStatus.RETIRED
+    current.notes = f"{current.notes or ''}\nRolled back {datetime.now(UTC).isoformat()}".strip()
+    session.flush()
+    previous.status = ModelStatus.ACTIVE
+    session.commit()
+    return current, previous

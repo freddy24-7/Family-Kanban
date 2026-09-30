@@ -412,6 +412,8 @@ class SimulationRun(Base):
     start_date: Mapped[date] = mapped_column(Date, nullable=False)
     weeks: Mapped[int] = mapped_column(Integer, nullable=False)
     random_seed: Mapped[int] = mapped_column(Integer, nullable=False)
+    # Shadow evaluation: {task: model version name} to use instead of the active models.
+    model_versions: Mapped[dict[str, str] | None] = mapped_column(JSONB)
     # pool_pending | pool_ready | running | completed | failed
     status: Mapped[str] = mapped_column(String(20), nullable=False)
     current_week: Mapped[int] = mapped_column(Integer, default=0, nullable=False)

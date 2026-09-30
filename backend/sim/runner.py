@@ -67,6 +67,12 @@ class Simulation:
         self.users = {m.user.display_name: m.user for m in members}
         planner = next(m for m in members if m.is_planner)
         self.access = HouseholdAccess(self.household, planner.user, True, True, is_member=True)
+        # Shadow evaluation: the run may pin model versions instead of the active ones.
+        self.versions = (
+            await repository.model_versions_by_name(self.session, self.run.model_versions)
+            if self.run.model_versions
+            else None
+        )
         pool_id = self.run.pool_run_id or self.run.id
         self.pool = (
             await self.session.scalars(
@@ -135,6 +141,7 @@ class Simulation:
                 ticket.text,
                 None,
                 self.clock,
+                self.versions,
             )
             topic.sim_ticket_id = ticket.id
             await self.session.commit()

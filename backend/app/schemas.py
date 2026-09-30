@@ -245,6 +245,8 @@ class SimulationCreate(BaseModel):
 class SimulationReplay(BaseModel):
     seed: int | None = None
     planner: PlannerBehaviour = Field(default_factory=PlannerBehaviour)
+    # Shadow evaluation: {"category": "category-v2", ...} instead of the active models.
+    model_versions: dict[str, str] | None = None
 
 
 class SimulationRead(ORMModel):
@@ -256,6 +258,7 @@ class SimulationRead(ORMModel):
     start_date: date
     weeks: int
     random_seed: int
+    model_versions: dict[str, str] | None = None
     status: str
     current_week: int
     tokens_in: int

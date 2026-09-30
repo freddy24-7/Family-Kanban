@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import {
+  useModelLog,
   useReplaySimulation,
   useResumeSimulation,
   useSimulation,
@@ -125,6 +126,9 @@ function SimulationsPage() {
                   <div className="flex justify-between gap-2">
                     <span className="font-medium">
                       {r.scenario.name} {r.pool_run_id ? `(${nl.admin.replay.toLowerCase()})` : ''}
+                      {r.model_versions
+                        ? ` · shadow: ${Object.values(r.model_versions).join(', ')}`
+                        : ''}
                     </span>
                     <span className="text-ink-3">
                       {nl.admin.status[r.status]} · {nl.admin.progress(r.current_week, r.weeks)}
@@ -150,7 +154,9 @@ function RunDetail({ id, onReplay }: { id: string; onReplay: (id: string) => voi
   const run = useSimulation(id)
   const replay = useReplaySimulation()
   const resume = useResumeSimulation()
-  const [rubber, setRubber] = useState(0.6)
+  const models = useModelLog()
+  const [rubber, setRubber] = useState(0.2)
+  const [shadow, setShadow] = useState<Record<string, string>>({})
   if (run.isLoading || !run.data) return <Spinner />
   const r = run.data
   return (
@@ -222,12 +228,38 @@ function RunDetail({ id, onReplay }: { id: string; onReplay: (id: string) => voi
               onChange={(e) => setRubber(Number(e.target.value))}
             />
           </Field>
+          {(['category', 'effort'] as const).map((task) => (
+            <Field key={task} label={`${nl.admin.modelFor} ${task}`}>
+              <select
+                value={shadow[task] ?? ''}
+                onChange={(e) => setShadow({ ...shadow, [task]: e.target.value })}
+                className="min-h-11 rounded-xl border border-line bg-surface px-2"
+              >
+                <option value="">{nl.admin.activeModel}</option>
+                {(models.data ?? [])
+                  .filter((m) => m.task === task && m.status !== 'active')
+                  .map((m) => (
+                    <option key={m.name} value={m.name}>
+                      {m.name} ({m.status})
+                    </option>
+                  ))}
+              </select>
+            </Field>
+          ))}
           <Button
             variant="secondary"
             disabled={replay.isPending}
-            onClick={async () =>
-              onReplay((await replay.mutateAsync({ id: r.id, rubber_stamp_rate: rubber })).id)
-            }
+            onClick={async () => {
+              // Pinned versions = shadow evaluation: the candidate lives through this world
+              // without being promoted.
+              const pinned = Object.fromEntries(Object.entries(shadow).filter(([, v]) => v))
+              const run = await replay.mutateAsync({
+                id: r.id,
+                rubber_stamp_rate: rubber,
+                model_versions: Object.keys(pinned).length ? pinned : undefined,
+              })
+              onReplay(run.id)
+            }}
           >
             {nl.admin.replay}
           </Button>

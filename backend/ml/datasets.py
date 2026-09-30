@@ -22,6 +22,13 @@ SNAPSHOT_DIR = REPO_ROOT / "data" / "datasets"
 # Only confirmed/generator labels from training-eligible households. Metadata
 # columns (household, source, submitter, run) are for splitting and analysis;
 # they are never model features.
+# Only confirmed/generator labels from training-eligible households. Metadata
+# columns (household, source, submitter, run) are for splitting and analysis;
+# they are never model features.
+#
+# Effort target: the ACTUAL effort from the sprint review when the task was done
+# (the truth we care about), else the planner's estimate, else the generator's
+# weak label. `effort_source` records which one each row uses.
 LABELLED_TOPICS_SQL = text(
     """
     SELECT t.id::text AS topic_id,
@@ -31,7 +38,10 @@ LABELLED_TOPICS_SQL = text(
            t.source,
            t.text,
            t.category_label AS category,
-           t.effort_label AS effort,
+           COALESCE(rv.effort_actual, t.effort_label) AS effort,
+           CASE WHEN rv.effort_actual IS NOT NULL THEN 'review' ELSE t.label_source END
+               AS effort_source,
+           t.effort_label AS effort_estimate,
            t.label_source,
            t.occurred_at,
            t.generation_run_id::text AS generation_run_id,
@@ -41,13 +51,38 @@ LABELLED_TOPICS_SQL = text(
     JOIN household h ON h.id = t.household_id
     LEFT JOIN family_profile fp ON fp.household_id = t.household_id
     LEFT JOIN membership m ON m.user_id = t.created_by AND m.household_id = t.household_id
+    LEFT JOIN LATERAL (
+        SELECT si.effort_actual FROM sprint_item si
+        WHERE si.topic_id = t.id AND si.completed AND si.effort_actual IS NOT NULL
+        ORDER BY si.reviewed_at DESC LIMIT 1
+    ) rv ON TRUE
     WHERE h.training_eligible
       AND t.deleted_at IS NULL
       AND t.category_label IS NOT NULL
-      AND t.effort_label IS NOT NULL
+      AND COALESCE(rv.effort_actual, t.effort_label) IS NOT NULL
     ORDER BY t.id
     """
 )
+
+TOPICS_BY_ID_SQL = text(
+    """
+    SELECT t.id::text AS topic_id, t.household_id::text AS household_id, t.text, t.source
+    FROM topic t WHERE t.id::text = ANY(:ids)
+    """
+)
+
+
+def load_topics_by_ids(ids: list[str], database_url: str | None = None) -> pd.DataFrame:
+    """Texts of specific topics regardless of training eligibility (frozen holdouts can
+    come from any household; their labels come from the manifest, not the database)."""
+    engine = create_engine(database_url or config.DATABASE_URL)
+    try:
+        with engine.connect() as conn:
+            df = pd.read_sql(TOPICS_BY_ID_SQL, conn, params={"ids": list(ids)})
+    finally:
+        engine.dispose()
+    df["text_hash"] = df["text"].map(text_hash)
+    return df
 
 
 def load_labelled(database_url: str | None = None) -> pd.DataFrame:

@@ -257,10 +257,19 @@ export function useStartSimulation() {
 export function useReplaySimulation() {
   const invalidate = useInvalidate()
   return useMutation({
-    mutationFn: ({ id, rubber_stamp_rate }: { id: string; rubber_stamp_rate: number }) =>
+    mutationFn: ({
+      id,
+      rubber_stamp_rate,
+      model_versions,
+    }: {
+      id: string
+      rubber_stamp_rate: number
+      model_versions?: Record<string, string>
+    }) =>
       api<SimulationRun>(`/admin/simulations/${id}/replay`, {
         method: 'POST',
-        body: { planner: { rubber_stamp_rate } },
+        // model_versions: shadow evaluation of candidates instead of the active models
+        body: { planner: { rubber_stamp_rate }, model_versions: model_versions ?? null },
       }),
     onSuccess: () => invalidate(['simulations']),
   })

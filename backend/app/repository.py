@@ -301,3 +301,16 @@ async def list_simulation_runs(session: AsyncSession) -> Sequence[SimulationRun]
 
 async def get_simulation_run(session: AsyncSession, run_id: uuid.UUID) -> SimulationRun | None:
     return await session.get(SimulationRun, run_id)
+
+
+async def model_versions_by_name(
+    session: AsyncSession, names: dict[str, str]
+) -> dict[Task, ModelVersion]:
+    """{task: version name} -> {Task: ModelVersion}; raises on unknown or mismatched names."""
+    out = {}
+    for task, name in names.items():
+        version = await session.scalar(select(ModelVersion).where(ModelVersion.name == name))
+        if version is None or str(version.task) != task:
+            raise ValueError(f"No {task} model version named {name!r}")
+        out[Task(task)] = version
+    return out

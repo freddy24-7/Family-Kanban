@@ -26,7 +26,10 @@ see [backend/ml/CLAUDE.md](backend/ml/CLAUDE.md).
 - Make platform admin: `cd backend && uv run python -m app.cli make-admin <email>`
 - Demo families / synthetic tickets: `cd backend && uv run python -m sim.seed_dataset --presets typical-1 --tickets 25`
   (writes to whatever `DATABASE_URL` points at; label rules: `backend/app/labeling_guidelines.md`)
-- Train/evaluate/register: `cd backend && uv run python -m ml.train --snapshot seed-v2 --task all [--dry-run | --promote]`
+- Retrain (use the `/retrain` skill): `cd backend && uv run python -m ml.retrain status|snapshot|run|rollback`
+  (`run --dry-run` first; promotion needs the gate AND explicit user approval; shadow-replay an unseen
+  simulated world with pinned candidate versions before promoting)
+- Train/evaluate/register (lower level): `uv run python -m ml.train --snapshot seed-v2 --task all [--dry-run | --promote]`
   (reads snapshot + household members; evaluates on every frozen holdout next to the champion)
 - Simulate: `cd backend && uv run python -m sim.simulate create|replay|resume|report ...` (pool uses
   Gemini once; replays are deterministic and free). Runs live in non-training-eligible households.

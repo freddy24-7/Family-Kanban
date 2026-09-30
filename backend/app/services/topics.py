@@ -22,6 +22,7 @@ async def create_topic(
     text: str,
     due_by: date | None,
     clock: Clock,
+    model_versions: dict | None = None,
 ) -> Topic:
     topic = Topic(
         id=uuid.uuid4(),
@@ -34,7 +35,7 @@ async def create_topic(
     )
     session.add(topic)
     await session.flush()
-    await classify_topics(session, [topic], clock)
+    await classify_topics(session, [topic], clock, model_versions)
     await session.commit()
     return topic
 

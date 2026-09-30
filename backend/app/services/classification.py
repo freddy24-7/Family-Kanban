@@ -8,7 +8,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app import repository
 from app.clock import Clock
-from app.models import Prediction, Topic
+from app.domain import Task
+from app.models import ModelVersion, Prediction, Topic
 from ml import registry
 from ml.text import ROLE_MASK_VERSION, mask_member_names
 
@@ -16,7 +17,10 @@ log = logging.getLogger(__name__)
 
 
 async def classify_topics(
-    session: AsyncSession, topics: Sequence[Topic], clock: Clock
+    session: AsyncSession,
+    topics: Sequence[Topic],
+    clock: Clock,
+    versions: dict[Task, ModelVersion] | None = None,
 ) -> list[Prediction]:
     """Predict every task for the given topics with the currently active model
     versions. Each prediction records which model version produced it, so its
@@ -28,7 +32,9 @@ async def classify_topics(
         return []
     members: dict[uuid.UUID, list[tuple[str, bool]]] = {}
     predictions: list[Prediction] = []
-    for task, version in (await repository.active_model_versions(session)).items():
+    # `versions` overrides the active models (shadow evaluation in the simulator).
+    active = versions if versions is not None else await repository.active_model_versions(session)
+    for task, version in active.items():
         try:
             model = await registry.load_model(session, version.artifact_uri)
         except Exception:

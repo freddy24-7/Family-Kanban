@@ -150,8 +150,19 @@ async def replay_run(
         if pool_run.pool_run_id is None
         else await repository.get_simulation_run(session, pool_run.pool_run_id)
     )
-    run = await service.create_run(
-        session, SIM_FAMILY, None, body.planner, None, 0, body.seed, pool_run=source
-    )
+    try:
+        run = await service.create_run(
+            session,
+            SIM_FAMILY,
+            None,
+            body.planner,
+            None,
+            0,
+            body.seed,
+            pool_run=source,
+            model_versions=body.model_versions,
+        )
+    except ValueError as exc:
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, str(exc)) from exc
     background.add_task(_execute, run.id)
     return run

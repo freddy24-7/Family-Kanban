@@ -30,7 +30,7 @@ import pandas as pd
 from app.domain import Category, Task
 from ml import monitoring, registry
 from ml.calibration import TemperatureScaled, apply_temperature, fit_temperature
-from ml.datasets import dataset_hash, load_snapshot, load_snapshot_members
+from ml.datasets import dataset_hash, load_snapshot, load_snapshot_members, load_topics_by_ids
 from ml.evaluate import (
     expected_calibration_error,
     group_cv_predict,
@@ -78,30 +78,52 @@ def masked_texts(frame: pd.DataFrame, members: dict[str, list[tuple[str, bool]]]
     )
 
 
-def promotion_decision(holdouts: dict[str, dict]) -> tuple[bool, str]:
-    """Gate, per frozen holdout:
-    - no holdout topics may be missing (the comparison must be on the full frozen set);
-    - the challenger must beat the champion with a *paired bootstrap*: resample the same
-      holdout rows for both models, and require the 95% interval of the difference in
-      the primary metric to lie above zero (a real improvement, not noise);
-    - on real-data rows (once they exist) the challenger must not be worse."""
+def promotion_decision(holdouts: dict[str, dict], primary: str) -> tuple[bool, str]:
+    """Gate (paired bootstrap of the primary metric, per frozen holdout):
+    - no frozen topics may be missing;
+    - on the PRIMARY holdout (today's world) the challenger must be clearly better:
+      the 95% interval of the gain lies above zero;
+    - on every other holdout it must not be clearly worse: the interval must not lie
+      entirely below zero (an old world may legitimately score a new model lower, but not
+      significantly so without a deliberate decision);
+    - on real-data rows (once they exist) it must not be worse."""
     reasons = []
     for name, h in holdouts.items():
         if h["report"]["missing"]:
             reasons.append(f"{name}: {h['report']['missing']} frozen topics missing")
             continue
+        delta = h["delta_vs_champion"]["delta"]
         low, high = h["delta_vs_champion"]["ci95"]
-        if low <= 0:
+        if name == primary and low <= 0:
             reasons.append(
-                f"{name}: {PRIMARY_METRIC} gain {h['delta_vs_champion']['delta']:+.3f} "
+                f"{name} (primary): {PRIMARY_METRIC} gain {delta:+.3f} "
                 f"(95% CI {low:+.3f}..{high:+.3f}) is not clearly above zero"
             )
+        elif name != primary and high < 0:
+            reasons.append(f"{name}: clearly worse ({delta:+.3f}, 95% CI {low:+.3f}..{high:+.3f})")
         real = h.get("delta_vs_champion_real")
         if real is not None and real["delta"] < 0:
             reasons.append(f"{name}: worse than champion on real data ({real['delta']:+.3f})")
+    if primary not in holdouts:
+        reasons.append(f"primary holdout {primary!r} not found")
     if reasons:
         return False, "; ".join(reasons)
-    return True, "significantly beats the champion on every holdout"
+    return True, f"clearly better on {primary}, not clearly worse elsewhere"
+
+
+def frozen_holdout(df: pd.DataFrame, manifest, manifests) -> tuple[pd.DataFrame, dict]:
+    """A frozen holdout's rows with its FROZEN labels. Rows come from the snapshot when
+    present, else from the database by id (holdouts may live in households that are not
+    training-eligible, e.g. a simulated world)."""
+    held, report = holdout_frame(df, manifest.name, manifests)
+    missing_ids = sorted(manifest.topic_ids - set(held["topic_id"]))
+    if missing_ids:
+        extra = load_topics_by_ids(missing_ids)
+        extra["category"] = extra["topic_id"].map(lambda t: manifest.labels[t][0])
+        extra["effort"] = extra["topic_id"].map(lambda t: manifest.labels[t][1])
+        held = pd.concat([held, extra], ignore_index=True)
+        report = {**report, "found": len(held), "missing": len(manifest.topic_ids) - len(held)}
+    return held, report
 
 
 def task_profile(task: Task, texts: list[str], outputs, labels) -> dict:
@@ -140,9 +162,14 @@ def backfill_reference(df: pd.DataFrame, members) -> None:
             continue
         model = registry.load_model_sync(session, version)
         profiles = {}
-        for manifest in load_manifests():
-            held, _ = holdout_frame(df, manifest.name)
-            outputs = model.predict(list(masked_texts(held, members)))
+        manifests = load_manifests()
+        all_members = {
+            **members,
+            **{h: ms for m in manifests for h, ms in (m.members or {}).items()},
+        }
+        for manifest in manifests:
+            held, _ = frozen_holdout(df, manifest, manifests)
+            outputs = model.predict(list(masked_texts(held, all_members)))
             profiles[manifest.name] = task_profile(
                 task, list(held["text"]), outputs, held[LABEL_COLUMN[task]].to_numpy()
             )
@@ -172,28 +199,49 @@ def _champion_predictions(champion, held: pd.DataFrame, members) -> np.ndarray:
 
 
 def train_task(
-    task: Task, df: pd.DataFrame, snapshot: str, members, promote: bool, dry_run: bool = False
+    task: Task,
+    df: pd.DataFrame,
+    snapshot: str,
+    members,
+    promote: bool,
+    dry_run: bool = False,
+    real_weight: float = 1.0,
+    primary: str | None = None,
 ) -> dict:
     config, label = CONFIGS[task], LABEL_COLUMN[task]
     ordinal = task == Task.EFFORT
     manifests = load_manifests()
+    primary = primary or latest_holdout(manifests)
+    members = {**members, **{h: ms for m in manifests for h, ms in (m.members or {}).items()}}
+    held_frames = {m.name: frozen_holdout(df, m, manifests) for m in manifests}
+    holdout_texts = pd.concat([h["text"] for h, _ in held_frames.values()]) if held_frames else None
 
     # 1-2. Training frame (raw-text exclusion), masking, then exclusion on masked text
-    train, train_report = training_frame(df, manifests)
+    train, train_report = training_frame(df, manifests, holdout_texts=holdout_texts)
     X = masked_texts(train, members)
-    holdout_masked = np.concatenate(
-        [masked_texts(holdout_frame(df, m.name, manifests)[0], members) for m in manifests]
-    )
+    holdout_masked = np.concatenate([masked_texts(h, members) for h, _ in held_frames.values()])
     keep = ~exclude_similar(X, holdout_masked)
     train_report["excluded_similar_after_masking"] = int((~keep).sum())
     train, X = train[keep], X[keep]
     train_report["rows_out"] = len(train)
+    train_report["by_source"] = train["source"].value_counts().to_dict()
+    if "effort_source" in train:
+        train_report["effort_source"] = train["effort_source"].value_counts().to_dict()
+    train_report["real_weight"] = real_weight
     y, groups = train[label].to_numpy(), train["household_id"].to_numpy()
+    # Real tickets can count more than synthetic ones, so they aren't drowned out.
+    weights = np.where(train["source"].to_numpy() == "real", real_weight, 1.0)
 
     # 3. Cross-validation (out-of-fold) + temperature
     classes = np.array(EFFORT_ORDER) if ordinal else np.array(sorted(set(y)))
     oof_proba = group_cv_predict(
-        build_text_classifier(config), X, y, groups, proba=True, classes=classes
+        build_text_classifier(config),
+        X,
+        y,
+        groups,
+        proba=True,
+        classes=classes,
+        sample_weight=weights,
     )
     temperature = fit_temperature(oof_proba, y, classes)
     scaled = apply_temperature(oof_proba, temperature)
@@ -208,7 +256,9 @@ def train_task(
     }
 
     # 4. Final model on all training data (+ baselines fitted on the same data)
-    final = TemperatureScaled(build_text_classifier(config).fit(X, y), temperature)
+    final = TemperatureScaled(
+        build_text_classifier(config).fit(X, y, classifier__sample_weight=weights), temperature
+    )
     served = registry.SklearnTextClassifier(final, ROLE_MASK_VERSION)
     baselines = {"majority": majority_baseline().fit(X, y)}
     if task == Task.CATEGORY:
@@ -220,7 +270,7 @@ def train_task(
     champion = registry.load_model_sync(session, champion_version) if champion_version else None
     holdouts, reference_profiles = {}, {}
     for manifest in manifests:
-        held, held_report = holdout_frame(df, manifest.name, manifests)
+        held, held_report = held_frames[manifest.name]
         y_held, X_held = held[label].to_numpy(), masked_texts(held, members)
         outputs = served.predict(list(X_held))
         pred = np.array([o.predicted for o in outputs])
@@ -262,7 +312,7 @@ def train_task(
         reference_profiles[manifest.name] = task_profile(task, list(held["text"]), outputs, y_held)
 
     # 6. Register + gate
-    passed, reason = promotion_decision(holdouts)
+    passed, reason = promotion_decision(holdouts, primary)
     result = {
         "gate": reason,
         "cv": cv_metrics,
@@ -321,6 +371,11 @@ def _champion_name(champion_version) -> str:
     return champion_version.name if champion_version else "majority baseline (no active model)"
 
 
+def latest_holdout(manifests) -> str:
+    """Default primary holdout: the most recently frozen one (today's world)."""
+    return max(manifests, key=lambda m: m.raw.get("frozen_at", "")).name
+
+
 def _source_masks(frame: pd.DataFrame):
     for source in sorted(frame["source"].unique()):
         yield source, (frame["source"] == source).to_numpy()
@@ -348,7 +403,16 @@ def main() -> None:
         return
     tasks = [Task.CATEGORY, Task.EFFORT] if args.task == "all" else [Task(args.task)]
     for task in tasks:
-        result = train_task(task, df, args.snapshot, members, args.promote, args.dry_run)
+        result = train_task(
+            task,
+            df,
+            args.snapshot,
+            members,
+            args.promote,
+            args.dry_run,
+            args.real_weight,
+            args.primary_holdout,
+        )
         print(f"\n=== {task.value}: {result['version']} -> {result['outcome']}")
         print(f"gate vs {result['champion']}: {result['gate']}")
         cv = {k: v for k, v in result["cv"].items() if k != "thresholds"}
