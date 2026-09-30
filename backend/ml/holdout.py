@@ -252,8 +252,12 @@ def freeze_simulation(
         "members": {household_id: [[n, bool(c)] for n, c in members]},
         "counts": {
             "topics": len(rows),
-            "by_category": dict(pd.Series([r.category for r in rows]).value_counts()),
-            "by_effort": dict(pd.Series([r.effort for r in rows]).value_counts()),
+            "by_category": {
+                k: int(v) for k, v in pd.Series([r.category for r in rows]).value_counts().items()
+            },
+            "by_effort": {
+                k: int(v) for k, v in pd.Series([r.effort for r in rows]).value_counts().items()
+            },
         },
         "topics": [
             {
