@@ -20,7 +20,7 @@ Migrations run automatically on every deploy before the API starts.
    | `APP_ENV` | `production` |
    | `AUTH_SECRET` | `${{ secret(64) }}` (Railway generates it) |
    | `FRONTEND_URL` / `CORS_ORIGINS` | the frontend URL (Phase 4) |
-   | `RESEND_API_KEY`, `EMAIL_FROM` | when real emails should go out |
+   | `RESEND_API_KEY`, `EMAIL_FROM`, `EMAIL_REPLY_TO` | real email (see below) |
    | `GOOGLE_OAUTH_CLIENT_ID`, `GOOGLE_OAUTH_CLIENT_SECRET` | when Google login is enabled |
 
    ⚠️ Don't blindly accept Railway's "Suggested Variables": it proposed `${{ secret() }}` for
@@ -55,6 +55,18 @@ static files served by Caddy with an SPA fallback and cache headers).
 Cache policy (Caddyfile): `/assets/*` (hashed) cached for a year; everything else, including
 `index.html` for every route and the service worker, `no-cache`, so phones pick up new
 deploys.
+
+## Email (Resend)
+
+Configured 2026-09-30 for `scalarox.nl` (region eu-west-1):
+- DNS: DKIM `resend._domainkey` TXT, `send` MX → `feedback-smtp.eu-west-1.amazonses.com`,
+  `send` TXT SPF `include:amazonses.com`, `_dmarc` (p=reject). The domain's own MX
+  (Hostnet mailboxes) is untouched: Resend uses the `send.` subdomain.
+- API key: *Sending access* only, restricted to `scalarox.nl`.
+- `EMAIL_FROM = Gezinsbord <gezinsbord@scalarox.nl>` (no mailbox needed on a verified domain),
+  `EMAIL_REPLY_TO = info@scalarox.nl` so replies reach a real inbox.
+- Check: `POST /auth/forgot-password` for your own address, then look for
+  `POST https://api.resend.com/emails "200 OK"` in the API logs.
 
 ## Google login (when enabling it)
 
