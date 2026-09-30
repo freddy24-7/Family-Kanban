@@ -28,6 +28,8 @@ see [backend/ml/CLAUDE.md](backend/ml/CLAUDE.md).
   (writes to whatever `DATABASE_URL` points at; label rules: `backend/app/labeling_guidelines.md`)
 - Train/evaluate/register: `cd backend && uv run python -m ml.train --snapshot seed-v2 --task all [--dry-run | --promote]`
   (reads snapshot + household members; evaluates on every frozen holdout next to the champion)
+- Simulate: `cd backend && uv run python -m sim.simulate create|replay|resume|report ...` (pool uses
+  Gemini once; replays are deterministic and free). Runs live in non-training-eligible households.
 - Holdouts: `uv run python -m ml.holdout suggest|freeze ...` · snapshots in `data/datasets/` (not committed)
 - Deploy: see [docs/deploy.md](docs/deploy.md)
 - Frontend: `cd frontend && npm run dev` · `npm run build` · `npm run lint` · `npm run format`

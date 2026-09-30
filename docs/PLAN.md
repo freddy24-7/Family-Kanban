@@ -1,6 +1,6 @@
 # Build Plan — Family Kanban
 
-**Status**: Phase 4 deployed (2026-09-30): app live, family onboarding next · then Phase 5
+**Status**: Phase 5 complete (2026-09-30) · next: Phase 6 (monitoring dashboard)
 
 Sized for ~8–10 hours/week. Each phase ends with something demonstrable.
 Phases marked 🎓 include ML lessons: before building, the concept is explained;
@@ -185,6 +185,11 @@ logs), family onboarding, first real sprint.
 
 **Done when**: a 26-week simulation with a planted drift runs in minutes and
 produces a realistic database for a simulated household.
+
+**Outcome**: world model + Gemini pool + deterministic runner through the real services;
+`baseline` and `drift-demo` scenarios; CLI and admin page (create / replay / progress). First
+26-week run: concept drift visible only in labels (effort acc 0.69 → 0.49, confidence flat), the
+new-typist covariate drift hidden in averages, automation bias measurable by replay. See lesson 04.
 
 ---
 
