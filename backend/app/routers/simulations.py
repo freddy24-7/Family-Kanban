@@ -41,6 +41,45 @@ async def _execute(run_id: uuid.UUID) -> None:
             await session.commit()
 
 
+def pool_complete(run) -> bool:
+    """A run's pool is complete once the run got past building it (weeks started), even
+    if the run itself failed later."""
+    return run.status in ("pool_ready", "running", "completed") or (
+        run.status == "failed" and run.current_week > 0
+    )
+
+
+@router.post(
+    "/{run_id}/resume", response_model=SimulationRead, status_code=status.HTTP_202_ACCEPTED
+)
+async def resume_run(
+    run_id: uuid.UUID,
+    background: BackgroundTasks,
+    _: User = Depends(current_superuser),
+    session: AsyncSession = Depends(get_session),
+):
+    """Continue a run that stopped while building its pool (the pool is resumable: weeks
+    already written are kept and the RNG replays identically). A run that stopped after
+    its weeks began can't be resumed safely mid-week: replay its pool instead."""
+    run = await repository.get_simulation_run(session, run_id)
+    if run is None:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Simulation not found")
+    if (
+        run.pool_run_id is not None
+        or run.current_week > 0
+        or run.status not in ("failed", "pool_pending")
+    ):
+        raise HTTPException(
+            status.HTTP_409_CONFLICT, "Only runs stopped while building their pool can resume"
+        )
+    if not llm.is_configured():
+        raise HTTPException(status.HTTP_503_SERVICE_UNAVAILABLE, "GEMINI_API_KEY is not configured")
+    run.status, run.error = "pool_pending", None
+    await session.commit()
+    background.add_task(_execute, run.id)
+    return run
+
+
 @router.get("/scenarios", response_model=dict[str, Scenario])
 async def scenarios(_: User = Depends(current_superuser)):
     return SCENARIOS
@@ -104,7 +143,7 @@ async def replay_run(
 ):
     """Same world (pool, family, calendar), new behaviour and/or the current models."""
     pool_run = await repository.get_simulation_run(session, run_id)
-    if pool_run is None or pool_run.status not in ("pool_ready", "running", "completed"):
+    if pool_run is None or not pool_complete(pool_run):
         raise HTTPException(status.HTTP_409_CONFLICT, "That run has no finished pool to replay")
     source = (
         pool_run

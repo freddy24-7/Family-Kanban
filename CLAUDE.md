@@ -30,6 +30,9 @@ see [backend/ml/CLAUDE.md](backend/ml/CLAUDE.md).
   (reads snapshot + household members; evaluates on every frozen holdout next to the champion)
 - Simulate: `cd backend && uv run python -m sim.simulate create|replay|resume|report ...` (pool uses
   Gemini once; replays are deterministic and free). Runs live in non-training-eligible households.
+  **Production runs: start them from the admin page (Beheer → Simulaties)** so they execute inside
+  Railway next to the DB. From a laptop over the public DB proxy a 26-week run takes hours and the
+  connection drops (happened 2026-09-30). Local-DB runs via the CLI are fine.
 - Monitoring references for active models: `uv run python -m ml.train --snapshot seed-v2 --backfill-reference`
   (new versions store theirs automatically)
 - Holdouts: `uv run python -m ml.holdout suggest|freeze ...` · snapshots in `data/datasets/` (not committed)

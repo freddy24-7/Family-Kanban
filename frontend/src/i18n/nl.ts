@@ -194,6 +194,8 @@ export const nl = {
     rubberStampHelp: 'Hoe vaak de planner een zekere voorspelling ongecontroleerd overneemt.',
     run: 'Simulatie starten',
     replay: 'Opnieuw afspelen',
+    resume: 'Hervatten',
+    resumeHelp: 'Gestopt tijdens het schrijven van tickets: hervatten gaat verder waar het bleef.',
     runs: 'Runs',
     progress: (w: number, total: number) => `week ${w}/${total}`,
     weekly: 'Per week',

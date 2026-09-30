@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import {
   useReplaySimulation,
+  useResumeSimulation,
   useSimulation,
   useSimulations,
   useStartSimulation,
@@ -148,6 +149,7 @@ function SimulationsPage() {
 function RunDetail({ id, onReplay }: { id: string; onReplay: (id: string) => void }) {
   const run = useSimulation(id)
   const replay = useReplaySimulation()
+  const resume = useResumeSimulation()
   const [rubber, setRubber] = useState(0.6)
   if (run.isLoading || !run.data) return <Spinner />
   const r = run.data
@@ -191,7 +193,19 @@ function RunDetail({ id, onReplay }: { id: string; onReplay: (id: string) => voi
           </tbody>
         </table>
       </div>
-      {r.status === 'completed' && (
+      {r.status === 'failed' && !r.pool_run_id && r.current_week === 0 && (
+        <Card className="flex flex-wrap items-center justify-between gap-3">
+          <span className="text-sm text-ink-2">{nl.admin.resumeHelp}</span>
+          <Button
+            variant="secondary"
+            disabled={resume.isPending}
+            onClick={() => resume.mutate(r.id)}
+          >
+            {nl.admin.resume}
+          </Button>
+        </Card>
+      )}
+      {(r.status === 'completed' || (r.status === 'failed' && r.current_week > 0)) && (
         <Card className="flex flex-wrap items-end gap-3">
           <Field label={nl.admin.rubberStamp}>
             <Input

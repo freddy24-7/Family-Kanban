@@ -284,3 +284,12 @@ export const useModelLog = () =>
     queryKey: ['model-log'],
     queryFn: () => api<ModelLogEntry[]>('/admin/monitoring/models'),
   })
+
+export function useResumeSimulation() {
+  const invalidate = useInvalidate()
+  return useMutation({
+    mutationFn: (id: string) =>
+      api<SimulationRun>(`/admin/simulations/${id}/resume`, { method: 'POST' }),
+    onSuccess: (_run, id) => invalidate(['simulations'], ['simulation', id]),
+  })
+}

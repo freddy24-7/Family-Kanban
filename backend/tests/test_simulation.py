@@ -249,3 +249,60 @@ async def test_monitoring_api(gemini, client, outbox):
         m["name"] for m in (await client.get("/admin/monitoring/models", headers=admin)).json()
     }
     assert {"category-stub-0", "effort-stub-0"} <= names
+
+
+async def test_resume_and_replay_after_failures(client, outbox, monkeypatch):
+    from tests.helpers import make_superuser, register_and_login
+
+    monkeypatch.setattr(config, "GEMINI_API_KEY", "fake")
+    admin = await register_and_login(client, "fix@example.com")
+    await make_superuser("fix@example.com")
+    working, calls = fake_gemini(), {"n": 0}
+
+    async def flaky(*a, **k):
+        calls["n"] += 1
+        if calls["n"] == 2:
+            raise llm.LLMUnavailable("proxy dropped")
+        return await working(*a, **k)
+
+    monkeypatch.setattr(llm, "generate_json_list", flaky)
+    run = (
+        await client.post(
+            "/admin/simulations",
+            json={"scenario": "baseline", "weeks": 3, "seed": 4, "family_seed": 4},
+            headers=admin,
+        )
+    ).json()
+    failed = (await client.get(f"/admin/simulations/{run['id']}", headers=admin)).json()
+    assert failed["status"] == "failed" and failed["current_week"] == 0
+    assert (
+        await client.post(f"/admin/simulations/{run['id']}/replay", json={}, headers=admin)
+    ).status_code == 409
+
+    resumed = await client.post(f"/admin/simulations/{run['id']}/resume", headers=admin)
+    assert resumed.status_code == 202
+    done = (await client.get(f"/admin/simulations/{run['id']}", headers=admin)).json()
+    assert done["status"] == "completed" and len(done["weekly_stats"]) == 3
+    assert (
+        await client.post(f"/admin/simulations/{run['id']}/resume", headers=admin)
+    ).status_code == 409
+
+    # A run that failed after its weeks began: not resumable, but its pool can be replayed.
+    async with SessionFactory() as session:
+        from app.models import SimulationRun
+
+        stored = await session.get(SimulationRun, uuid_of(run["id"]))
+        stored.status, stored.current_week = "failed", 2
+        await session.commit()
+    assert (
+        await client.post(f"/admin/simulations/{run['id']}/resume", headers=admin)
+    ).status_code == 409
+    assert (
+        await client.post(f"/admin/simulations/{run['id']}/replay", json={}, headers=admin)
+    ).status_code == 202
+
+
+def uuid_of(value: str):
+    import uuid
+
+    return uuid.UUID(value)

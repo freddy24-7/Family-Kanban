@@ -56,6 +56,15 @@ Cache policy (Caddyfile): `/assets/*` (hashed) cached for a year; everything els
 `index.html` for every route and the service worker, `no-cache`, so phones pick up new
 deploys.
 
+## Long-running jobs (simulations)
+
+Start production simulations from the admin page (**Beheer → Simulaties**): they run as a background
+task inside the API container, on Railway's private network next to the database. Running them from
+a laptop against `DATABASE_URL` (the public TCP proxy) is slow (thousands of round trips over the
+internet) and the proxy drops long connections. Failed runs: *Hervatten* continues a run that
+stopped while writing its pool; *Opnieuw afspelen* replays a complete pool in a fresh household.
+A redeploy of the API stops running background jobs.
+
 ## Email (Resend)
 
 Configured 2026-09-30 for `scalarox.nl` (region eu-west-1):
