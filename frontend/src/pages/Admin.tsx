@@ -157,6 +157,7 @@ function RunDetail({ id, onReplay }: { id: string; onReplay: (id: string) => voi
   const models = useModelLog()
   const [rubber, setRubber] = useState(0.2)
   const [shadow, setShadow] = useState<Record<string, string>>({})
+  const [adapt, setAdapt] = useState(false)
   if (run.isLoading || !run.data) return <Spinner />
   const r = run.data
   return (
@@ -246,6 +247,15 @@ function RunDetail({ id, onReplay }: { id: string; onReplay: (id: string) => voi
               </select>
             </Field>
           ))}
+          <label className="flex min-h-11 items-center gap-2 text-sm">
+            <input
+              type="checkbox"
+              className="size-4 accent-[var(--accent)]"
+              checked={adapt}
+              onChange={(e) => setAdapt(e.target.checked)}
+            />
+            {nl.admin.adaptation}
+          </label>
           <Button
             variant="secondary"
             disabled={replay.isPending}
@@ -257,6 +267,7 @@ function RunDetail({ id, onReplay }: { id: string; onReplay: (id: string) => voi
                 id: r.id,
                 rubber_stamp_rate: rubber,
                 model_versions: Object.keys(pinned).length ? pinned : undefined,
+                adaptation: adapt,
               })
               onReplay(run.id)
             }}

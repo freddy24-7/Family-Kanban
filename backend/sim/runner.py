@@ -142,6 +142,7 @@ class Simulation:
                 None,
                 self.clock,
                 self.versions,
+                self.run.adaptation,
             )
             topic.sim_ticket_id = ticket.id
             await self.session.commit()

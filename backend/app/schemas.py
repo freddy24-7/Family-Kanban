@@ -247,6 +247,8 @@ class SimulationReplay(BaseModel):
     planner: PlannerBehaviour = Field(default_factory=PlannerBehaviour)
     # Shadow evaluation: {"category": "category-v2", ...} instead of the active models.
     model_versions: dict[str, str] | None = None
+    # Per-household effort adjustment (Phase 7b) on for this replay.
+    adaptation: bool = False
 
 
 class SimulationRead(ORMModel):
@@ -259,6 +261,7 @@ class SimulationRead(ORMModel):
     weeks: int
     random_seed: int
     model_versions: dict[str, str] | None = None
+    adaptation: bool = False
     status: str
     current_week: int
     tokens_in: int

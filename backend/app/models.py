@@ -261,6 +261,10 @@ class Prediction(Base):
     source: Mapped[Source] = mapped_column(str_enum(Source), nullable=False)
     occurred_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
     created_at: Mapped[datetime] = created_at()
+    # Per-household effort adjustment applied to this prediction (None = raw model output):
+    # {"category", "n", "ratio", "raw": raw model probabilities}. `predicted`/`confidence`/
+    # `probabilities` hold the adjusted values; "raw" keeps the model's own output.
+    adjustment: Mapped[dict[str, Any] | None] = mapped_column(JSONB)
 
 
 # --- Demo / simulation ------------------------------------------------------------
@@ -414,6 +418,10 @@ class SimulationRun(Base):
     random_seed: Mapped[int] = mapped_column(Integer, nullable=False)
     # Shadow evaluation: {task: model version name} to use instead of the active models.
     model_versions: Mapped[dict[str, str] | None] = mapped_column(JSONB)
+    # Per-household effort adjustment on (shadow evaluation of Phase 7b).
+    adaptation: Mapped[bool] = mapped_column(
+        Boolean, default=False, server_default=text("false"), nullable=False
+    )
     # pool_pending | pool_ready | running | completed | failed
     status: Mapped[str] = mapped_column(String(20), nullable=False)
     current_week: Mapped[int] = mapped_column(Integer, default=0, nullable=False)

@@ -93,3 +93,7 @@ GEMINI_MODELS = [
 ]
 # Hard cap per generation run (input + output tokens), to bound cost.
 LLM_MAX_TOKENS_PER_RUN = _env_number("LLM_MAX_TOKENS_PER_RUN", 600_000, int)
+
+# --- Per-household effort adjustment (Phase 7b): off until a shadow replay shows it helps
+EFFORT_ADAPTATION = _env("EFFORT_ADAPTATION", "false").lower() == "true"
+ADAPTATION_WINDOW = _env_number("ADAPTATION_WINDOW", 10, int)  # recent reviews per category

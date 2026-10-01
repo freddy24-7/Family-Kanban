@@ -6,11 +6,11 @@ from collections.abc import Sequence
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app import repository
+from app import config, repository
 from app.clock import Clock
 from app.domain import Task
 from app.models import ModelVersion, Prediction, Topic
-from ml import registry
+from ml import adaptation, registry
 from ml.text import ROLE_MASK_VERSION, mask_member_names
 
 log = logging.getLogger(__name__)
@@ -21,22 +21,29 @@ async def classify_topics(
     topics: Sequence[Topic],
     clock: Clock,
     versions: dict[Task, ModelVersion] | None = None,
+    adapt: bool | None = None,
 ) -> list[Prediction]:
-    """Predict every task for the given topics with the currently active model
-    versions. Each prediction records which model version produced it, so its
-    accuracy can later be attributed to the right model. Caller commits.
+    """Predict every task for the given topics with the active model versions. Each
+    prediction records which model version produced it, so its accuracy can later be
+    attributed to the right model. Caller commits.
 
-    Fails soft per task: if a model can't be loaded, the topic is still created
-    (it just has no prediction for that task and is flagged for review)."""
+    - `versions` pins models per task (shadow evaluation); unpinned tasks keep the
+      active model. (A first version replaced ALL active models with the pinned ones.)
+    - `adapt` (default: config.EFFORT_ADAPTATION) applies the per-household effort
+      adjustment (ml/adaptation.py); the raw model output is kept in `adjustment`.
+    - Fails soft per task: if a model can't be loaded, the topic is still created (it
+      just has no prediction for that task and is flagged for review)."""
     if not topics:
         return []
+    adapt = config.EFFORT_ADAPTATION if adapt is None else adapt
     members: dict[uuid.UUID, list[tuple[str, bool]]] = {}
-    predictions: list[Prediction] = []
-    # `versions` pins models per task (shadow evaluation in the simulator); tasks that
-    # aren't pinned keep using the active model. (A first version replaced ALL active
-    # models with the pinned ones, so a run pinning only effort had no category model.)
     active = {**(await repository.active_model_versions(session)), **(versions or {})}
-    for task, version in active.items():
+    predictions: list[Prediction] = []
+    category_of: dict[uuid.UUID, str] = {}
+    ratios: dict[uuid.UUID, dict[str, tuple[dict[str, float], int]]] = {}
+    # Category first: the effort adjustment needs each topic's category.
+    for task in sorted(active, key=lambda t: t != Task.CATEGORY):
+        version = active[task]
         try:
             model = await registry.load_model(session, version.artifact_uri)
         except Exception:
@@ -52,21 +59,67 @@ async def classify_topics(
             log.error("Model %s needs unknown preprocessing %r", version.name, model.preprocessing)
             continue
         for topic, output in zip(topics, model.predict(texts), strict=True):
+            predicted, confidence, probabilities = (
+                output.predicted,
+                output.confidence,
+                output.probabilities,
+            )
+            adjustment = None
+            if task == Task.CATEGORY:
+                category_of[topic.id] = output.predicted
+            elif task == Task.EFFORT and adapt and topic.id in category_of:
+                category = category_of[topic.id]
+                segment = await _segment_ratio(
+                    session, topic.household_id, version, category, ratios
+                )
+                if segment is not None:
+                    ratio, n = segment
+                    adjusted = adaptation.adjust(output.probabilities, ratio)
+                    probabilities = {e: round(p, 4) for e, p in adjusted.items()}
+                    predicted = max(probabilities, key=probabilities.get)
+                    confidence = probabilities[predicted]
+                    adjustment = {
+                        "category": category,
+                        "n": n,
+                        "ratio": {e: round(r, 4) for e, r in ratio.items()},
+                        "raw": output.probabilities,
+                    }
             predictions.append(
                 Prediction(
                     topic_id=topic.id,
                     household_id=topic.household_id,
                     model_version_id=version.id,
                     task=task,
-                    predicted=output.predicted,
-                    confidence=output.confidence,
-                    probabilities=output.probabilities,
+                    predicted=predicted,
+                    confidence=confidence,
+                    probabilities=probabilities,
                     source=topic.source,
                     occurred_at=clock.now(),
+                    adjustment=adjustment,
                 )
             )
     session.add_all(predictions)
     return predictions
+
+
+async def _segment_ratio(
+    session: AsyncSession,
+    household_id: uuid.UUID,
+    version: ModelVersion,
+    category: str,
+    cache: dict[uuid.UUID, dict[str, tuple[dict[str, float], int]]],
+) -> tuple[dict[str, float], int] | None:
+    """The household's adjustment for one category, computed once per call."""
+    if household_id not in cache:
+        reviews = await repository.recent_effort_reviews(
+            session, household_id, version.id, config.ADAPTATION_WINDOW
+        )
+        cache[household_id] = {}
+        for category_name, rows in reviews.items():
+            ratio = adaptation.segment_ratio(rows)
+            if ratio is not None:
+                cache[household_id][category_name] = (ratio, len(rows))
+    return cache[household_id].get(category)
 
 
 async def _members(

@@ -261,15 +261,21 @@ export function useReplaySimulation() {
       id,
       rubber_stamp_rate,
       model_versions,
+      adaptation,
     }: {
       id: string
       rubber_stamp_rate: number
       model_versions?: Record<string, string>
+      adaptation?: boolean
     }) =>
       api<SimulationRun>(`/admin/simulations/${id}/replay`, {
         method: 'POST',
         // model_versions: shadow evaluation of candidates instead of the active models
-        body: { planner: { rubber_stamp_rate }, model_versions: model_versions ?? null },
+        body: {
+          planner: { rubber_stamp_rate },
+          model_versions: model_versions ?? null,
+          adaptation: !!adaptation,
+        },
       }),
     onSuccess: () => invalidate(['simulations']),
   })

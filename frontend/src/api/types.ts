@@ -159,6 +159,7 @@ export interface SimulationRun {
   weeks: number
   random_seed: number
   model_versions: Record<string, string> | null
+  adaptation: boolean
   status: 'pool_pending' | 'pool_ready' | 'running' | 'completed' | 'failed'
   current_week: number
   tokens_in: number

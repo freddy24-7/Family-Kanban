@@ -58,9 +58,36 @@ Both need a **real holdout**. With one family a group split is impossible, so re
 **temporal split**: the most recent weeks are the test set (the model is always evaluated on the
 future, never on the past it trained on).
 
+## 7. When retraining can't fix it: household-specific drift
+
+Retraining effort-v2 on world A improved effort overall but **not** the drifted category: groceries
+after the move stayed at 0.18 accuracy. Weighting the reliable review labels barely helped (0.31 at
+weight 40), because reviews from *before* the move ("groceries = S") were amplified too. The same
+text ("melk halen") has two answers, and a global model has no way to know which family it is.
+
+The drift is **household-specific** (this family moved), so the fix belongs at the household level:
+a global model plus a small **per-household adjustment**, learned from that family's own reviews.
+
+**Label-shift correction (Bayes' rule).** For a household and category, compare what the model
+expects with what the reviews say:
+
+- π_model(e): the model's average predicted probability of effort e on the household's recent
+  reviewed tickets of that category ("what I expected");
+- π_household(e): the actual efforts in those reviews, smoothed toward π_model with a few pseudo
+  counts so that 2 reviews can't flip everything;
+
+and re-weight each new prediction: p_adj(e) ∝ p_model(e) × π_household(e) / π_model(e).
+If the model says "S, 70%" for groceries but this family's groceries have mostly been M, the S
+probability is scaled down and M up. Only the **last few reviews** per category are used, so the
+adjustment follows change and forgets the old world: the recency the global model lacks.
+
+It only adjusts the label *mix* per segment; it can't fix a model that doesn't understand a text.
+And it's evaluated like any change: in a shadow replay of an unseen world, before switching it on.
+
 ## Self-check
 
 1. Why is the sprint-review effort a better training target than the planner's estimate?
 2. A challenger is better on the new-world holdout but worse on the old one. What do you do?
 3. Why replay an *unseen* world in shadow, not the world the challenger was trained on?
 4. Why a temporal split for one family's data instead of a random one?
+5. Why can't more data fix household-specific concept drift, and what does the adjustment add?

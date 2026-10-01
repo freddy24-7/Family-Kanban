@@ -314,3 +314,55 @@ async def model_versions_by_name(
             raise ValueError(f"No {task} model version named {name!r}")
         out[Task(task)] = version
     return out
+
+
+async def recent_effort_reviews(
+    session: AsyncSession, household_id: uuid.UUID, effort_version_id: uuid.UUID, window: int
+) -> dict[str, list[tuple[dict[str, float], str]]]:
+    """Per category (planner label, else the intake prediction): the household's most
+    recent reviewed tickets as (RAW model probabilities of `effort_version_id`, actual effort)."""
+    items = (
+        (
+            await session.scalars(
+                select(SprintItem)
+                .where(
+                    SprintItem.household_id == household_id,
+                    SprintItem.completed.is_(True),
+                    SprintItem.effort_actual.is_not(None),
+                )
+                .order_by(SprintItem.reviewed_at.desc())
+                .limit(window * 20)
+            )
+        )
+        .unique()
+        .all()
+    )
+    if not items:
+        return {}
+    topic_ids = [i.topic_id for i in items]
+    predictions = (
+        await session.scalars(
+            select(Prediction)
+            .where(Prediction.topic_id.in_(topic_ids))
+            .order_by(Prediction.created_at)
+        )
+    ).all()
+    effort_probs: dict[uuid.UUID, dict[str, float]] = {}
+    intake_category: dict[uuid.UUID, str] = {}
+    for p in predictions:
+        if p.task == Task.EFFORT and p.model_version_id == effort_version_id:
+            raw = (p.adjustment or {}).get("raw") or p.probabilities
+            effort_probs.setdefault(p.topic_id, raw)
+        elif p.task == Task.CATEGORY:
+            intake_category.setdefault(p.topic_id, p.predicted)
+    out: dict[str, list[tuple[dict[str, float], str]]] = {}
+    for item in items:
+        probs = effort_probs.get(item.topic_id)
+        category = (
+            str(item.topic.category_label)
+            if item.topic.category_label
+            else intake_category.get(item.topic_id)
+        )
+        if probs and category and len(out.setdefault(category, [])) < window:
+            out[category].append((probs, str(item.effort_actual)))
+    return out

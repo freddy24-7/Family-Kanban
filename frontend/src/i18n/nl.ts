@@ -197,6 +197,8 @@ export const nl = {
     resume: 'Hervatten',
     modelFor: 'Model voor',
     activeModel: 'actieve model',
+    adaptation: 'Aanpassing per gezin (moeite)',
+    adaptationShort: 'aanpassing per gezin',
     resumeHelp: 'Gestopt tijdens het schrijven van tickets: hervatten gaat verder waar het bleef.',
     runs: 'Runs',
     progress: (w: number, total: number) => `week ${w}/${total}`,

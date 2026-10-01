@@ -24,6 +24,7 @@ async def create_run(
     family_seed: int | None = None,
     pool_run: SimulationRun | None = None,
     model_versions: dict[str, str] | None = None,
+    adaptation: bool = False,
 ) -> SimulationRun:
     """New household + run. With `pool_run`, the run replays that run's pool: same
     family (spec + name seed), same scenario and calendar, own household."""
@@ -54,6 +55,7 @@ async def create_run(
         random_seed=seed if seed is not None else secrets.randbelow(2**31),
         status="pool_ready" if pool_run else "pool_pending",
         model_versions=model_versions or None,
+        adaptation=adaptation,
         weekly_stats=[],
     )
     session.add(run)

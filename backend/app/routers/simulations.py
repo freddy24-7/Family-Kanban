@@ -161,6 +161,7 @@ async def replay_run(
             body.seed,
             pool_run=source,
             model_versions=body.model_versions,
+            adaptation=body.adaptation,
         )
     except ValueError as exc:
         raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, str(exc)) from exc

@@ -72,6 +72,9 @@ async def main() -> None:
         if name == "replay":  # shadow evaluation of candidate models
             p.add_argument("--category-model")
             p.add_argument("--effort-model")
+            p.add_argument(
+                "--adaptation", action="store_true", help="per-household effort adjustment"
+            )
     for name in ("resume", "report"):
         sub.add_parser(name).add_argument("run_id", type=uuid.UUID)
     args = parser.parse_args()
@@ -108,6 +111,7 @@ async def main() -> None:
                 args.seed,
                 pool_run=pool_run,
                 model_versions=overrides or None,
+                adaptation=args.adaptation,
             )
             print(f"replay run {run.id} of pool {pool_run.id}")
             run = await run_simulation(session, run)
