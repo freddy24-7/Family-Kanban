@@ -1,6 +1,6 @@
 # Build Plan — Family Kanban
 
-**Status**: Phase 6 complete (2026-09-30) · next: Phase 7 (retraining loop)
+**Status**: Phase 7 complete (2026-10-01) · next: Phase 8 (embeddings & planning suggestions)
 
 Sized for ~8–10 hours/week. Each phase ends with something demonstrable.
 Phases marked 🎓 include ML lessons: before building, the concept is explained;
@@ -243,6 +243,14 @@ Bonferroni-corrected alarm (needs ~2-3 months or pooled households). See lesson 
 
 **Done when**: at least one real-data retraining event and one simulated
 drift-recovery event are visible in the retraining log.
+
+**Outcome**: retraining tooling (snapshot / run / promote / rollback, `/retrain` skill), effort target
+from sprint reviews, simulation holdouts with hidden truth, primary-holdout gate, shadow replays with
+pinned versions, per-household effort adjustment (label-shift correction, off in production).
+effort-v2 promoted after gate + clean shadow replay; category-v2 correctly rejected. The groceries
+concept drift is only partly repaired (0.18 → 0.33 with the adjustment). Open: tune the adjustment
+on world A, a real-data retraining event once the family has reviews, `holdout-real-v1`
+(temporal split). See lesson 06.
 
 ---
 

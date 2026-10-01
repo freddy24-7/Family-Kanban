@@ -229,3 +229,54 @@ def test_training_cli_parses_all_options(monkeypatch):
     )
     train.main()
     assert seen["args"][-3:] == (3.0, "h", 5.0)
+
+
+def test_promote_existing_candidate_rechecks_gate(monkeypatch):
+    from app.models import ModelVersion
+    from ml import retrain
+
+    monkeypatch.setattr("ml.holdout.load_manifests", lambda: [])
+    monkeypatch.setattr("ml.train.latest_holdout", lambda manifests: "h1")
+    model = build_text_classifier(TextModelConfig(features="word")).fit(TEXTS, CATS)
+    holdout = {"report": {"missing": 0}, "delta_vs_champion": {"delta": 0.3, "ci95": (0.2, 0.4)}}
+    with registry.sync_session() as s:
+        champion = registry.active_version(s, Task.CATEGORY)
+        good = registry.save_and_register(
+            s,
+            Task.CATEGORY,
+            model,
+            {},
+            {"holdouts": {"h1": holdout}, "champion_at_training": champion.name},
+            1,
+            "h",
+            champion,
+            "",
+        )
+        weak = registry.save_and_register(
+            s,
+            Task.CATEGORY,
+            model,
+            {},
+            {
+                "holdouts": {
+                    "h1": {**holdout, "delta_vs_champion": {"delta": 0.0, "ci95": (-0.1, 0.1)}}
+                },
+                "champion_at_training": champion.name,
+            },
+            1,
+            "h",
+            champion,
+            "",
+        )
+        good_name, weak_name = good.name, weak.name
+    with pytest.raises(SystemExit, match="gate"):
+        retrain.promote_candidate(weak_name)
+    retrain.promote_candidate(good_name)
+    with registry.sync_session() as s:
+        assert (
+            str(s.scalar(select(ModelVersion.status).where(ModelVersion.name == good_name)))
+            == "active"
+        )
+    # The champion changed, so the weak candidate's comparison is stale now.
+    with pytest.raises(SystemExit, match="champion is now"):
+        retrain.promote_candidate(weak_name)

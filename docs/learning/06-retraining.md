@@ -84,6 +84,32 @@ adjustment follows change and forgets the old world: the recency the global mode
 It only adjusts the label *mix* per segment; it can't fix a model that doesn't understand a text.
 And it's evaluated like any change: in a shadow replay of an unseen world, before switching it on.
 
+## What happened in this project
+
+1. **Data**: world A (a 26-week drift-demo run, 327 labelled tickets, 310 with a sprint-review effort)
+   became training data. World B, an unseen drift-demo world, was frozen as `holdout-drift-v1`
+   (210 tickets after the move, hidden-truth labels) **before** training.
+2. **Gate** (snapshot `train-2026-09-30`): effort-v2 +0.143 macro-F1 on the new world (95% CI
+   +0.065..+0.219), −0.020 on the old world (within noise) → pass. category-v2 +0.008 (not
+   significant) → correctly not promoted: more data without a real gain only adds risk.
+3. **Per-category view** exposed what the overall score hid: effort-v2 still scored **0.18 on
+   groceries** after the move, exactly like v1. Weighting review labels (×40) only reached 0.31,
+   because pre-move reviews were amplified too.
+4. **Shadow replays of world B** (same tickets, only the model differs), against the hidden truth:
+
+| After the move | v1 | effort-v2 | v2 + household adjustment |
+|---|---|---|---|
+| Effort accuracy | 0.53 | 0.58 | 0.60 |
+| Effort MAE (steps) | 0.57 | 0.47 | 0.44 |
+| Groceries | 0.18 | 0.18 | 0.33 |
+
+   Before the move both v2 variants score 0.68 (the adjustment does no harm when nothing drifted).
+   A first shadow replay was invalid: pinning only the effort model removed the category model
+   entirely (fixed, with a regression test).
+5. **effort-v2 promoted** (the evaluated candidate itself, gate re-checked), effort-v1 retired.
+   On the developer's real tickets it now says M for the vet visit (labelled M) and L for clearing
+   the attic. The household adjustment stays off in production until it's tuned on world A.
+
 ## Self-check
 
 1. Why is the sprint-review effort a better training target than the planner's estimate?

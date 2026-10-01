@@ -4,6 +4,7 @@
   uv run python -m ml.retrain snapshot --name train-2026-10-02      # freeze today's training data
   uv run python -m ml.retrain run --snapshot train-2026-10-02 --dry-run
   uv run python -m ml.retrain run --snapshot train-2026-10-02 --promote [--real-weight 5]
+  uv run python -m ml.retrain promote --version effort-v2       # an evaluated candidate
   uv run python -m ml.retrain rollback --task effort
 
 `run` trains a challenger per task and evaluates it next to the champion on every frozen
@@ -31,13 +32,12 @@ from ml.train import train_task
 
 
 def status() -> None:
-    session = registry.sync_session()
-    versions = session.scalars(select(ModelVersion).order_by(ModelVersion.created_at)).all()
+    with registry.sync_session() as session:
+        versions = session.scalars(select(ModelVersion).order_by(ModelVersion.created_at)).all()
     for v in versions:
         holdouts = (v.metrics or {}).get("holdouts", {})
         scores = ", ".join(f"{h}: {m.get('macro_f1')}" for h, m in holdouts.items())
         print(f"{v.name:18} {str(v.status):9} n={v.training_set_size:<5} {scores}")
-    session.close()
 
 
 def snapshot(name: str) -> None:
@@ -79,6 +79,36 @@ def run(
             )
 
 
+def promote_candidate(name: str, primary: str | None = None) -> None:
+    """Promote an already evaluated candidate (the one that was shadow-tested) instead of
+    retraining, which would create a new, untested version. The gate is re-checked
+    against the candidate's stored holdout results, and the champion must still be the
+    one it was compared with."""
+    from ml.holdout import load_manifests
+    from ml.train import latest_holdout, promotion_decision
+
+    # `with`: the session is closed on every path, including the refusals below.
+    # (Without it, a refused promotion left a transaction open holding a lock.)
+    with registry.sync_session() as session:
+        version = session.scalar(select(ModelVersion).where(ModelVersion.name == name))
+        if version is None or str(version.status) != "candidate":
+            raise SystemExit(f"{name} is not a candidate")
+        champion = registry.active_version(session, version.task)
+        compared_with = (version.metrics or {}).get("champion_at_training")
+        if champion is not None and champion.name != compared_with:
+            raise SystemExit(
+                f"{name} was compared with {compared_with}, but the champion is now {champion.name}"
+            )
+        primary = primary or latest_holdout(load_manifests())
+        passed, reason = promotion_decision(version.metrics.get("holdouts", {}), primary)
+        if not passed:
+            raise SystemExit(f"gate: {reason}")
+        registry.promote(session, version)
+        print(
+            f"{name} is now active ({reason}); {champion.name if champion else 'nothing'} retired"
+        )
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
@@ -96,6 +126,9 @@ def main() -> None:
         "--review-weight", type=float, default=1.0, help="effort: weight of sprint-review labels"
     )
     r.add_argument("--primary-holdout")
+    pc = sub.add_parser("promote", help="promote an evaluated candidate (gate re-checked)")
+    pc.add_argument("--version", required=True)
+    pc.add_argument("--primary-holdout")
     b = sub.add_parser("rollback")
     b.add_argument("--task", choices=[t.value for t in Task], required=True)
     args = parser.parse_args()
@@ -113,11 +146,12 @@ def main() -> None:
             args.primary_holdout,
             args.review_weight,
         )
+    elif args.command == "promote":
+        promote_candidate(args.version, args.primary_holdout)
     else:
-        session = registry.sync_session()
-        retired, active = registry.rollback(session, Task(args.task))
-        print(f"rolled back: {retired.name} retired, {active.name} active again")
-        session.close()
+        with registry.sync_session() as session:
+            retired, active = registry.rollback(session, Task(args.task))
+            print(f"rolled back: {retired.name} retired, {active.name} active again")
 
 
 if __name__ == "__main__":
