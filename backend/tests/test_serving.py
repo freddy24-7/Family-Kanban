@@ -182,3 +182,50 @@ def test_temperature_respects_non_alphabetical_class_order():
     proba = np.tile([0.2, 0.2, 0.2], (90, 1))
     proba[np.arange(90), np.arange(90) % 3] = 0.6  # right answer always gets 0.6
     assert fit_temperature(proba, y, ["S", "M", "L"]) < 1  # underconfident -> sharpen
+
+
+def test_training_cli_parses_all_options(monkeypatch):
+    """Regression: options used by main() must exist in its parser."""
+    import sys
+
+    from ml import train
+
+    seen = {}
+    monkeypatch.setattr(train, "load_snapshot", lambda name: seen.setdefault("snapshot", name))
+    monkeypatch.setattr(train, "load_snapshot_members", lambda name: {})
+    monkeypatch.setattr(
+        train,
+        "train_task",
+        lambda *a: (
+            seen.update(args=a)
+            or {
+                "version": "x",
+                "outcome": "y",
+                "gate": "",
+                "champion": "",
+                "cv": {},
+                "temperature": 1.0,
+                "holdouts": {},
+            }
+        ),
+    )
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            "train",
+            "--snapshot",
+            "s",
+            "--task",
+            "effort",
+            "--dry-run",
+            "--real-weight",
+            "3",
+            "--review-weight",
+            "5",
+            "--primary-holdout",
+            "h",
+        ],
+    )
+    train.main()
+    assert seen["args"][-3:] == (3.0, "h", 5.0)

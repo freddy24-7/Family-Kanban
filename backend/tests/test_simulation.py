@@ -374,6 +374,13 @@ async def test_shadow_replay_uses_pinned_model_versions(gemini, client, outbox):
             ).all()
         )
         assert used == {name}
+        # Unpinned tasks keep using the active model (regression: they used to get none).
+        effort_predictions = await session.scalar(
+            select(func.count())
+            .select_from(Prediction)
+            .where(Prediction.household_id == run.household_id, Prediction.task == Task.EFFORT)
+        )
+        assert effort_predictions > 0
         still_active = await session.scalar(
             select(ModelVersion.status).where(ModelVersion.name == name)
         )

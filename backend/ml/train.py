@@ -207,6 +207,7 @@ def train_task(
     dry_run: bool = False,
     real_weight: float = 1.0,
     primary: str | None = None,
+    review_weight: float = 1.0,
 ) -> dict:
     config, label = CONFIGS[task], LABEL_COLUMN[task]
     ordinal = task == Task.EFFORT
@@ -231,6 +232,14 @@ def train_task(
     y, groups = train[label].to_numpy(), train["household_id"].to_numpy()
     # Real tickets can count more than synthetic ones, so they aren't drowned out.
     weights = np.where(train["source"].to_numpy() == "real", real_weight, 1.0)
+    # Effort only: a sprint-review label is the MEASURED effort; generator and planner
+    # labels are estimates. Under concept drift the old estimates outvote the few new
+    # measurements unless measurements count more.
+    if task == Task.EFFORT and "effort_source" in train:
+        weights = weights * np.where(
+            train["effort_source"].to_numpy() == "review", review_weight, 1.0
+        )
+    train_report["review_weight"] = review_weight if task == Task.EFFORT else None
 
     # 3. Cross-validation (out-of-fold) + temperature
     classes = np.array(EFFORT_ORDER) if ordinal else np.array(sorted(set(y)))
@@ -300,6 +309,13 @@ def train_task(
                 for n, b in baselines.items()
             },
             "report": held_report,
+            # Per true category: a change in one category (concept drift) hides in the
+            # overall score. (Effort-v2 first looked fine overall while groceries didn't move.)
+            "accuracy_by_category": {
+                c: {"n": int(m.sum()), "accuracy": round(float((pred[m] == y_held[m]).mean()), 3)}
+                for c in sorted(set(held["category"]))
+                for m in [(held["category"] == c).to_numpy()]
+            },
         }
         real = (held["source"] == "real").to_numpy()
         if real.any():
@@ -394,6 +410,13 @@ def main() -> None:
         action="store_true",
         help="add monitoring references to active models",
     )
+    parser.add_argument(
+        "--real-weight", type=float, default=1.0, help="weight of real vs synthetic rows"
+    )
+    parser.add_argument(
+        "--review-weight", type=float, default=1.0, help="effort: weight of review labels"
+    )
+    parser.add_argument("--primary-holdout", help="holdout the challenger must clearly win")
     args = parser.parse_args()
 
     df = load_snapshot(args.snapshot)
@@ -412,6 +435,7 @@ def main() -> None:
             args.dry_run,
             args.real_weight,
             args.primary_holdout,
+            args.review_weight,
         )
         print(f"\n=== {task.value}: {result['version']} -> {result['outcome']}")
         print(f"gate vs {result['champion']}: {result['gate']}")

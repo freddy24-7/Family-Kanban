@@ -48,19 +48,34 @@ def snapshot(name: str) -> None:
     print(f"  effort labels from: {df['effort_source'].value_counts().to_dict()}")
 
 
-def run(name: str, promote: bool, dry_run: bool, real_weight: float, primary: str | None) -> None:
+def run(
+    name: str,
+    promote: bool,
+    dry_run: bool,
+    real_weight: float,
+    primary: str | None,
+    review_weight: float = 1.0,
+) -> None:
     df: pd.DataFrame = load_snapshot(name)
     members = load_snapshot_members(name)
     for task in (Task.CATEGORY, Task.EFFORT):
-        result = train_task(task, df, name, members, promote, dry_run, real_weight, primary)
+        result = train_task(
+            task, df, name, members, promote, dry_run, real_weight, primary, review_weight
+        )
         print(f"\n=== {task.value}: {result['version']} -> {result['outcome']}")
         print(f"gate vs {result['champion']}: {result['gate']}")
         for holdout, h in result["holdouts"].items():
             gain = h["delta_vs_champion"]
+            groceries = h.get("accuracy_by_category", {}).get("groceries")
             print(
                 f"  {holdout:22} challenger {h['macro_f1']:.3f} {h.get('macro_f1_ci95')} | "
                 f"champion {h['champion']['macro_f1']:.3f} | "
                 f"gain {gain['delta']:+.3f} {gain['ci95']}"
+                + (
+                    f" | groceries {groceries['accuracy']:.2f} (n={groceries['n']})"
+                    if groceries
+                    else ""
+                )
             )
 
 
@@ -77,6 +92,9 @@ def main() -> None:
     r.add_argument("--promote", action="store_true")
     r.add_argument("--dry-run", action="store_true")
     r.add_argument("--real-weight", type=float, default=1.0)
+    r.add_argument(
+        "--review-weight", type=float, default=1.0, help="effort: weight of sprint-review labels"
+    )
     r.add_argument("--primary-holdout")
     b = sub.add_parser("rollback")
     b.add_argument("--task", choices=[t.value for t in Task], required=True)
@@ -87,7 +105,14 @@ def main() -> None:
     elif args.command == "snapshot":
         snapshot(args.name)
     elif args.command == "run":
-        run(args.snapshot, args.promote, args.dry_run, args.real_weight, args.primary_holdout)
+        run(
+            args.snapshot,
+            args.promote,
+            args.dry_run,
+            args.real_weight,
+            args.primary_holdout,
+            args.review_weight,
+        )
     else:
         session = registry.sync_session()
         retired, active = registry.rollback(session, Task(args.task))

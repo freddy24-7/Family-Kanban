@@ -32,8 +32,10 @@ async def classify_topics(
         return []
     members: dict[uuid.UUID, list[tuple[str, bool]]] = {}
     predictions: list[Prediction] = []
-    # `versions` overrides the active models (shadow evaluation in the simulator).
-    active = versions if versions is not None else await repository.active_model_versions(session)
+    # `versions` pins models per task (shadow evaluation in the simulator); tasks that
+    # aren't pinned keep using the active model. (A first version replaced ALL active
+    # models with the pinned ones, so a run pinning only effort had no category model.)
+    active = {**(await repository.active_model_versions(session)), **(versions or {})}
     for task, version in active.items():
         try:
             model = await registry.load_model(session, version.artifact_uri)
