@@ -22,6 +22,7 @@ The holdout (with duplicate exclusion) is the number to trust.
 import argparse
 import json
 import subprocess
+from dataclasses import replace
 from datetime import UTC, datetime
 
 import numpy as np
@@ -60,6 +61,8 @@ CONFIGS: dict[Task, TextModelConfig] = {
 LABEL_COLUMN = {Task.CATEGORY: "category", Task.EFFORT: "effort"}
 LABELS = {Task.CATEGORY: [c.value for c in Category], Task.EFFORT: EFFORT_ORDER}
 PRIMARY_METRIC = "macro_f1"
+# Feature types whose runtime dependency isn't installed in production (lesson 07).
+EXPERIMENT_ONLY_FEATURES = {"embedding"}
 
 
 def masked_texts(frame: pd.DataFrame, members: dict[str, list[tuple[str, bool]]]) -> np.ndarray:
@@ -208,8 +211,16 @@ def train_task(
     real_weight: float = 1.0,
     primary: str | None = None,
     review_weight: float = 1.0,
+    overrides: dict | None = None,
+    cv_only: bool = False,
 ) -> dict:
-    config, label = CONFIGS[task], LABEL_COLUMN[task]
+    # `overrides` (e.g. {"features": "embedding", "C": 10}) is for experiments against
+    # the same data, holdouts and gate as the production config.
+    config, label = replace(CONFIGS[task], **(overrides or {})), LABEL_COLUMN[task]
+    if config.features in EXPERIMENT_ONLY_FEATURES and not (dry_run or cv_only):
+        # fastembed is a dev dependency: such a model would load in production and then
+        # fail on its first prediction. Experiments are evaluated, never registered.
+        raise SystemExit(f"features={config.features!r} is experiment-only: use --dry-run")
     ordinal = task == Task.EFFORT
     manifests = load_manifests()
     primary = primary or latest_holdout(manifests)
@@ -263,6 +274,10 @@ def train_task(
         "ece_after": round(expected_calibration_error(scaled.max(axis=1), correct), 4),
         "thresholds": threshold_table(scaled.max(axis=1), correct).to_dict(orient="records"),
     }
+
+    if cv_only:
+        # Model selection (e.g. choosing C): training families only, no holdout is scored.
+        return {"version": "(cv only)", "outcome": "no holdout evaluated", "cv": cv_metrics}
 
     # 4. Final model on all training data (+ baselines fitted on the same data)
     final = TemperatureScaled(
@@ -417,7 +432,19 @@ def main() -> None:
         "--review-weight", type=float, default=1.0, help="effort: weight of review labels"
     )
     parser.add_argument("--primary-holdout", help="holdout the challenger must clearly win")
+    parser.add_argument(
+        "--features",
+        choices=["word", "char", "word+char", "embedding"],
+        help="experiment: other text features than the production config",
+    )
+    parser.add_argument("--C", type=float, help="experiment: other regularisation strength")
+    parser.add_argument(
+        "--cv-only",
+        action="store_true",
+        help="model selection: group-CV on training families only, no holdout scored",
+    )
     args = parser.parse_args()
+    overrides = {k: v for k, v in {"features": args.features, "C": args.C}.items() if v}
 
     df = load_snapshot(args.snapshot)
     members = load_snapshot_members(args.snapshot)
@@ -436,8 +463,14 @@ def main() -> None:
             args.real_weight,
             args.primary_holdout,
             args.review_weight,
+            overrides,
+            args.cv_only,
         )
         print(f"\n=== {task.value}: {result['version']} -> {result['outcome']}")
+        if args.cv_only:
+            cv = {k: v for k, v in result["cv"].items() if k != "thresholds"}
+            print(f"CV: {json.dumps(cv)}")
+            continue
         print(f"gate vs {result['champion']}: {result['gate']}")
         cv = {k: v for k, v in result["cv"].items() if k != "thresholds"}
         print(f"temperature {result['temperature']:.3f} | CV: {json.dumps(cv)}")

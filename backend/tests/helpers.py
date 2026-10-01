@@ -31,3 +31,19 @@ async def create_household(client: AsyncClient, headers: dict, name: str = "Fami
     response = await client.post("/households", json={"name": name}, headers=headers)
     assert response.status_code == 201, response.text
     return response.json()["id"]
+
+
+def fake_embed(texts: list[str]):
+    """Stand-in for the embedding model: a bag of hashed words. Texts that share words
+    are similar, others ~orthogonal. Deterministic, instant, no model download."""
+    import hashlib
+
+    import numpy as np
+
+    from ml.embeddings import DIM
+
+    out = np.zeros((len(texts), DIM), dtype=np.float32)
+    for row, sentence in enumerate(texts):
+        for word in sentence.lower().split():
+            out[row, int(hashlib.md5(word.encode()).hexdigest(), 16) % DIM] += 1.0
+    return out

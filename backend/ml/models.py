@@ -84,7 +84,7 @@ class KeywordBaseline(ClassifierMixin, BaseEstimator):
 
 # --- TF-IDF + logistic regression ----------------------------------------------------------
 
-Features = Literal["word", "char", "word+char"]
+Features = Literal["word", "char", "word+char", "embedding"]
 
 
 @dataclass(frozen=True)
@@ -119,6 +119,11 @@ def _char_vectorizer() -> TfidfVectorizer:
 
 
 def _vectorizer(features: Features):
+    if features == "embedding":
+        # Dense, pretrained sentence vectors instead of sparse word counts (lesson 07).
+        from ml.embeddings import EmbeddingFeatures
+
+        return EmbeddingFeatures()
     if features == "word":
         return _word_vectorizer()
     if features == "char":

@@ -137,6 +137,10 @@ export const nl = {
     backlogEmpty: 'De backlog is leeg.',
     plannerOnly: 'Alleen planners kunnen sprints plannen.',
     sprintEmpty: 'Nog geen taken in deze sprint.',
+    similarTitle: 'Eerder gedaan',
+    similarHint: 'Vergelijkbare taken uit eerdere sprints, met hoeveel werk het echt was.',
+    notFinished: 'niet af',
+    nobody: 'niemand',
   },
   board: {
     title: 'Bord',

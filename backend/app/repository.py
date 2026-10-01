@@ -366,3 +366,26 @@ async def recent_effort_reviews(
         if probs and category and len(out.setdefault(category, [])) < window:
             out[category].append((probs, str(item.effort_actual)))
     return out
+
+
+# --- Similar tasks (Phase 8) -------------------------------------------------------
+
+
+async def latest_reviews(session: AsyncSession, household_id: uuid.UUID) -> Sequence[SprintItem]:
+    """The most recent review of every reviewed, live topic of the household (who did
+    it, was it finished, how big was it really), with its topic loaded."""
+    latest = (
+        select(SprintItem.id)
+        .distinct(SprintItem.topic_id)
+        .where(SprintItem.household_id == household_id, SprintItem.reviewed_at.is_not(None))
+        .order_by(SprintItem.topic_id, SprintItem.reviewed_at.desc())
+        .subquery()
+    )
+    stmt = (
+        select(SprintItem)
+        .join(latest, latest.c.id == SprintItem.id)
+        .join(Topic, Topic.id == SprintItem.topic_id)
+        .where(Topic.deleted_at.is_(None))
+        .order_by(SprintItem.reviewed_at)
+    )
+    return (await session.scalars(stmt)).unique().all()

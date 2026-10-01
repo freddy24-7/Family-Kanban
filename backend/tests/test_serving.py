@@ -225,10 +225,14 @@ def test_training_cli_parses_all_options(monkeypatch):
             "5",
             "--primary-holdout",
             "h",
+            "--features",
+            "embedding",
+            "--C",
+            "10",
         ],
     )
     train.main()
-    assert seen["args"][-3:] == (3.0, "h", 5.0)
+    assert seen["args"][-5:] == (3.0, "h", 5.0, {"features": "embedding", "C": 10.0}, False)
 
 
 def test_promote_existing_candidate_rechecks_gate(monkeypatch):
@@ -280,3 +284,48 @@ def test_promote_existing_candidate_rechecks_gate(monkeypatch):
     # The champion changed, so the weak candidate's comparison is stale now.
     with pytest.raises(SystemExit, match="champion is now"):
         retrain.promote_candidate(weak_name)
+
+
+def test_embedding_classifier_survives_the_registry():
+    """features="embedding": the pickle stores only the model name, not vectors or the
+    ONNX model, and predicts after a round trip like any other artifact."""
+    import io
+
+    import joblib
+
+    model = build_text_classifier(TextModelConfig(features="embedding", C=10.0)).fit(TEXTS, CATS)
+    data, _ = registry.serialize(model)
+    assert len(data) < 50_000
+    restored = joblib.load(io.BytesIO(data))
+    assert list(restored.predict(TEXTS)) == list(model.predict(TEXTS))
+
+
+async def test_model_that_cannot_predict_fails_soft(client, outbox):
+    """An embedding model in production, where fastembed isn't installed: it loads (the
+    pickle only names the model) but its first prediction fails. Topics must still work."""
+    from ml import embeddings
+
+    model = build_text_classifier(TextModelConfig(features="embedding", C=10)).fit(TEXTS, CATS)
+    _register_and_promote(model)
+
+    def missing_dependency(texts):
+        raise ModuleNotFoundError("No module named 'fastembed'")
+
+    embeddings.set_backend(missing_dependency)
+    headers = await register_and_login(client, "x@example.com")
+    household = await create_household(client, headers)
+    response = await client.post(
+        f"/households/{household}/topics", json={"text": "melk halen"}, headers=headers
+    )
+    assert response.status_code == 201
+    assert response.json()["prediction"]["category"] is None
+    assert response.json()["prediction"]["effort"] == "M"
+
+
+def test_experiment_only_features_are_never_registered():
+    from ml import train
+
+    with pytest.raises(SystemExit, match="experiment-only"):
+        train.train_task(
+            Task.CATEGORY, None, "s", {}, promote=True, overrides={"features": "embedding"}
+        )

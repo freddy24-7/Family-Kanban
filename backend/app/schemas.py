@@ -214,6 +214,23 @@ class SprintItemRead(BaseModel):
     reviewed_at: datetime | None
 
 
+class SimilarTaskRead(BaseModel):
+    """An earlier, reviewed task of the same household that resembles a backlog topic."""
+
+    topic_id: uuid.UUID
+    text: str
+    similarity: float
+    assignee_name: str | None
+    completed: bool | None
+    effort_actual: Effort | None
+    reviewed_at: datetime | None
+
+
+class TopicSuggestionRead(BaseModel):
+    topic_id: uuid.UUID
+    similar: list[SimilarTaskRead]  # most similar first; empty: nothing comparable done
+
+
 class SprintCompleteIn(BaseModel):
     notes: str | None = Field(default=None, max_length=2000)
 

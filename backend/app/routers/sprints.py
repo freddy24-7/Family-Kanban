@@ -21,7 +21,9 @@ from app.schemas import (
     SprintRead,
     SprintReviewRead,
     TopicRead,
+    TopicSuggestionRead,
 )
+from app.services import similar
 from app.services import sprints as service
 from app.services import topics as topics_service
 from app.tenancy import HouseholdAccess, household_access, planner_access, reviewer_access
@@ -39,6 +41,19 @@ async def backlog(
     """Topics not yet planned into an open sprint and not completed."""
     topics = await repository.list_backlog(session, access.household.id, limit, offset)
     return await topics_service.to_read_models(session, topics)
+
+
+@router.get("/backlog/suggestions", response_model=list[TopicSuggestionRead])
+async def backlog_suggestions(
+    access: HouseholdAccess = Depends(household_access),
+    session: AsyncSession = Depends(get_session),
+    k: int = Query(3, ge=1, le=10),
+    limit: int = Query(100, ge=1, le=500),
+):
+    """Per backlog topic: similar earlier, reviewed tasks of this household (Phase 8).
+    Same topics, same order as GET /backlog."""
+    topics = await repository.list_backlog(session, access.household.id, limit, 0)
+    return await similar.suggestions(session, access.household, topics, k)
 
 
 # --- helpers ----------------------------------------------------------------------------

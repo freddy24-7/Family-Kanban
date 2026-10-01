@@ -31,8 +31,8 @@ async def classify_topics(
       active model. (A first version replaced ALL active models with the pinned ones.)
     - `adapt` (default: config.EFFORT_ADAPTATION) applies the per-household effort
       adjustment (ml/adaptation.py); the raw model output is kept in `adjustment`.
-    - Fails soft per task: if a model can't be loaded, the topic is still created (it
-      just has no prediction for that task and is flagged for review)."""
+    - Fails soft per task: if a model can't be loaded or can't predict, the topic is
+      still created (it just has no prediction for that task and is flagged for review)."""
     if not topics:
         return []
     adapt = config.EFFORT_ADAPTATION if adapt is None else adapt
@@ -58,7 +58,13 @@ async def classify_topics(
         elif model.preprocessing is not None:
             log.error("Model %s needs unknown preprocessing %r", version.name, model.preprocessing)
             continue
-        for topic, output in zip(topics, model.predict(texts), strict=True):
+        try:
+            # A model can load and still fail to predict (e.g. a missing dependency).
+            outputs = model.predict(texts)
+        except Exception:
+            log.exception("Model %s failed to predict; skipping %s predictions", version.name, task)
+            continue
+        for topic, output in zip(topics, outputs, strict=True):
             predicted, confidence, probabilities = (
                 output.predicted,
                 output.confidence,

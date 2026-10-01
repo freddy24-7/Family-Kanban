@@ -15,6 +15,7 @@ import type {
   SprintDetail,
   SprintItem,
   Topic,
+  TopicSuggestion,
   User,
 } from './types'
 
@@ -39,6 +40,14 @@ export const useHousehold = (h: string) =>
 
 export const useBacklog = (h: string) =>
   useQuery({ queryKey: keys.backlog(h), queryFn: () => api<Topic[]>(`/households/${h}/backlog`) })
+
+// Under the backlog key, so every backlog invalidation refreshes the suggestions too.
+export const useBacklogSuggestions = (h: string) =>
+  useQuery({
+    queryKey: [...keys.backlog(h), 'suggestions'],
+    queryFn: () => api<TopicSuggestion[]>(`/households/${h}/backlog/suggestions`),
+    staleTime: 60_000,
+  })
 
 export const useSprints = (h: string) =>
   useQuery({ queryKey: keys.sprints(h), queryFn: () => api<Sprint[]>(`/households/${h}/sprints`) })

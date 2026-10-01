@@ -25,6 +25,8 @@ from app import (  # noqa: E402
 )
 from app.db import Base, SessionFactory, engine  # noqa: E402
 from app.main import app  # noqa: E402
+from ml import embeddings  # noqa: E402
+from tests.helpers import fake_embed  # noqa: E402
 
 BACKEND_DIR = Path(__file__).resolve().parents[1]
 
@@ -61,6 +63,14 @@ async def clean_tables(database):
         await repository.ensure_stub_model_versions(session)
     yield
     app.dependency_overrides.clear()
+
+
+@pytest.fixture(autouse=True)
+def fake_embeddings():
+    """Tests never load the real embedding model (220 MB download, slow)."""
+    embeddings.set_backend(fake_embed)
+    yield
+    embeddings.set_backend(None)
 
 
 @pytest.fixture

@@ -239,3 +239,19 @@ export interface ModelLogEntry {
   cv_macro_f1: number | null
   notes: string | null
 }
+
+/** An earlier, reviewed task of the same household that resembles a backlog topic. */
+export interface SimilarTask {
+  topic_id: string
+  text: string
+  similarity: number
+  assignee_name: string | null
+  completed: boolean | null
+  effort_actual: Effort | null
+  reviewed_at: string | null
+}
+
+export interface TopicSuggestion {
+  topic_id: string
+  similar: SimilarTask[] // most similar first; empty: nothing comparable done before
+}

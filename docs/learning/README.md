@@ -11,3 +11,4 @@ language, where it lives in this codebase, how to read its results, and self-che
 | 04 | [Simulation as a controlled experiment, and the three kinds of drift](04-simulation-and-drift.md) | 5 |
 | 05 | [Monitoring a model in production: drift detection](05-monitoring-and-drift-detection.md) | 6 |
 | 06 | [The retraining loop: champion, challenger and honest comparison](06-retraining.md) | 7 |
+| 07 | [Embeddings, similarity search and fair model comparison](07-embeddings.md) | 8 |

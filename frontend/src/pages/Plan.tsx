@@ -3,16 +3,17 @@ import {
   useAddItem,
   useAssignItem,
   useBacklog,
+  useBacklogSuggestions,
   useCreateSprint,
   useRemoveItem,
   useSprint,
   useSprints,
   useStartSprint,
 } from '../api/hooks'
-import type { Member } from '../api/types'
+import type { Member, SimilarTask } from '../api/types'
 import { TopicLabels } from '../components/badges'
 import { Button, Card, Empty, ErrorText, Field, Input, PageTitle, Spinner } from '../components/ui'
-import { nl } from '../i18n/nl'
+import { effortLabels, nl } from '../i18n/nl'
 import { nextWeek, shortDate } from '../lib/dates'
 import { useCurrentHousehold } from '../state/household'
 
@@ -97,6 +98,8 @@ function PlannedSprint({ sprintId, blocked }: { sprintId: string; blocked: boole
   const h = household.id
   const sprint = useSprint(h, sprintId)
   const backlog = useBacklog(h)
+  const suggestions = useBacklogSuggestions(h)
+  const similarByTopic = new Map((suggestions.data ?? []).map((t) => [t.topic_id, t.similar]))
   const add = useAddItem(h, sprintId)
   const assign = useAssignItem(h, sprintId)
   const remove = useRemoveItem(h, sprintId)
@@ -182,12 +185,41 @@ function PlannedSprint({ sprintId, blocked }: { sprintId: string; blocked: boole
                   >
                     {nl.plan.add}
                   </Button>
+                  <SimilarTasks tasks={similarByTopic.get(t.id) ?? []} />
                 </Card>
               </li>
             ))}
           </ul>
         )}
       </section>
+    </div>
+  )
+}
+
+/** Earlier, similar tasks of this family: who did it and how much work it really was.
+ * Shown as history for the planner to judge, not as a prediction: as an effort
+ * predictor, the vote of similar tasks lost to the model (docs/learning/07-embeddings.md). */
+function SimilarTasks({ tasks }: { tasks: SimilarTask[] }) {
+  if (tasks.length === 0) return null
+  return (
+    <div
+      className="w-full border-t border-line pt-2 text-xs text-ink-3"
+      title={nl.plan.similarHint}
+    >
+      <span className="font-medium">{nl.plan.similarTitle}:</span>
+      <ul className="mt-0.5 space-y-0.5">
+        {tasks.map((s) => (
+          <li key={s.topic_id} className="truncate">
+            ‘{s.text}’ · {s.assignee_name ?? nl.plan.nobody} ·{' '}
+            {s.completed === false
+              ? nl.plan.notFinished
+              : s.effort_actual
+                ? effortLabels[s.effort_actual]
+                : '–'}
+            {s.reviewed_at && <> · {shortDate(s.reviewed_at.slice(0, 10))}</>}
+          </li>
+        ))}
+      </ul>
     </div>
   )
 }

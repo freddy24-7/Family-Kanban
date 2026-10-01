@@ -38,6 +38,8 @@ see [backend/ml/CLAUDE.md](backend/ml/CLAUDE.md).
   connection drops (happened 2026-09-30). Local-DB runs via the CLI are fine.
 - Monitoring references for active models: `uv run python -m ml.train --snapshot seed-v2 --backfill-reference`
   (new versions store theirs automatically)
+- Retrieval (Phase 8): `uv run python -m ml.retrieval_eval --simulated [--retriever tfidf|embedding|hybrid]`
+  (precision@k, kNN effort vs the model; embeddings need the dev dependency fastembed)
 - Holdouts: `uv run python -m ml.holdout suggest|freeze ...` · snapshots in `data/datasets/` (not committed)
 - Deploy: see [docs/deploy.md](docs/deploy.md)
 - Frontend: `cd frontend && npm run dev` · `npm run build` · `npm run lint` · `npm run format`

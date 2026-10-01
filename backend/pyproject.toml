@@ -22,6 +22,7 @@ default-groups = ["dev", "notebooks"]
 
 [dependency-groups]
 dev = [
+    "fastembed>=0.8.1",
     "httpx2>=2.13.1",
     "pytest>=9.1.1",
     "pytest-asyncio>=1.4.0",

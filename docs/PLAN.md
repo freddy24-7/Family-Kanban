@@ -1,6 +1,6 @@
 # Build Plan — Family Kanban
 
-**Status**: Phase 7 complete (2026-10-01) · next: Phase 8 (embeddings & planning suggestions)
+**Status**: Phase 8 complete (2026-10-01) · next: Phase 9 (story & polish)
 
 Sized for ~8–10 hours/week. Each phase ends with something demonstrable.
 Phases marked 🎓 include ML lessons: before building, the concept is explained;
@@ -267,6 +267,14 @@ on world A, a real-data retraining event once the family has reviews, `holdout-r
 - Cosine similarity, k-nearest-neighbours, approximate indexes (HNSW) in pgvector.
 - Evaluating retrieval (precision@k) as opposed to evaluating classification.
 - Fair model comparison: same holdouts, same metrics, significance with small n.
+
+**Outcome** (lesson 07): embeddings lost every comparison on our data (retrieval
+precision@3 0.61 vs 0.67 for TF-IDF; embeddings+LR CV macro-F1 0.87/0.53 vs 0.94/0.63 for
+category/effort). Production serves **TF-IDF retrieval**; fastembed is a dev dependency for
+the experiments, the pgvector table was dropped. kNN effort from household history ties the
+model overall but beats it on the drifted category (groceries after the move 0.42 vs 0.00,
+n=19, one world). The Plan page shows similar earlier tasks as history (who, actual effort,
+finished) next to the model's guess.
 
 ---
 
