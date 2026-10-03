@@ -12,3 +12,4 @@ language, where it lives in this codebase, how to read its results, and self-che
 | 05 | [Monitoring a model in production: drift detection](05-monitoring-and-drift-detection.md) | 6 |
 | 06 | [The retraining loop: champion, challenger and honest comparison](06-retraining.md) | 7 |
 | 07 | [Embeddings, similarity search and fair model comparison](07-embeddings.md) | 8 |
+| 08 | [An LLM as decision-maker: baselines, simulation and honest evaluation](08-llm-planner.md) | 9 |

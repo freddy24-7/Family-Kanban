@@ -97,7 +97,56 @@ Weeks where Gemini failed and the rules stood in are excluded from the compariso
 
 ## What happened in this project
 
-(Filled in after the experiment.)
+Five 26-week replays under the load model, seed 202 (commit `913094d`, after the review fixes):
+the rule planner and Gemini (`gemini-3.5-flash`, ~80k tokens per run) on the drift-demo world
+and on the baseline world, plus a second Gemini run on drift-demo to see the LLM's own spread.
+The simulated family has ~13.5 hours a week for household tasks.
+
+| Per 26 weeks | Rules (drift) | Gemini (drift) | Gemini again | Rules (baseline) | Gemini (baseline) |
+|---|---|---|---|---|---|
+| Planned hours | 161.5 | 401.5 | 427.0 | 168.0 | 372.0 |
+| **Finished hours** | 118.0 | **228.5** | **221.0** | 124.5 | **181.5** |
+| **Completion rate** | **0.73** | 0.60 | 0.56 | **0.75** | 0.53 |
+| Overloaded items | 15 | 107 | 134 | 14 | 107 |
+| Oldest open task at the end (days) | 150 | 129 | 99 | 148 | 129 |
+| Backlog at the end | 250 | 168 | 177 | 271 | 231 |
+
+Paired per week (Gemini − rules, moving-block 95% CI):
+
+| World | Finished hours / week | Completion rate |
+|---|---|---|
+| drift-demo | +4.4 (+3.0..+6.3) | −0.12 (−0.21..−0.03) |
+| drift-demo, 2nd Gemini run | +4.1 (+2.9..+5.8) | −0.16 (−0.24..−0.08) |
+| baseline | +2.3 (+1.2..+3.3) | −0.23 (−0.31..−0.15) |
+| Gemini vs Gemini | −0.3 (−0.8..+0.2) | −0.05 (−0.10..−0.00) |
+
+**Decision rule: no clear winner, in every world.** Gemini finishes clearly more work, but by
+planning 2.5× as much and overloading people, so a clearly lower share of what it plans gets
+done. That's exactly the trade-off the completion-rate guard was added to expose: with
+"finished hours" alone, Gemini would have "won".
+
+**What each planner gets wrong**
+
+- **The rules are stuck in a feedback loop.** They estimate a member's capacity from the hours
+  that member *finished*, which can never exceed what the rules *gave* them. So they plan 5–8
+  hours a week for a family that has 13.5, and the estimate never grows. This is a
+  small-scale version of a classic problem: a system that only learns from the outcomes of its
+  own decisions never sees what the alternatives would have produced (no exploration).
+- **Gemini ignores its first instruction.** The prompt puts "don't overload anyone" first; it
+  plans ~15.5 hours a week, more than the family has, and a third of its items are overloaded.
+  Fluent, plausible reasons per task, and still a systematically too-full sprint.
+- **The LLM varies with itself**, but less than it differs from the rules: two Gemini runs on
+  the same world differ by −0.3 hours a week (not significant) and 0.05 in completion rate.
+
+**Decisions**
+
+- No default switch on the evidence: neither planner is better by the rule declared up front.
+  The proposal stays a proposal the planner trims (human in the loop), which suits Gemini's
+  failure mode: an over-full sprint is easy to cut, an under-full one is invisible.
+- Improving either planner is a new experiment, not a tweak: for example giving both planners
+  the same capacity estimate with some exploration, or telling Gemini the estimated hours per
+  member. It must then be tested on a world/seed it wasn't tuned on, or it's overfitting to
+  seed 202.
 
 ## Self-check
 

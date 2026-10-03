@@ -167,6 +167,12 @@ of "Lieke → kids", which only works in one family.
 (temporal split), weight real tickets more than synthetic ones, plot learning curves to see when
 more data stops helping, and switch on the per-household adjustment once it's tuned.
 
+**Is the LLM planner better than rules?** Not by the rule I fixed in advance. In simulation
+Gemini finished more work, but by planning 2.5× as much and overloading people; its completion
+rate was clearly lower. Measuring finished hours alone would have crowned it. The rules
+under-planned because they learn capacity only from their own past decisions. So it stays a
+proposal the planner trims.
+
 **What did Claude Code do?** It was the pair programmer and teacher; I made the decisions and
 can explain each one. The repo has its own reviewer agent that checks ML changes for leakage.
 Among its finds: a calibration bug from a wrong class order, training/serving skew in the name

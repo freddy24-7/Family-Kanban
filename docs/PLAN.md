@@ -1,6 +1,6 @@
 # Build Plan — Family Kanban
 
-**Status**: Phase 9 in progress (README and walkthrough done 2026-10-03) · next: rehearse; stretch: Planner Assistant
+**Status**: Phase 9 complete (2026-10-03): README, walkthrough, Planner Assistant + experiment (lesson 08)
 
 Sized for ~8–10 hours/week. Each phase ends with something demonstrable.
 Phases marked 🎓 include ML lessons: before building, the concept is explained;
@@ -284,6 +284,11 @@ finished) next to the model's guess.
   lightweight and how it would scale (MLflow, feature store, scheduled pipelines).
 - Interview walkthrough script (< 10 min).
 - Stretch: Planner Assistant agent (Gemini) proposing a draft sprint.
+
+**Outcome** (lesson 08): "Voorstel maken" on the Plan page (Gemini or rules, names masked,
+accept item by item). Simulated evaluation under a new load work model: Gemini finishes more
+work (+2.3 to +4.4 h/week) but plans 2.5× as much with a clearly lower completion rate; the
+rules under-plan (capacity feedback loop). No winner by the pre-declared rule.
 
 ---
 

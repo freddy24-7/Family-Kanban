@@ -41,6 +41,7 @@ flowchart LR
 | Simulation | World model with seasons and scenario events (a dog arrives, groceries start taking longer, a child starts typing); deterministic replays; shadow evaluation of candidate models | `sim/` |
 | Adaptation | Per-household label-shift correction from the family's own recent reviews | `ml/adaptation.py` |
 | Retrieval | "Done before": similar earlier tasks of the family when planning | `ml/retrieval.py` |
+| Planner Assistant | Gemini (or rules) proposes a draft sprint; names masked, output validated, evaluated in simulation | `app/services/planner_assistant.py`, `sim/compare_planners.py` |
 
 ## What the experiments showed
 
@@ -64,6 +65,12 @@ The honest results are the interesting part. Each one has a lesson with the full
   as classifier features 0.87 vs 0.94 (category) and 0.53 vs 0.63 (effort). It was trained to
   ignore exactly the difference that effort depends on. Production serves TF-IDF; the embedding
   code stays as a documented experiment. [Lesson 07](docs/learning/07-embeddings.md)
+- **An LLM planner finishes more work, by overloading people.** The Planner Assistant (Gemini)
+  was compared with a transparent rule baseline in simulated families with a time budget per
+  person. Gemini finished +2 to +4 hours of work a week but planned 2.5× as much, and a clearly
+  smaller share got done; the rules under-planned, stuck in a feedback loop. Neither wins by the
+  rule declared in advance, so the proposal stays a suggestion the planner trims.
+  [Lesson 08](docs/learning/08-llm-planner.md)
 
 ## Architecture
 
@@ -115,7 +122,7 @@ ML commands (training, retraining, holdouts, simulations, retrieval evaluation) 
 
 - [docs/PRD.md](docs/PRD.md): product spec and skill coverage map
 - [docs/PLAN.md](docs/PLAN.md): the phased plan, with outcomes per phase
-- [docs/learning/](docs/learning/): seven ML lessons, from weak labels to embeddings
+- [docs/learning/](docs/learning/): eight ML lessons, from weak labels to an LLM planner
 - [docs/decisions/](docs/decisions/): architecture decision records
 - [docs/interview-walkthrough.md](docs/interview-walkthrough.md): a 10-minute guided tour
 - [docs/deploy.md](docs/deploy.md): Railway deployment

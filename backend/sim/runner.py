@@ -150,7 +150,7 @@ class Simulation:
         self.planning = {
             "method": proposal.method,
             "model": proposal.model,
-            "fallback": proposal.method != method,
+            "fallback": proposal.note is not None,  # Gemini missing or failed
             "tokens": proposal.tokens,
         }
         if not proposal.items:
