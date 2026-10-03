@@ -142,7 +142,7 @@ Every technology must earn its place here. Nothing is added for CV padding.
 | Monitoring / drift | Model Health Dashboard; PSI / chi-square drift; validated against planted drift in simulations |
 | Retraining / MLOps | Retrain script: champion/challenger, promotion gate, registry pattern designed to map to MLflow |
 | Synthetic data / simulation | Gemini ticket generation + world-model simulator with controllable drift |
-| RAG / embeddings (reused strength) | Similar-task retrieval via pgvector for planning suggestions |
+| RAG / embeddings (reused strength) | Similar-task retrieval for planning suggestions; embeddings (fastembed) vs TF-IDF compared, TF-IDF served because it won (lesson 07) |
 | Full-stack / auth / multi-tenancy | React PWA, FastAPI, Postgres, self-hosted auth (fastapi-users + Google OAuth), household-scoped data |
 | Agentic (reused strength, stretch) | Planner Assistant proposing a draft sprint |
 
@@ -162,10 +162,11 @@ Every technology must earn its place here. Nothing is added for CV padding.
 - **Email**: transactional email (verification, reset, invites) via Resend,
   isolated in `app/mailer.py`, inert without its API key (links logged in dev).
 - **ML**: scikit-learn, pandas, joblib; exploration in Jupyter notebooks.
-  Embeddings via `fastembed` (ONNX, no PyTorch) with a multilingual model.
+  Embeddings via `fastembed` (ONNX, no PyTorch) with a multilingual model, as an
+  experiment only: TF-IDF retrieval won the Phase 8 comparison and is what's served.
 - **LLM**: Gemini, isolated in one module, inert without `GEMINI_API_KEY`,
   structured JSON output, per-run token cap, defensive parsing.
-- **Model artifacts**: Railway volume (or S3-compatible bucket), referenced by URI.
+- **Model artifacts**: Postgres table `model_artifact`, referenced by URI (ADR-002).
 - **Retraining**: manual script / admin action in v1; Railway cron later.
 
 ## 10. Training data policy

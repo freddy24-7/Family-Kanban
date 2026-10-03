@@ -1,6 +1,6 @@
 # Build Plan — Family Kanban
 
-**Status**: Phase 8 complete (2026-10-01) · next: Phase 9 (story & polish)
+**Status**: Phase 9 in progress (README done 2026-10-03) · next: interview walkthrough
 
 Sized for ~8–10 hours/week. Each phase ends with something demonstrable.
 Phases marked 🎓 include ML lessons: before building, the concept is explained;
