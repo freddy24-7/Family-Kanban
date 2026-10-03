@@ -117,6 +117,7 @@ ML commands (training, retraining, holdouts, simulations, retrieval evaluation) 
 - [docs/PLAN.md](docs/PLAN.md): the phased plan, with outcomes per phase
 - [docs/learning/](docs/learning/): seven ML lessons, from weak labels to embeddings
 - [docs/decisions/](docs/decisions/): architecture decision records
+- [docs/interview-walkthrough.md](docs/interview-walkthrough.md): a 10-minute guided tour
 - [docs/deploy.md](docs/deploy.md): Railway deployment
 
 Built with [Claude Code](https://claude.com/claude-code) as a pair programmer and teacher; the

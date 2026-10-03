@@ -1,6 +1,6 @@
 # Build Plan — Family Kanban
 
-**Status**: Phase 9 in progress (README done 2026-10-03) · next: interview walkthrough
+**Status**: Phase 9 in progress (README and walkthrough done 2026-10-03) · next: rehearse; stretch: Planner Assistant
 
 Sized for ~8–10 hours/week. Each phase ends with something demonstrable.
 Phases marked 🎓 include ML lessons: before building, the concept is explained;
