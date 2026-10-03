@@ -2,6 +2,7 @@
 
 import uuid
 from datetime import date, datetime
+from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, EmailStr, Field
 
@@ -229,6 +230,28 @@ class SimilarTaskRead(BaseModel):
 class TopicSuggestionRead(BaseModel):
     topic_id: uuid.UUID
     similar: list[SimilarTaskRead]  # most similar first; empty: nothing comparable done
+
+
+class ProposalRequest(BaseModel):
+    max_items: int = Field(10, ge=1, le=50)
+    method: Literal["auto", "llm", "rules"] = "auto"
+
+
+class ProposalItemRead(BaseModel):
+    topic_id: uuid.UUID
+    text: str
+    assignee_id: uuid.UUID
+    assignee_name: str
+    reason: str
+
+
+class ProposalRead(BaseModel):
+    """A draft sprint from the Planner Assistant; nothing is planned until accepted."""
+
+    method: Literal["llm", "rules"]
+    # "llm_not_configured" | "llm_failed": rules were used instead of Gemini.
+    note: str | None
+    items: list[ProposalItemRead]
 
 
 class SprintCompleteIn(BaseModel):

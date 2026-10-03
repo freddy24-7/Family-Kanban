@@ -43,6 +43,8 @@ async def test_list_only_own_households(client, two_families):
         ("PATCH", "/households/{h}/topics/{t}", {"text": "gekaapt"}),
         ("DELETE", "/households/{h}/topics/{t}", None),
         ("GET", "/households/{h}/backlog", None),
+        ("GET", "/households/{h}/backlog/suggestions", None),
+        ("POST", "/households/{h}/planning/proposal", {"method": "rules"}),
         ("GET", "/households/{h}/sprints", None),
         (
             "POST",

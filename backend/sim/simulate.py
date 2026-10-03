@@ -34,6 +34,9 @@ def planner_from(args) -> PlannerBehaviour:
         check_rate=args.check_rate,
         rubber_stamp_rate=args.rubber_stamp,
         label_error_rate=args.label_error,
+        policy=args.policy,
+        work_model=args.work_model,
+        max_items=args.max_items,
     )
 
 
@@ -69,6 +72,19 @@ async def main() -> None:
         p.add_argument("--check-rate", type=float, default=0.9)
         p.add_argument("--rubber-stamp", type=float, default=0.2)
         p.add_argument("--label-error", type=float, default=0.03)
+        p.add_argument(
+            "--policy",
+            choices=["sim", "rules", "llm"],
+            default="sim",
+            help="who plans the sprint (rules/llm: the Planner Assistant)",
+        )
+        p.add_argument(
+            "--work-model",
+            choices=["simple", "load"],
+            default="simple",
+            help="load: completion depends on each person's weekly hours",
+        )
+        p.add_argument("--max-items", type=int, default=14, help="rules/llm: sprint size limit")
         if name == "replay":  # shadow evaluation of candidate models
             p.add_argument("--category-model")
             p.add_argument("--effort-model")

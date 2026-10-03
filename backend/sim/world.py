@@ -51,6 +51,11 @@ class PlannerBehaviour(BaseModel):
     rubber_stamp_rate: float = Field(0.2, ge=0, le=1)  # accept the model's guess unchecked
     label_error_rate: float = Field(0.03, ge=0, le=1)  # honest mistakes when checking
     capacity_per_person: int = Field(6, ge=1)  # sprint items per member per week
+    # Phase 9 planner experiment (defaults keep earlier runs and replays unchanged):
+    # who plans the sprint, and whether completion depends on each person's load.
+    policy: Literal["sim", "rules", "llm"] = "sim"
+    work_model: Literal["simple", "load"] = "simple"
+    max_items: int = Field(14, ge=1)  # rules/llm: sprint size limit given to the planner
 
 
 # --- Hidden rules -----------------------------------------------------------------------
@@ -224,6 +229,50 @@ def pick_assignee(category: Category, people: list[Person], rng: np.random.Gener
 def completes(true_effort: Effort, assignee: Person, rng: np.random.Generator) -> bool:
     p = COMPLETION[true_effort] * (0.85 if assignee.role == "kid" else 1.0)
     return bool(rng.random() < p)
+
+
+# --- Load work model (Phase 9: planner evaluation) -----------------------------------------
+# Hidden from every planner: they only see what the app sees (history of who finished what).
+
+HOURS = {Effort.S: 0.5, Effort.M: 1.5, Effort.L: 3.0}
+OVERLOAD_FACTOR = 0.3  # a task that doesn't fit in the remaining week rarely gets done
+UNSUITED_FACTOR = 0.4  # e.g. a 9-year-old doing the tax return
+
+
+def weekly_hours(person: Person) -> float:
+    """Time a person has for household tasks in a week."""
+    if person.role == "adult":
+        return 5.0
+    age = person.age or 0
+    return 2.5 if age >= 12 else 1.0 if age >= 8 else 0.0
+
+
+def suited(category: Category, person: Person) -> bool:
+    """The same rules as `pick_assignee`: who can sensibly do this kind of task."""
+    if person.role == "adult":
+        return True
+    age = person.age or 0
+    if age < 8:
+        return False
+    if category in (Category.CHORES, Category.GROCERIES):
+        return True
+    return category == Category.KIDS and age >= 12
+
+
+def completion_probability(
+    true_effort: Effort, category: Category, assignee: Person, hours_before: float
+) -> float:
+    """Load model: a person works through their tasks in board order; tasks beyond
+    their weekly hours, or unsuited to them, are much less likely to get done."""
+    budget = weekly_hours(assignee)
+    if budget == 0:
+        return 0.0
+    p = COMPLETION[true_effort] * (0.85 if assignee.role == "kid" else 1.0)
+    if hours_before + HOURS[true_effort] > budget:
+        p *= OVERLOAD_FACTOR
+    if not suited(category, assignee):
+        p *= UNSUITED_FACTOR
+    return p
 
 
 def reported_effort(true_effort: Effort, rng: np.random.Generator) -> Effort:

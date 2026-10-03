@@ -3,6 +3,7 @@ functions that read tenant data take a household_id and filter on it."""
 
 import uuid
 from collections.abc import Sequence
+from datetime import datetime
 
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -366,6 +367,28 @@ async def recent_effort_reviews(
         if probs and category and len(out.setdefault(category, [])) < window:
             out[category].append((probs, str(item.effort_actual)))
     return out
+
+
+# --- Planner Assistant (Phase 9) ----------------------------------------------------
+
+
+async def reviews_since(
+    session: AsyncSession, household_id: uuid.UUID, since: datetime
+) -> Sequence[SprintItem]:
+    """Every review since `since`, one row per sprint item: a task failed by one member
+    and finished by another next week counts for both (latest_reviews keeps only the
+    last, which hides the failure)."""
+    stmt = (
+        select(SprintItem)
+        .join(Topic, Topic.id == SprintItem.topic_id)
+        .where(
+            SprintItem.household_id == household_id,
+            SprintItem.reviewed_at >= since,
+            Topic.deleted_at.is_(None),
+        )
+        .order_by(SprintItem.reviewed_at, SprintItem.created_at)
+    )
+    return (await session.scalars(stmt)).unique().all()
 
 
 # --- Similar tasks (Phase 8) -------------------------------------------------------

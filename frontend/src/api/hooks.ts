@@ -9,6 +9,7 @@ import type {
   ItemStatus,
   ModelLogEntry,
   MonitoringReport,
+  Proposal,
   SimulationDetail,
   SimulationRun,
   Sprint,
@@ -47,6 +48,13 @@ export const useBacklogSuggestions = (h: string) =>
     queryKey: [...keys.backlog(h), 'suggestions'],
     queryFn: () => api<TopicSuggestion[]>(`/households/${h}/backlog/suggestions`),
     staleTime: 60_000,
+  })
+
+// A proposal is read-only and costs a Gemini call: fetched on demand, never cached.
+export const usePlanningProposal = (h: string) =>
+  useMutation({
+    mutationFn: (body: { max_items: number }) =>
+      api<Proposal>(`/households/${h}/planning/proposal`, { method: 'POST', body }),
   })
 
 export const useSprints = (h: string) =>

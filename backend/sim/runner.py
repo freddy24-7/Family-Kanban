@@ -23,21 +23,31 @@ from app import config, repository
 from app.clock import SimulatedClock
 from app.domain import Effort, ItemStatus, LabelSource, Task
 from app.models import Household, SimTicket, SimulationRun, Topic
+from app.services import planner_assistant
 from app.services import sprints as sprint_service
 from app.services import topics as topic_service
 from app.tenancy import HouseholdAccess
 from sim.family import FamilySpec, Person, build_world
 from sim.world import (
     EFFORTS,
+    HOURS,
     PlannerBehaviour,
     Scenario,
     completes,
+    completion_probability,
     pick_assignee,
     reported_effort,
     state_at,
+    weekly_hours,
 )
 
 log = logging.getLogger(__name__)
+
+
+class Purpose:
+    """Keys of the independent random streams in the load work model."""
+
+    INTAKE, STARTED, REPORTED, LABEL = 1, 2, 3, 4
 
 
 def _at(day: date, hour: int, minute: int = 0) -> datetime:
@@ -61,6 +71,8 @@ class Simulation:
         self.rng = np.random.default_rng([run.random_seed, 1])
         self.clock = SimulatedClock(_at(run.start_date, 8))
         self.truth: dict = {}  # topic_id -> SimTicket
+        self.planning: dict = {}  # this week's planner outcome, for the stats
+        self.overloaded = 0
 
     async def setup(self) -> None:
         members = await repository.list_members(self.session, self.household.id)
@@ -114,6 +126,8 @@ class Simulation:
         backlog = [t for t in backlog if t.id in self.truth][
             : self.planner_cfg.capacity_per_person * len(people)
         ]
+        if self.planner_cfg.policy != "sim":
+            return await self._plan_with_assistant(week, monday)
         if not backlog:
             return None
         sprint = await sprint_service.create_sprint(
@@ -126,10 +140,33 @@ class Simulation:
             )
         return await sprint_service.start_sprint(self.session, sprint, self.clock)
 
+    async def _plan_with_assistant(self, week: int, monday: date):
+        """Phase 9: the Planner Assistant (rules or Gemini) plans, through the same
+        service the app's "Voorstel maken" button uses."""
+        method = self.planner_cfg.policy
+        proposal, _ = await planner_assistant.propose(
+            self.session, self.household, self.clock, self.planner_cfg.max_items, method
+        )
+        self.planning = {
+            "method": proposal.method,
+            "model": proposal.model,
+            "fallback": proposal.method != method,
+            "tokens": proposal.tokens,
+        }
+        if not proposal.items:
+            return None
+        sprint = await sprint_service.create_sprint(
+            self.session, self.household, f"Sim week {week + 1}", monday, monday + timedelta(days=6)
+        )
+        for item in proposal.items:
+            await sprint_service.add_item(self.session, sprint, item.topic_id, item.user_id)
+        return await sprint_service.start_sprint(self.session, sprint, self.clock)
+
     async def _intake(self, week: int, monday: date) -> list[Topic]:
         replayed = {ticket.id for ticket in self.truth.values()}  # resume: skip done ones
         tickets = [t for t in self.pool if t.week == week and t.id not in replayed]
-        minutes = np.sort(self.rng.integers(60, 6 * 24 * 60, size=len(tickets)))  # Mon 09:00 .. Sun
+        rng = self._rng(Purpose.INTAKE, None, monday)
+        minutes = np.sort(rng.integers(60, 6 * 24 * 60, size=len(tickets)))  # Mon 09:00 .. Sun
         created = []
         for ticket, offset in zip(tickets, minutes, strict=True):
             self.clock.set(_at(monday, 8) + timedelta(minutes=int(offset)))
@@ -156,12 +193,21 @@ class Simulation:
         names = {u.id: name for name, u in self.users.items()}
         outcome = {}
         self.clock.set(_at(monday + timedelta(days=5), 12))
-        for item in items:
+        hours_before: dict = {}
+        self.overloaded = 0
+        for item in items:  # board order: the planner's priority
             truth = self.truth[item.topic_id]
             assignee = people.get(names.get(item.assignee_id), next(iter(people.values())))
-            done = completes(truth.true_effort, assignee, self.rng)
+            if self.planner_cfg.work_model == "load":
+                before = hours_before.get(assignee.name, 0.0)
+                hours_before[assignee.name] = before + HOURS[truth.true_effort]
+                self.overloaded += before + HOURS[truth.true_effort] > weekly_hours(assignee)
+                p = completion_probability(truth.true_effort, truth.true_category, assignee, before)
+                done = self._draw(truth, monday) < p
+            else:
+                done = completes(truth.true_effort, assignee, self.rng)
             outcome[item.id] = done
-            if done or self.rng.random() < 0.5:
+            if done or self._rng(Purpose.STARTED, truth, monday).random() < 0.5:
                 await sprint_service.move_item(
                     self.session, self.access, sprint, item, ItemStatus.IN_PROGRESS, 0, self.clock
                 )
@@ -173,12 +219,37 @@ class Simulation:
         for item in items:
             done = outcome[item.id]
             effort = (
-                reported_effort(self.truth[item.topic_id].true_effort, self.rng) if done else None
+                reported_effort(
+                    self.truth[item.topic_id].true_effort,
+                    self._rng(Purpose.REPORTED, self.truth[item.topic_id], monday),
+                )
+                if done
+                else None
             )
             await sprint_service.review_item(
                 self.session, self.access, sprint, item, done, effort, None, self.clock
             )
         await sprint_service.complete_sprint(self.session, self.access, sprint, None, self.clock)
+
+    def _rng(self, purpose: int, ticket, monday: date) -> np.random.Generator:
+        """Randomness for one event. Default work model: the run's single stream, exactly
+        as before (earlier runs stay bit-identical). Load model (planner experiments): a
+        stream keyed by ticket, week and purpose, so no random event depends on what a
+        planner did earlier: two planners differ only by their decisions. (A first version
+        keyed only the completion roll; labels and arrival times still drifted apart.)"""
+        if self.planner_cfg.work_model != "load":
+            return self.rng
+        ticket_key = ticket.id.int % 2**63 if ticket is not None else 0
+        return np.random.default_rng(
+            [self.run.random_seed, ticket_key, monday.toordinal(), purpose]
+        )
+
+    def _draw(self, ticket, monday: date) -> float:
+        """Common random numbers: a ticket's luck in a given week is fixed by the run
+        seed, whoever planned it. Two planners then differ only by their decisions, not
+        by the dice (far less noise in the comparison)."""
+        seed = [self.run.random_seed, ticket.id.int % 2**63, monday.toordinal()]
+        return float(np.random.default_rng(seed).random())
 
     async def _label_backlog(self, monday: date) -> None:
         """The planner confirms or corrects new tickets. Our UI pre-fills only CONFIDENT
@@ -193,18 +264,19 @@ class Simulation:
         )
         threshold = config.LOW_CONFIDENCE_THRESHOLD
         for topic in todo:
-            if self.rng.random() >= cfg.check_rate:
+            rng = self._rng(Purpose.LABEL, self.truth[topic.id], monday)
+            if rng.random() >= cfg.check_rate:
                 continue  # not looked at this week
             truth, preds = self.truth[topic.id], predictions.get(topic.id, {})
             cat, eff = preds.get(Task.CATEGORY), preds.get(Task.EFFORT)
             confident = cat and eff and min(cat.confidence, eff.confidence) >= threshold
-            if confident and self.rng.random() < cfg.rubber_stamp_rate:
+            if confident and rng.random() < cfg.rubber_stamp_rate:
                 category, effort = cat.predicted, eff.predicted  # accepted unchecked
             else:
                 category, effort = truth.true_category, truth.text_effort
-                if self.rng.random() < cfg.label_error_rate:
+                if rng.random() < cfg.label_error_rate:
                     others = [c for c in type(truth.true_category) if c != truth.true_category]
-                    category = others[self.rng.integers(len(others))]
+                    category = others[rng.integers(len(others))]
             await topic_service.set_labels(
                 self.session,
                 topic,
@@ -225,6 +297,7 @@ class Simulation:
             cat, eff = p.get(Task.CATEGORY), p.get(Task.EFFORT)
             rows.append((topic, truth, cat, eff))
         n = len(rows)
+        backlog = await repository.list_backlog(self.session, self.household.id, 500, 0)
         mean = lambda xs: round(float(np.mean(xs)), 4) if xs else None  # noqa: E731
         labelled = [(t, c, e) for t, _, c, e in rows if t.category_label is not None and c and e]
         items = await repository.list_sprint_items(self.session, sprint.id) if sprint else []
@@ -267,6 +340,26 @@ class Simulation:
             "labelled": len(labelled),
             "sprint_items": len(items),
             "sprint_done": sum(1 for i in items if i.completed),
+            # Planner experiment (Phase 9): true hours of finished work, waiting time.
+            "planned_hours": sum(HOURS[self.truth[i.topic_id].true_effort] for i in items),
+            "done_hours": sum(
+                HOURS[self.truth[i.topic_id].true_effort] for i in items if i.completed
+            ),
+            "overloaded_items": self.overloaded if items else 0,
+            "done_wait_days": mean(
+                [
+                    (i.reviewed_at - i.topic.occurred_at).days
+                    for i in items
+                    if i.completed and i.reviewed_at
+                ]
+            ),
+            "backlog_size": len(backlog),
+            # Survivorship guard for done_wait_days: a planner that keeps skipping old
+            # tasks shows a short wait for finished ones but an old open backlog.
+            "oldest_open_days": max(
+                ((self.clock.now() - t.occurred_at).days for t in backlog), default=0
+            ),
+            "planner": self.planning or None,
         }
 
 

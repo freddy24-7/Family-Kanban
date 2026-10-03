@@ -255,3 +255,18 @@ export interface TopicSuggestion {
   topic_id: string
   similar: SimilarTask[] // most similar first; empty: nothing comparable done before
 }
+
+/** A draft sprint from the Planner Assistant; nothing is planned until accepted. */
+export interface ProposalItem {
+  topic_id: string
+  text: string
+  assignee_id: string
+  assignee_name: string
+  reason: string
+}
+
+export interface Proposal {
+  method: 'llm' | 'rules'
+  note: 'llm_not_configured' | 'llm_failed' | null
+  items: ProposalItem[]
+}

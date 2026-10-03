@@ -402,3 +402,64 @@ async def test_rollback_reactivates_parent():
         retired, active = registry.rollback(s, Task.EFFORT)
         assert (retired.name, active.name) == (v1.name, stub.name)
         assert str(s.get(ModelVersion, v1.id).status) == "retired"
+
+
+async def test_planner_experiment_run_is_deterministic(gemini):
+    """Phase 9: the rule planner under the load work model. Common random numbers make a
+    replay with the same planner give the same outcome."""
+    planner = PlannerBehaviour(policy="rules", work_model="load", max_items=8)
+    async with SessionFactory() as session:
+        run = await service.create_run(
+            session, SIM_FAMILY, SHIFT, planner, START, 4, seed=11, family_seed=3
+        )
+        await build_pool(session, run, SIM_FAMILY, 3)
+        run = await run_simulation(session, run)
+        assert run.status == "completed"
+        planned = [w for w in run.weekly_stats if w["sprint_items"]]
+        assert planned and all(w["sprint_items"] <= 8 for w in planned)
+        assert all(w["planner"]["method"] == "rules" for w in planned)
+        assert all(0 <= w["done_hours"] <= w["planned_hours"] for w in planned)
+
+        replay = await service.create_run(
+            session, SIM_FAMILY, None, planner, None, 0, seed=11, pool_run=run
+        )
+        replay = await run_simulation(session, replay)
+        keys = ("sprint_items", "sprint_done", "done_hours", "overloaded_items")
+        assert [[w[k] for k in keys] for w in replay.weekly_stats] == [
+            [w[k] for k in keys] for w in run.weekly_stats
+        ]
+
+
+async def test_load_model_luck_does_not_depend_on_the_planner(gemini):
+    """Common random numbers: two DIFFERENT planners on the same pool and seed see the
+    same arrival times and make the same labelling choices (review finding: a shared
+    stream used to drift apart as soon as their outcomes differed)."""
+    async with SessionFactory() as session:
+        base = PlannerBehaviour(policy="rules", work_model="load", max_items=8)
+        run = await service.create_run(
+            session, SIM_FAMILY, SHIFT, base, START, 4, seed=5, family_seed=3
+        )
+        await build_pool(session, run, SIM_FAMILY, 3)
+        run = await run_simulation(session, run)
+        other = base.model_copy(update={"policy": "sim"})
+        replay = await service.create_run(
+            session, SIM_FAMILY, None, other, None, 0, seed=5, pool_run=run
+        )
+        replay = await run_simulation(session, replay)
+        assert [w["sprint_done"] for w in replay.weekly_stats] != [
+            w["sprint_done"] for w in run.weekly_stats
+        ]  # the planners really did differ
+
+        async def by_ticket(household_id):
+            topics = await session.scalars(select(Topic).where(Topic.household_id == household_id))
+            return {t.sim_ticket_id: t for t in topics}
+
+        a, b = await by_ticket(run.household_id), await by_ticket(replay.household_id)
+        assert {k: t.occurred_at for k, t in a.items()} == {k: t.occurred_at for k, t in b.items()}
+        same_day = [
+            k
+            for k in a
+            if a[k].labeled_at and b[k].labeled_at and a[k].labeled_at == b[k].labeled_at
+        ]
+        assert same_day
+        assert all(a[k].category_label == b[k].category_label for k in same_day)

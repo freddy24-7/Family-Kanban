@@ -4,6 +4,7 @@ import {
   useAssignItem,
   useBacklog,
   useBacklogSuggestions,
+  usePlanningProposal,
   useCreateSprint,
   useRemoveItem,
   useSprint,
@@ -129,6 +130,8 @@ function PlannedSprint({ sprintId, blocked }: { sprintId: string; blocked: boole
         <ErrorText error={start.error} />
       </Card>
 
+      <ProposalCard sprintId={sprintId} />
+
       <section>
         <h2 className="mb-2 font-semibold">{nl.plan.inSprint}</h2>
         {s.items.length === 0 ? (
@@ -221,5 +224,109 @@ function SimilarTasks({ tasks }: { tasks: SimilarTask[] }) {
         ))}
       </ul>
     </div>
+  )
+}
+
+/** Planner Assistant: a draft sprint to accept item by item. Nothing is planned until
+ * "Geselecteerde overnemen"; the planner stays in charge. */
+function ProposalCard({ sprintId }: { sprintId: string }) {
+  const { household, members } = useCurrentHousehold()
+  const proposal = usePlanningProposal(household.id)
+  const add = useAddItem(household.id, sprintId)
+  const [count, setCount] = useState(Math.max(3, members.length * 3))
+  const [skipped, setSkipped] = useState<Set<string>>(new Set())
+  const items = proposal.data?.items ?? []
+  const chosen = items.filter((i) => !skipped.has(i.topic_id))
+
+  async function accept() {
+    for (const item of chosen) {
+      await add.mutateAsync({ topic_id: item.topic_id, assignee_id: item.assignee_id })
+    }
+    proposal.reset()
+    setSkipped(new Set())
+  }
+
+  function toggle(topicId: string) {
+    const next = new Set(skipped)
+    if (next.has(topicId)) next.delete(topicId)
+    else next.add(topicId)
+    setSkipped(next)
+  }
+
+  const note = proposal.data
+    ? proposal.data.method === 'llm'
+      ? nl.plan.proposalByAi
+      : proposal.data.note
+        ? nl.plan.proposalNoAi
+        : nl.plan.proposalByRules
+    : null
+
+  return (
+    <Card className="space-y-3">
+      <div>
+        <h2 className="font-semibold">{nl.plan.proposalTitle}</h2>
+        <p className="text-sm text-ink-3">{nl.plan.proposalIntro}</p>
+      </div>
+      <div className="flex items-end gap-3">
+        <Field label={nl.plan.proposalCount}>
+          <Input
+            type="number"
+            min={1}
+            max={50}
+            value={count}
+            onChange={(e) => setCount(Number(e.target.value) || 1)}
+            className="w-24"
+          />
+        </Field>
+        <Button
+          variant="secondary"
+          disabled={proposal.isPending}
+          onClick={() => {
+            setSkipped(new Set())
+            proposal.mutate({ max_items: count })
+          }}
+        >
+          {proposal.isPending ? <Spinner /> : nl.plan.proposalMake}
+        </Button>
+      </div>
+      <ErrorText error={proposal.error ?? add.error} />
+      {proposal.data && (
+        <>
+          <p className="text-xs text-ink-3">{note}</p>
+          {items.length === 0 ? (
+            <Empty>{nl.plan.proposalEmpty}</Empty>
+          ) : (
+            <ul className="space-y-2">
+              {items.map((item) => (
+                <li key={item.topic_id}>
+                  <label className="flex cursor-pointer gap-3 rounded-xl border border-line p-3">
+                    <input
+                      type="checkbox"
+                      className="mt-1"
+                      checked={!skipped.has(item.topic_id)}
+                      onChange={() => toggle(item.topic_id)}
+                    />
+                    <span className="min-w-0 flex-1">
+                      <span className="block">{item.text}</span>
+                      <span className="block text-sm font-medium">{item.assignee_name}</span>
+                      <span className="block text-xs text-ink-3">{item.reason}</span>
+                    </span>
+                  </label>
+                </li>
+              ))}
+            </ul>
+          )}
+          {items.length > 0 && (
+            <Button
+              onClick={accept}
+              disabled={add.isPending || chosen.length === 0}
+              className="w-full"
+            >
+              {nl.plan.proposalAccept} ({chosen.length})
+            </Button>
+          )}
+        </>
+      )}
+    </Card>
   )
 }

@@ -10,6 +10,9 @@ from app.db import get_session
 from app.domain import ItemStatus
 from app.models import Sprint, SprintItem
 from app.schemas import (
+    ProposalItemRead,
+    ProposalRead,
+    ProposalRequest,
     SprintCompleteIn,
     SprintCreate,
     SprintDetail,
@@ -23,7 +26,7 @@ from app.schemas import (
     TopicRead,
     TopicSuggestionRead,
 )
-from app.services import similar
+from app.services import planner_assistant, similar
 from app.services import sprints as service
 from app.services import topics as topics_service
 from app.tenancy import HouseholdAccess, household_access, planner_access, reviewer_access
@@ -54,6 +57,38 @@ async def backlog_suggestions(
     Same topics, same order as GET /backlog."""
     topics = await repository.list_backlog(session, access.household.id, limit, 0)
     return await similar.suggestions(session, access.household, topics, k)
+
+
+@router.post("/planning/proposal", response_model=ProposalRead)
+async def planning_proposal(
+    body: ProposalRequest,
+    access: HouseholdAccess = Depends(planner_access),
+    session: AsyncSession = Depends(get_session),
+    clock: Clock = Depends(get_clock),
+):
+    """Planner Assistant: a draft sprint (tasks + assignees + reasons). Read-only."""
+    proposal, ctx = await planner_assistant.propose(
+        session, access.household, clock, body.max_items, body.method
+    )
+    tasks = {t.topic_id: t for t in ctx.tasks}
+    texts = {
+        t.id: t.text for t in await repository.list_backlog(session, access.household.id, 500, 0)
+    }
+    names = {m.user_id: m.name for m in ctx.members}
+    return ProposalRead(
+        method=proposal.method,
+        note=proposal.note,
+        items=[
+            ProposalItemRead(
+                topic_id=i.topic_id,
+                text=texts.get(i.topic_id, tasks[i.topic_id].text),
+                assignee_id=i.user_id,
+                assignee_name=names[i.user_id],
+                reason=planner_assistant.with_names(i.reason, ctx),
+            )
+            for i in proposal.items
+        ],
+    )
 
 
 # --- helpers ----------------------------------------------------------------------------
